@@ -4,7 +4,7 @@ Benchmark of the most commonly used http routers.
 
 Tested routers:
 
-- [find-my-way](https://github.com/delvedor/find-my-way)
+- [find-my-way (fastify)](https://github.com/delvedor/find-my-way)
 - [express](https://www.npmjs.com/package/express)
 - [prosto-router](https://github.com/prostojs/prosto-router)
 
