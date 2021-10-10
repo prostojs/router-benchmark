@@ -5,7 +5,7 @@
   "main": "./src/index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node --experimental-modules ./src/index"
   },
   "repository": {
     "type": "git",
@@ -25,6 +25,6 @@
     "arquero": "^4.8.7",
     "express": "^4.17.1",
     "find-my-way": "^4.3.3",
-    "prosto-router": "^0.0.1-alpha.2"
+    "prosto-router": "^0.0.1-alpha.3"
   }
 }

@@ -1,4 +1,4 @@
-export const operations = 100000
+export const operations = 200000
 
 export function now () {
   var ts = process.hrtime()

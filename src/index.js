@@ -4,7 +4,7 @@ import { ProstoRouterInterface } from "./routers/prosto-router.js";
 import { routes } from "./routes.js";
 import { tests } from "./tests.js";
 import { getOpsSec, now, operations } from "./utils.js";
-import { table, op } from 'arquero';
+import { table, op, not } from 'arquero';
 
 const routerInterfaces = [
     ExpressInterface,
@@ -17,7 +17,7 @@ const tableRows = {
 }
 
 for (let t = 0; t < 5; t++) {
-    console.log('Run #' + t + ' ====================')
+    console.log('Run #' + (t + 1) + ' ====================')
     main(t)
 }
 table(tableRows)
@@ -27,7 +27,7 @@ table(tableRows)
         'FindMyWay avg op/s':  d => op.round(op.average(d['FindMyWay avg op/s'])),
         'ProstoRouter avg op/s':  d => op.round(op.average(d['ProstoRouter avg op/s'])),
     })
-    .print(30)
+    .print(10)
 
 function main(t) {
 
@@ -47,7 +47,8 @@ function main(t) {
             const row = tableRows[ri.getName() + ' avg op/s'] = tableRows[ri.getName() + ' avg op/s'] || []
             // console.log('\t->' + name)
             let time = now()
-            for (let o = 0; o < operations; o++) {
+            const count = (operations / urls.length)
+            for (let o = 0; o < count; o++) {
                 for (let k = 0; k < urls.length; k++) {
                     const url = urls[k];
                     ri.lookup(...url)
