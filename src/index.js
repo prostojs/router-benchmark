@@ -7,17 +7,19 @@ import { getOpsSec, now, operations } from "./utils.js";
 import { table, op, not } from 'arquero';
 
 const routerInterfaces = [
-    ExpressInterface,
     FindMyWayInterface,
     ProstoRouterInterface,
+    ExpressInterface,
 ]
 
 const tableRows = {
     'Test Name': [],
 }
 
-for (let t = 0; t < 5; t++) {
-    console.log('Run #' + (t + 1) + ' ====================')
+const tries = 5
+
+for (let t = 0; t < tries; t++) {
+    console.log('Run #' + (t + 1) + ' of ' + tries + ' ====================')
     main(t)
 }
 table(tableRows)
@@ -37,7 +39,7 @@ function main(t) {
         ri.init()
         ri.registerRoutes(routes)
 
-        console.log('Testing ' + ri.getName() + '... run #' + t)
+        console.log('Testing ' + ri.getName() + '... run #' + (t + 1))
 
         for (let j = 0; j < tests.length; j++) {
             const { name, urls } = tests[j];
