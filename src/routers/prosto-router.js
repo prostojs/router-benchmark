@@ -6,7 +6,7 @@ function noop () {}
 export class ProstoRouterInterface extends RouterInterface {
     init() {
         this.router = new ProstoRouter({
-            logLevel: 1
+            logLevel: 1,
         })
     }
     registerRoutes(routes) {

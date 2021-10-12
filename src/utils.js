@@ -1,7 +1,7 @@
 export const operations = 200000
 
 export function now () {
-  var ts = process.hrtime()
+  const ts = process.hrtime()
   return (ts[0] * 1e3) + (ts[1] / 1e6)
 }
 

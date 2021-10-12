@@ -5,33 +5,41 @@ import { routes } from "./routes.js";
 import { tests } from "./tests.js";
 import { getOpsSec, now, operations } from "./utils.js";
 import { table, op, not } from 'arquero';
+import { ProstoRouterWCacheInterface } from "./routers/prosto-router-w-cache.js";
 
 const routerInterfaces = [
+    ExpressInterface,
     FindMyWayInterface,
     ProstoRouterInterface,
-    ExpressInterface,
+    // ProstoRouterWCacheInterface,
 ]
-
 const tableRows = {
     'Test Name': [],
 }
 
-const tries = 5
+main()
 
-for (let t = 0; t < tries; t++) {
-    console.log('Run #' + (t + 1) + ' of ' + tries + ' ====================')
-    main(t)
-}
-table(tableRows)
+async function main() {
+
+    const tries = 5
+
+    for (let t = 0; t < tries; t++) {
+        console.log('Run #' + (t + 1) + ' of ' + tries + ' ====================')
+        run(t)
+    }
+
+    table(tableRows)
     .groupby('Test Name')
     .rollup({
         'Express avg op/s':  d => op.round(op.average(d['Express avg op/s'])),
         'FindMyWay avg op/s':  d => op.round(op.average(d['FindMyWay avg op/s'])),
         'ProstoRouter avg op/s':  d => op.round(op.average(d['ProstoRouter avg op/s'])),
+        // 'ProstoRouter w/CACHE avg op/s':  d => op.round(op.average(d['ProstoRouter w/CACHE avg op/s'])),
     })
-    .print(10)
+    .print()
+}
 
-function main(t) {
+function run(t) {
 
     for (let i = 0; i < routerInterfaces.length; i++) {
         const ri = new routerInterfaces[i]();
@@ -48,17 +56,15 @@ function main(t) {
             }
             const row = tableRows[ri.getName() + ' avg op/s'] = tableRows[ri.getName() + ' avg op/s'] || []
             // console.log('\t->' + name)
-            let time = now()
             const count = (operations / urls.length)
+            let time = now()
             for (let o = 0; o < count; o++) {
                 for (let k = 0; k < urls.length; k++) {
                     const url = urls[k];
                     ri.lookup(...url)
                 }
             }
-            // print(name + ':', time)
             row.push(getOpsSec(now() - time))
         }
-
     }
 }

@@ -15,14 +15,15 @@ This benchmarks aims to test only http routers, so the method handling should no
 ┌──────────────────────────┬──────────────────┬────────────────────┬───────────────────────┐
 │        Test Name         │ Express avg op/s │ FindMyWay avg op/s │ ProstoRouter avg op/s │
 ├──────────────────────────┼──────────────────┼────────────────────┼───────────────────────┤
-│      'short static'      │     1 898 472    │     10 056 091     │        9 036 110      │
-│ 'static with same radix' │     1 460 236    │      4 646 625     │        9 866 334      │
-│     'dynamic route'      │       773 574    │      1 744 047     │        2 058 529      │
-│  'mixed static dynamic'  │       696 420    │      3 319 119     │        3 442 772      │
-│      'long static'       │       682 617    │      3 867 130     │        6 705 040      │
-│        'wildcard'        │       507 441    │      3 039 629     │        2 566 019      │
-│      'all together'      │       768 293    │      3 149 479     │        3 994 576      │
+│      'short static'      │     2 038 705    │      9 845 863     │       12 033 033      │
+│ 'static with same radix' │     1 429 513    │      4 648 899     │       16 516 231      │
+│     'dynamic route'      │       752 883    │      1 763 378     │        2 035 768      │
+│  'mixed static dynamic'  │       746 858    │      3 374 320     │        3 982 142      │
+│      'long static'       │       728 834    │      3 900 218     │       15 066 149      │
+│        'wildcard'        │       531 119    │      2 947 204     │        2 508 523      │
+│      'all together'      │       790 766    │      3 186 281     │        5 036 080      │
 └──────────────────────────┴──────────────────┴────────────────────┴───────────────────────┘
+
 ```
 
 ## How the benchmark is taken
