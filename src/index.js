@@ -4,7 +4,7 @@ import { ProstoRouterInterface } from "./routers/prosto-router.js";
 import { routes } from "./routes.js";
 import { tests } from "./tests.js";
 import { getOpsSec, now, operations } from "./utils.js";
-import { table, op, not } from 'arquero';
+import { table, op } from 'arquero';
 import { ProstoRouterWCacheInterface } from "./routers/prosto-router-w-cache.js";
 
 const routerInterfaces = [

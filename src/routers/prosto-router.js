@@ -1,4 +1,4 @@
-import { ProstoRouter } from 'prosto-router'
+import { ProstoRouter } from '@prostojs/router'
 import { RouterInterface } from './router-interface.js'
 
 function noop () {}

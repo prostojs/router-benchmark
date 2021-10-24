@@ -6,7 +6,7 @@ Tested routers:
 
 - [find-my-way (fastify)](https://github.com/delvedor/find-my-way)
 - [express](https://www.npmjs.com/package/express)
-- [prosto-router](https://github.com/prostojs/prosto-router)
+- [@prostojs/router](https://github.com/prostojs/router)
 
 This benchmarks aims to test only http routers, so the method handling should not be included.
 
@@ -15,13 +15,13 @@ This benchmarks aims to test only http routers, so the method handling should no
 ┌──────────────────────────┬──────────────────┬────────────────────┬───────────────────────┐
 │        Test Name         │ Express avg op/s │ FindMyWay avg op/s │ ProstoRouter avg op/s │
 ├──────────────────────────┼──────────────────┼────────────────────┼───────────────────────┤
-│      'short static'      │     2 038 705    │      9 845 863     │       12 033 033      │
-│ 'static with same radix' │     1 429 513    │      4 648 899     │       16 516 231      │
-│     'dynamic route'      │       752 883    │      1 763 378     │        2 035 768      │
-│  'mixed static dynamic'  │       746 858    │      3 374 320     │        3 982 142      │
-│      'long static'       │       728 834    │      3 900 218     │       15 066 149      │
-│        'wildcard'        │       531 119    │      2 947 204     │        2 508 523      │
-│      'all together'      │       790 766    │      3 186 281     │        5 036 080      │
+│      'short static'      │     1 939 076    │      9 904 303     │       10 101 495      │
+│ 'static with same radix' │     1 483 382    │      4 580 536     │       15 676 881      │
+│     'dynamic route'      │       806 307    │      1 762 586     │        1 871 945      │
+│  'mixed static dynamic'  │       746 846    │      3 250 570     │        4 037 661      │
+│      'long static'       │       749 525    │      3 824 647     │       15 814 390      │
+│        'wildcard'        │       540 287    │      3 125 221     │        2 575 338      │
+│      'all together'      │       793 525    │      3 200 556     │        5 107 963      │
 └──────────────────────────┴──────────────────┴────────────────────┴───────────────────────┘
 
 ```

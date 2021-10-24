@@ -1,4 +1,4 @@
-import { ProstoRouter } from '../../../prosto-router/build/index.js'
+import { ProstoRouter } from '@prostojs/router'
 import { ProstoRouterInterface } from './prosto-router.js'
 
 export class ProstoRouterWCacheInterface extends ProstoRouterInterface {
