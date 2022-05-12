@@ -30,6 +30,7 @@ export const tests = [
         name: 'long static',
         urls: [
             ['GET', '/user/very/deeply/nested/route/hello/there/super/long'],
+            ['GET', '/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x'],
         ]
     },
     {
@@ -38,6 +39,7 @@ export const tests = [
             ['GET', '/static/index.html'],
             ['GET', '/static/favicon.ico'],
             ['GET', '/static/some%20file.xml'],
+            ['GET', '/static/some%20file%20with%20many%20spaces.xml'],
         ]
     },
     {
@@ -47,11 +49,14 @@ export const tests = [
             ['GET', '/user/comments'],
             ['GET', '/user/reviews'],
             ['GET', '/user/lookup/username/john'],
+            ['GET', '/user/lookup/name/John%20/Doe'],
             ['GET', '/event/abcd1234/comments'],
             ['GET', '/user/very/deeply/nested/route/hello/there/super/long'],
+            ['GET', '/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x'],
             ['GET', '/static/index.html'],
-            ['GET', '/user/lookup/name/John/Doe'],
             ['GET', '/static/favicon.ico'],
+            ['GET', '/static/some%20file.xml'],
+            ['GET', '/static/some%20file%20with%20many%20spaces.xml'],
         ]
     }
 ]

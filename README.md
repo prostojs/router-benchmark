@@ -15,13 +15,13 @@ This benchmarks aims to test only http routers, so the method handling should no
 ┌──────────────────────────┬──────────────────┬────────────────────┬───────────────────────┐
 │        Test Name         │ Express avg op/s │ FindMyWay avg op/s │ ProstoRouter avg op/s │
 ├──────────────────────────┼──────────────────┼────────────────────┼───────────────────────┤
-│      'short static'      │     1743397      │      8246369       │        6887158        │
-│ 'static with same radix' │     1347875      │      4742362       │        7785178        │
-│     'dynamic route'      │      719388      │      1768312       │        1257927        │
-│  'mixed static dynamic'  │      698233      │      3359527       │        2190660        │
-│      'long static'       │      657112      │      2193211       │        8428374        │
-│        'wildcard'        │      501950      │      2841743       │        1663314        │
-│      'all together'      │      729731      │      3240736       │        2800958        │
+│      'short static'      │     1663596      │      7536315       │        6518988        │
+│ 'static with same radix' │     1301351      │      4690008       │        8118297        │
+│     'dynamic route'      │      701145      │      1746871       │        1667243        │
+│  'mixed static dynamic'  │      680634      │      3204076       │        3146505        │
+│      'long static'       │      633564      │      2218607       │        8260000        │
+│        'wildcard'        │      457659      │      2053342       │        1806782        │
+│      'all together'      │      616391      │      2372737       │        2763568        │
 └──────────────────────────┴──────────────────┴────────────────────┴───────────────────────┘
 
 ```
@@ -80,6 +80,7 @@ Then the following routes are tested:
         name: 'long static',
         urls: [
             ['GET', '/user/very/deeply/nested/route/hello/there/super/long'],
+            ['GET', '/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x'],
         ]
     },
     {
@@ -88,6 +89,7 @@ Then the following routes are tested:
             ['GET', '/static/index.html'],
             ['GET', '/static/favicon.ico'],
             ['GET', '/static/some%20file.xml'],
+            ['GET', '/static/some%20file%20with%20many%20spaces.xml'],
         ]
     },
     {
@@ -97,11 +99,14 @@ Then the following routes are tested:
             ['GET', '/user/comments'],
             ['GET', '/user/reviews'],
             ['GET', '/user/lookup/username/john'],
+            ['GET', '/user/lookup/name/John%20/Doe'],
             ['GET', '/event/abcd1234/comments'],
             ['GET', '/user/very/deeply/nested/route/hello/there/super/long'],
+            ['GET', '/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x'],
             ['GET', '/static/index.html'],
-            ['GET', '/user/lookup/name/John/Doe'],
             ['GET', '/static/favicon.ico'],
+            ['GET', '/static/some%20file.xml'],
+            ['GET', '/static/some%20file%20with%20many%20spaces.xml'],
         ]
     }
 ```

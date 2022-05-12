@@ -14,5 +14,6 @@ export const routes = [
     { method: 'GET', url: '/map/:location/events' },
     { method: 'GET', url: '/status' },
     { method: 'GET', url: '/user/very/deeply/nested/route/hello/there/super/long' },
+    { method: 'GET', url: '/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x' },
     { method: 'GET', url: '/static/*' }
   ]
