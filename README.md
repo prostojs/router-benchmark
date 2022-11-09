@@ -7,24 +7,22 @@ Tested routers:
 - [find-my-way (fastify)](https://github.com/delvedor/find-my-way)
 - [express](https://www.npmjs.com/package/express)
 - [@prostojs/router](https://github.com/prostojs/router)
+- [radix3](https://github.com/unjs/radix3)
 
 This benchmarks aims to test only http routers, so the method handling should not be included.
 
 ## Results
-```
-┌──────────────────────────┬──────────────────┬────────────────────┬───────────────────────┐
-│        Test Name         │ Express avg op/s │ FindMyWay avg op/s │ ProstoRouter avg op/s │
-├──────────────────────────┼──────────────────┼────────────────────┼───────────────────────┤
-│      'short static'      │     1663596      │      7536315       │        6518988        │
-│ 'static with same radix' │     1301351      │      4690008       │        8118297        │
-│     'dynamic route'      │      701145      │      1746871       │        1667243        │
-│  'mixed static dynamic'  │      680634      │      3204076       │        3146505        │
-│      'long static'       │      633564      │      2218607       │        8260000        │
-│        'wildcard'        │      457659      │      2053342       │        1806782        │
-│      'all together'      │      616391      │      2372737       │        2763568        │
-└──────────────────────────┴──────────────────┴────────────────────┴───────────────────────┘
 
-```
+|Test Name|Express avg op/ms|FindMyWay avg op/ms|ProstoRouter avg op/ms|Radix3 avg op/ms|
+|:-|-:|-:|-:|-:|
+|Short static|1 792|7 070|6 912|10 326|
+|Static with same radix|1 388|4 662|8 537|14 058|
+|Dynamic route|739|1 768|1 888|959|
+|Mixed static dynamic|685|3 101|3 470|988|
+|Long static|637|2 174|8 934|14 000|
+|Wildcard|486|2 081|2 065|1 019|
+|**All together**|**663**|**2 328**|**2 893**|**1 549**|
+
 
 ## How the benchmark is taken
 

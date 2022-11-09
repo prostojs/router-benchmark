@@ -5,7 +5,7 @@ export function now () {
   return (ts[0] * 1e3) + (ts[1] / 1e6)
 }
 
-export function getOpsSec (ms) {
-  return Number(((operations * 1000) / ms).toFixed())
+export function getOpsMs (ms) {
+  return Number((operations / ms).toFixed())
 }
 

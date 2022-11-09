@@ -3,14 +3,16 @@ import { FindMyWayInterface } from "./routers/find-my-way.js";
 import { ProstoRouterInterface } from "./routers/prosto-router.js";
 import { routes } from "./routes.js";
 import { tests } from "./tests.js";
-import { getOpsSec, now, operations } from "./utils.js";
+import { getOpsMs, now, operations } from "./utils.js";
 import { table, op } from 'arquero';
 import { ProstoRouterWCacheInterface } from "./routers/prosto-router-w-cache.js";
+import { Radix3RouterInterface } from "./routers/radix3-router.js";
 
 const routerInterfaces = [
     ExpressInterface,
     FindMyWayInterface,
     ProstoRouterInterface,
+    Radix3RouterInterface,
     // ProstoRouterWCacheInterface,
 ]
 const tableRows = {
@@ -28,15 +30,18 @@ async function main() {
         run(t)
     }
 
+    console.log(
     table(tableRows)
     .groupby('Test Name')
     .rollup({
-        'Express avg op/s':  d => op.round(op.average(d['Express avg op/s'])),
-        'FindMyWay avg op/s':  d => op.round(op.average(d['FindMyWay avg op/s'])),
-        'ProstoRouter avg op/s':  d => op.round(op.average(d['ProstoRouter avg op/s'])),
-        // 'ProstoRouter w/CACHE avg op/s':  d => op.round(op.average(d['ProstoRouter w/CACHE avg op/s'])),
+        'Express avg op/ms':  d => op.round(op.average(d['Express avg op/ms'])),
+        'FindMyWay avg op/ms':  d => op.round(op.average(d['FindMyWay avg op/ms'])),
+        'ProstoRouter avg op/ms':  d => op.round(op.average(d['ProstoRouter avg op/ms'])),
+        'Radix3 avg op/ms':  d => op.round(op.average(d['Radix3 avg op/ms'])),
+        // 'ProstoRouter w/CACHE avg op/ms':  d => op.round(op.average(d['ProstoRouter w/CACHE avg op/ms'])),
     })
-    .print()
+    .toMarkdown()
+    )
 }
 
 function run(t) {
@@ -54,7 +59,7 @@ function run(t) {
             if (i === 0) {
                 tableRows['Test Name'].push(name)
             }
-            const row = tableRows[ri.getName() + ' avg op/s'] = tableRows[ri.getName() + ' avg op/s'] || []
+            const row = tableRows[ri.getName() + ' avg op/ms'] = tableRows[ri.getName() + ' avg op/ms'] || []
             // console.log('\t->' + name)
             const count = (operations / urls.length)
             let time = now()
@@ -64,7 +69,7 @@ function run(t) {
                     ri.lookup(...url)
                 }
             }
-            row.push(getOpsSec(now() - time))
+            row.push(getOpsMs(now() - time))
         }
     }
 }

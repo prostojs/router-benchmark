@@ -22,9 +22,10 @@
   },
   "homepage": "https://github.com/prostojs/router-benchmark#readme",
   "dependencies": {
-    "@prostojs/router": "^0.0.11",
+    "@prostojs/router": "^0.0.14",
     "arquero": "^4.8.8",
-    "express": "^4.18.1",
-    "find-my-way": "^5.6.0"
+    "express": "^4.18.2",
+    "find-my-way": "^7.3.1",
+    "radix3": "^0.2.1"
   }
 }
