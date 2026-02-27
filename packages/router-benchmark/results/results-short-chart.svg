@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 318" font-family="system-ui,-apple-system,sans-serif" font-size="12">
+<rect width="700" height="318" fill="#2b2d30" rx="8"/>
+<text x="350" y="30" text-anchor="middle" font-size="15" font-weight="600" fill="#e0e0e0">Short Routes (2–5 segments) — 22 routes (avg op/ms)</text>
+<text x="178" y="73" text-anchor="end" fill="#bbb" font-size="13" font-weight="400">Hono (RegExpRouter)</text>
+<rect x="190" y="50" width="410.0" height="36" fill="#5dade2" rx="4" opacity="0.85"/>
+<text x="608" y="73" fill="#ccc" font-size="12" font-weight="600">37.9k op/ms</text>
+<text x="608" y="86" fill="#6a6" font-size="10">fastest</text>
+<text x="178" y="121" text-anchor="end" fill="#bbb" font-size="13" font-weight="400">ProstoRouter</text>
+<rect x="190" y="98" width="394.0" height="36" fill="#58d68d" rx="4" opacity="0.85"/>
+<text x="591.9954573066054" y="121" fill="#ccc" font-size="12" font-weight="600">36.4k op/ms</text>
+<text x="591.9954573066054" y="134" fill="#777" font-size="10">1.0x slower</text>
+<text x="178" y="169" text-anchor="end" fill="#bbb" font-size="13" font-weight="400">Rou3</text>
+<rect x="190" y="146" width="349.1" height="36" fill="#bb8fce" rx="4" opacity="0.85"/>
+<text x="547.1329266038085" y="169" fill="#ccc" font-size="12" font-weight="600">32.2k op/ms</text>
+<text x="547.1329266038085" y="182" fill="#777" font-size="10">1.2x slower</text>
+<text x="178" y="217" text-anchor="end" fill="#bbb" font-size="13" font-weight="400">FindMyWay</text>
+<rect x="190" y="194" width="242.3" height="36" fill="#f4d03f" rx="4" opacity="0.85"/>
+<text x="440.27715711908724" y="217" fill="#ccc" font-size="12" font-weight="600">22.4k op/ms</text>
+<text x="440.27715711908724" y="230" fill="#777" font-size="10">1.7x slower</text>
+<text x="178" y="265" text-anchor="end" fill="#bbb" font-size="13" font-weight="400">Express</text>
+<rect x="190" y="242" width="25.4" height="36" fill="#48c9b0" rx="4" opacity="0.85"/>
+<text x="223.42534928558223" y="265" fill="#ccc" font-size="12" font-weight="600">2.3k op/ms</text>
+<text x="223.42534928558223" y="278" fill="#777" font-size="10">16.1x slower</text>
+</svg>

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 318" font-family="system-ui,-apple-system,sans-serif" font-size="12">
+<rect width="700" height="318" fill="#2b2d30" rx="8"/>
+<text x="350" y="30" text-anchor="middle" font-size="15" font-weight="600" fill="#e0e0e0">HTTP Framework Benchmark — avg req/s</text>
+<text x="178" y="73" text-anchor="end" fill="#bbb" font-size="13" font-weight="400">Wooks</text>
+<rect x="190" y="50" width="410.0" height="36" fill="#5dade2" rx="4" opacity="0.85"/>
+<text x="608" y="73" fill="#ccc" font-size="12" font-weight="600">70.3k req/s</text>
+<text x="608" y="86" fill="#6a6" font-size="10">fastest</text>
+<text x="178" y="121" text-anchor="end" fill="#bbb" font-size="13" font-weight="400">Fastify</text>
+<rect x="190" y="98" width="398.0" height="36" fill="#58d68d" rx="4" opacity="0.85"/>
+<text x="595.9970710345219" y="121" fill="#ccc" font-size="12" font-weight="600">68.3k req/s</text>
+<text x="595.9970710345219" y="134" fill="#777" font-size="10">1.0x slower</text>
+<text x="178" y="169" text-anchor="end" fill="#bbb" font-size="13" font-weight="400">h3</text>
+<rect x="190" y="146" width="378.1" height="36" fill="#bb8fce" rx="4" opacity="0.85"/>
+<text x="576.1010066541546" y="169" fill="#ccc" font-size="12" font-weight="600">64.9k req/s</text>
+<text x="576.1010066541546" y="182" fill="#777" font-size="10">1.1x slower</text>
+<text x="178" y="217" text-anchor="end" fill="#bbb" font-size="13" font-weight="400">Hono</text>
+<rect x="190" y="194" width="346.7" height="36" fill="#f4d03f" rx="4" opacity="0.85"/>
+<text x="544.6567138713531" y="217" fill="#ccc" font-size="12" font-weight="600">59.5k req/s</text>
+<text x="544.6567138713531" y="230" fill="#777" font-size="10">1.2x slower</text>
+<text x="178" y="265" text-anchor="end" fill="#bbb" font-size="13" font-weight="400">Express</text>
+<rect x="190" y="242" width="274.8" height="36" fill="#48c9b0" rx="4" opacity="0.85"/>
+<text x="472.8431723824148" y="265" fill="#ccc" font-size="12" font-weight="600">47.1k req/s</text>
+<text x="472.8431723824148" y="278" fill="#777" font-size="10">1.5x slower</text>
+</svg>

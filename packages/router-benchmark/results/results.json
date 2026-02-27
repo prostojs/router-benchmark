@@ -1,0 +1,155 @@
+{
+  "timestamp": "2026-02-27T00:23:12.011Z",
+  "operations": 200000,
+  "tries": 2,
+  "variants": {
+    "short": {
+      "routeCount": 22,
+      "perTest": {
+        "All together": {
+          "Express": 2348,
+          "FindMyWay": 22374,
+          "ProstoRouter": 36385,
+          "Rou3": 32242,
+          "Hono (RegExpRouter)": 37863
+        }
+      },
+      "summary": {
+        "Hono (RegExpRouter)": 37863,
+        "ProstoRouter": 36385,
+        "Rou3": 32242,
+        "FindMyWay": 22374,
+        "Express": 2348
+      }
+    },
+    "long": {
+      "routeCount": 22,
+      "perTest": {
+        "Short static": {
+          "Express": 3960,
+          "FindMyWay": 21374,
+          "ProstoRouter": 35449,
+          "Rou3": 61430,
+          "Hono (RegExpRouter)": 41855
+        },
+        "Long static": {
+          "Express": 2110,
+          "FindMyWay": 7471,
+          "ProstoRouter": 39124,
+          "Rou3": 63406,
+          "Hono (RegExpRouter)": 42788
+        },
+        "Wildcard": {
+          "Express": 1380,
+          "FindMyWay": 10971,
+          "ProstoRouter": 8977,
+          "Rou3": 8323,
+          "Hono (RegExpRouter)": 11914
+        },
+        "Single param": {
+          "Express": 1853,
+          "FindMyWay": 8531,
+          "ProstoRouter": 9864,
+          "Rou3": 9098,
+          "Hono (RegExpRouter)": 7913
+        },
+        "Param + suffix": {
+          "Express": 1748,
+          "FindMyWay": 7015,
+          "ProstoRouter": 8898,
+          "Rou3": 8078,
+          "Hono (RegExpRouter)": 7810
+        },
+        "Param + tasks": {
+          "Express": 1480,
+          "FindMyWay": 6740,
+          "ProstoRouter": 8713,
+          "Rou3": 7938,
+          "Hono (RegExpRouter)": 7748
+        },
+        "Two params": {
+          "Express": 1192,
+          "FindMyWay": 5413,
+          "ProstoRouter": 8632,
+          "Rou3": 7078,
+          "Hono (RegExpRouter)": 6594
+        },
+        "Two params + suffix": {
+          "Express": 1034,
+          "FindMyWay": 4624,
+          "ProstoRouter": 7883,
+          "Rou3": 6400,
+          "Hono (RegExpRouter)": 6571
+        },
+        "Four params": {
+          "Express": 800,
+          "FindMyWay": 3725,
+          "ProstoRouter": 6247,
+          "Rou3": 4534,
+          "Hono (RegExpRouter)": 5147
+        },
+        "POST with params": {
+          "Express": 761,
+          "FindMyWay": 5058,
+          "ProstoRouter": 7606,
+          "Rou3": 5790,
+          "Hono (RegExpRouter)": 7651
+        },
+        "PUT with params": {
+          "Express": 853,
+          "FindMyWay": 6583,
+          "ProstoRouter": 8553,
+          "Rou3": 6480,
+          "Hono (RegExpRouter)": 7810
+        },
+        "DELETE with params": {
+          "Express": 668,
+          "FindMyWay": 6722,
+          "ProstoRouter": 8548,
+          "Rou3": 6508,
+          "Hono (RegExpRouter)": 7735
+        },
+        "404 not found": {
+          "Express": 1863,
+          "FindMyWay": 13305,
+          "ProstoRouter": 11066,
+          "Rou3": 10244,
+          "Hono (RegExpRouter)": 30858
+        },
+        "All together": {
+          "Express": 1141,
+          "FindMyWay": 6283,
+          "ProstoRouter": 9020,
+          "Rou3": 7157,
+          "Hono (RegExpRouter)": 8250
+        }
+      },
+      "summary": {
+        "ProstoRouter": 9020,
+        "Hono (RegExpRouter)": 8250,
+        "Rou3": 7157,
+        "FindMyWay": 6283,
+        "Express": 1141
+      }
+    },
+    "mixed": {
+      "routeCount": 20,
+      "perTest": {
+        "All together": {
+          "Express": 2201,
+          "FindMyWay": 16786,
+          "ProstoRouter": 21432,
+          "Rou3": 20828,
+          "Hono (RegExpRouter)": 37617
+        }
+      },
+      "summary": {
+        "Hono (RegExpRouter)": 37617,
+        "ProstoRouter": 21432,
+        "Rou3": 20828,
+        "FindMyWay": 16786,
+        "Express": 2201
+      }
+    }
+  }
+}

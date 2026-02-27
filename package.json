@@ -1,31 +1,26 @@
 {
-  "name": "router-benchmark",
-  "version": "0.0.1",
-  "description": "prosto-router benchmark",
-  "main": "./src/index.js",
+  "name": "complex-benchmark",
+  "private": true,
   "type": "module",
   "scripts": {
-    "start": "node --experimental-modules ./src/index"
+    "bench:router": "pnpm --filter router-benchmark start",
+    "bench:router:scale": "pnpm --filter router-benchmark scale",
+    "bench:wooks": "pnpm --filter wooks-benchmark start",
+    "bench:wooks:dev": "pnpm --filter wooks-benchmark dev",
+    "bench:moost": "pnpm --filter moost-benchmark start -- 1",
+    "bench:all": "pnpm bench:router && pnpm bench:wooks && pnpm bench:moost"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/prostojs/router-benchmark.git"
   },
-  "keywords": [
-    "prosto-router",
-    "benchmark"
-  ],
   "author": "Artem Maltsev",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/prostojs/router-benchmark/issues"
-  },
-  "homepage": "https://github.com/prostojs/router-benchmark#readme",
-  "dependencies": {
-    "@prostojs/router": "^0.0.14",
-    "arquero": "^4.8.8",
-    "express": "^4.18.2",
-    "find-my-way": "^7.3.1",
-    "radix3": "^0.2.1"
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "@prostojs/dye",
+      "esbuild"
+    ]
   }
 }

@@ -1,0 +1,32 @@
+{
+  "name": "moost-benchmark",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx ./src/index.ts",
+    "quick": "tsx ./src/bench-quick.ts"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@moostjs/event-http": "^0.6.1",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/platform-express": "^11.0.0",
+    "@nestjs/platform-fastify": "^11.0.0",
+    "@prostojs/router": "^0.3.2",
+    "@wooksjs/event-http": "^0.7.3",
+    "autocannon": "^7.15.0",
+    "bench-utils": "workspace:*",
+    "cookie-parser": "^1.4.7",
+    "moost": "^0.6.1",
+    "reflect-metadata": "^0.1.14",
+    "rxjs": "^7.8.0"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.10",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.5.0"
+  }
+}

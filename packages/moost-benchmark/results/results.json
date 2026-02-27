@@ -1,0 +1,172 @@
+{
+  "timestamp": "2026-02-27T00:32:16.716Z",
+  "duration": 0.5,
+  "testCount": 20,
+  "perTest": {
+    "Short static": {
+      "NestJS (Express) req/s": 54512,
+      "NestJS (Express) err%": 0,
+      "NestJS (Fastify) req/s": 77984,
+      "NestJS (Fastify) err%": 0,
+      "Moost req/s": 79520,
+      "Moost err%": 0
+    },
+    "Login (set-cookie)": {
+      "NestJS (Express) req/s": 40496,
+      "NestJS (Express) err%": 0,
+      "NestJS (Fastify) req/s": 47984,
+      "NestJS (Fastify) err%": 0,
+      "Moost req/s": 43504,
+      "Moost err%": 0
+    },
+    "Wildcard + cache": {
+      "NestJS (Express) req/s": 54000,
+      "NestJS (Express) err%": 0,
+      "NestJS (Fastify) req/s": 80032,
+      "NestJS (Fastify) err%": 0,
+      "Moost req/s": 79008,
+      "Moost err%": 0
+    },
+    "Wildcard deep": {
+      "NestJS (Express) req/s": 50992,
+      "NestJS (Express) err%": 0,
+      "NestJS (Fastify) req/s": 81504,
+      "NestJS (Fastify) err%": 0,
+      "Moost req/s": 77984,
+      "Moost err%": 0
+    },
+    "Header-auth static": {
+      "NestJS (Express) req/s": 55504,
+      "NestJS (Express) err%": 0,
+      "NestJS (Fastify) req/s": 82016,
+      "NestJS (Fastify) err%": 0,
+      "Moost req/s": 82016,
+      "Moost err%": 0
+    },
+    "Header-auth param": {
+      "NestJS (Express) req/s": 54992,
+      "NestJS (Express) err%": 0,
+      "NestJS (Fastify) req/s": 80992,
+      "NestJS (Fastify) err%": 0,
+      "Moost req/s": 79520,
+      "Moost err%": 0
+    },
+    "Header-auth long static + cache": {
+      "NestJS (Express) req/s": 54992,
+      "NestJS (Express) err%": 0,
+      "NestJS (Fastify) req/s": 79008,
+      "NestJS (Fastify) err%": 0,
+      "Moost req/s": 79520,
+      "Moost err%": 0
+    },
+    "Header-auth POST small body": {
+      "NestJS (Express) req/s": 39504,
+      "NestJS (Express) err%": 0,
+      "NestJS (Fastify) req/s": 50512,
+      "NestJS (Fastify) err%": 0,
+      "Moost req/s": 45488,
+      "Moost err%": 0
+    },
+    "Header-auth FAIL (401)": {
+      "NestJS (Express) req/s": 40016,
+      "NestJS (Express) err%": 0,
+      "NestJS (Fastify) req/s": 50480,
+      "NestJS (Fastify) err%": 0,
+      "Moost req/s": 58512,
+      "Moost err%": 0
+    },
+    "Cookie-auth param+suffix": {
+      "NestJS (Express) req/s": 46000,
+      "NestJS (Express) err%": 0,
+      "NestJS (Fastify) req/s": 67488,
+      "NestJS (Fastify) err%": 0,
+      "Moost req/s": 77024,
+      "Moost err%": 0
+    },
+    "Cookie-auth two params": {
+      "NestJS (Express) req/s": 46000,
+      "NestJS (Express) err%": 0,
+      "NestJS (Fastify) req/s": 66528,
+      "NestJS (Fastify) err%": 0,
+      "Moost req/s": 76512,
+      "Moost err%": 0
+    },
+    "Cookie-auth four params": {
+      "NestJS (Express) req/s": 44496,
+      "NestJS (Express) err%": 0,
+      "NestJS (Fastify) req/s": 66976,
+      "NestJS (Fastify) err%": 0,
+      "Moost req/s": 76000,
+      "Moost err%": 0
+    },
+    "Cookie-auth POST small body": {
+      "NestJS (Express) req/s": 32504,
+      "NestJS (Express) err%": 0,
+      "NestJS (Fastify) req/s": 42992,
+      "NestJS (Fastify) err%": 0,
+      "Moost req/s": 42512,
+      "Moost err%": 0
+    },
+    "Cookie-auth PUT small body": {
+      "NestJS (Express) req/s": 32488,
+      "NestJS (Express) err%": 0,
+      "NestJS (Fastify) req/s": 42512,
+      "NestJS (Fastify) err%": 0,
+      "Moost req/s": 42000,
+      "Moost err%": 0
+    },
+    "Cookie-auth POST large body": {
+      "NestJS (Express) req/s": 10564,
+      "NestJS (Express) err%": 0,
+      "NestJS (Fastify) req/s": 9300,
+      "NestJS (Fastify) err%": 0,
+      "Moost req/s": 9300,
+      "Moost err%": 0
+    },
+    "Cookie-auth FAIL (401)": {
+      "NestJS (Express) req/s": 38512,
+      "NestJS (Express) err%": 0,
+      "NestJS (Fastify) req/s": 51024,
+      "NestJS (Fastify) err%": 0,
+      "Moost req/s": 57488,
+      "Moost err%": 0
+    },
+    "404 short": {
+      "NestJS (Express) req/s": 38992,
+      "NestJS (Express) err%": 0,
+      "NestJS (Fastify) req/s": 56016,
+      "NestJS (Fastify) err%": 0,
+      "Moost req/s": 77472,
+      "Moost err%": 0
+    },
+    "404 deep": {
+      "NestJS (Express) req/s": 38992,
+      "NestJS (Express) err%": 0,
+      "NestJS (Fastify) req/s": 56016,
+      "NestJS (Fastify) err%": 0,
+      "Moost req/s": 78496,
+      "Moost err%": 0
+    },
+    "POST large body + bad header-auth": {
+      "NestJS (Express) req/s": 10244,
+      "NestJS (Express) err%": 0,
+      "NestJS (Fastify) req/s": 9004,
+      "NestJS (Fastify) err%": 0,
+      "Moost req/s": 28984,
+      "Moost err%": 0
+    },
+    "POST large body + bad cookie-auth": {
+      "NestJS (Express) req/s": 9924,
+      "NestJS (Express) err%": 0,
+      "NestJS (Fastify) req/s": 9004,
+      "NestJS (Fastify) err%": 0,
+      "Moost req/s": 29000,
+      "Moost err%": 0
+    }
+  },
+  "summary": {
+    "Moost": 66049,
+    "NestJS (Fastify)": 60196,
+    "NestJS (Express)": 42359
+  }
+}

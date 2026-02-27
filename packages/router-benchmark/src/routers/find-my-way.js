@@ -13,7 +13,7 @@ export class FindMyWayInterface extends RouterInterface {
         })
     }
     lookup(method, url) {
-        this.router.find(method, url)
+        return this.router.find(method, url)
     }
     getName() {
         return 'FindMyWay'

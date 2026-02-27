@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" font-family="system-ui,-apple-system,sans-serif" font-size="12">
+<rect width="800" height="480" fill="#2b2d30" rx="8"/>
+<text x="400" y="28" text-anchor="middle" font-size="15" font-weight="600" fill="#e0e0e0">Long Routes (deep enterprise API) — op/ms vs Route Count</text>
+<line x1="80" y1="420" x2="620" y2="420" stroke="#404040" stroke-width="1"/>
+<text x="70" y="424" text-anchor="end" fill="#999" font-size="11">0</text>
+<line x1="80" y1="378.22222222222223" x2="620" y2="378.22222222222223" stroke="#404040" stroke-width="1"/>
+<text x="70" y="382.22222222222223" text-anchor="end" fill="#999" font-size="11">1k</text>
+<line x1="80" y1="336.44444444444446" x2="620" y2="336.44444444444446" stroke="#404040" stroke-width="1"/>
+<text x="70" y="340.44444444444446" text-anchor="end" fill="#999" font-size="11">2k</text>
+<line x1="80" y1="294.6666666666667" x2="620" y2="294.6666666666667" stroke="#404040" stroke-width="1"/>
+<text x="70" y="298.6666666666667" text-anchor="end" fill="#999" font-size="11">3k</text>
+<line x1="80" y1="252.88888888888889" x2="620" y2="252.88888888888889" stroke="#404040" stroke-width="1"/>
+<text x="70" y="256.8888888888889" text-anchor="end" fill="#999" font-size="11">4k</text>
+<line x1="80" y1="211.11111111111111" x2="620" y2="211.11111111111111" stroke="#404040" stroke-width="1"/>
+<text x="70" y="215.11111111111111" text-anchor="end" fill="#999" font-size="11">5k</text>
+<line x1="80" y1="169.33333333333334" x2="620" y2="169.33333333333334" stroke="#404040" stroke-width="1"/>
+<text x="70" y="173.33333333333334" text-anchor="end" fill="#999" font-size="11">6k</text>
+<line x1="80" y1="127.55555555555554" x2="620" y2="127.55555555555554" stroke="#404040" stroke-width="1"/>
+<text x="70" y="131.55555555555554" text-anchor="end" fill="#999" font-size="11">7k</text>
+<line x1="80" y1="85.77777777777777" x2="620" y2="85.77777777777777" stroke="#404040" stroke-width="1"/>
+<text x="70" y="89.77777777777777" text-anchor="end" fill="#999" font-size="11">8k</text>
+<line x1="80" y1="44" x2="620" y2="44" stroke="#404040" stroke-width="1"/>
+<text x="70" y="48" text-anchor="end" fill="#999" font-size="11">9k</text>
+<line x1="80" y1="44" x2="80" y2="420" stroke="#363636" stroke-width="1"/>
+<text x="80" y="440" text-anchor="middle" fill="#999">22</text>
+<line x1="164.9438202247191" y1="44" x2="164.9438202247191" y2="420" stroke="#363636" stroke-width="1"/>
+<text x="164.9438202247191" y="440" text-anchor="middle" fill="#999">50</text>
+<line x1="316.6292134831461" y1="44" x2="316.6292134831461" y2="420" stroke="#363636" stroke-width="1"/>
+<text x="316.6292134831461" y="440" text-anchor="middle" fill="#999">100</text>
+<line x1="620" y1="44" x2="620" y2="420" stroke="#363636" stroke-width="1"/>
+<text x="620" y="440" text-anchor="middle" fill="#999">200</text>
+<text x="350" y="470" text-anchor="middle" fill="#888" font-size="13">Routes registered</text>
+<text x="16" y="232" text-anchor="middle" fill="#888" font-size="13" transform="rotate(-90,16,232)">op/ms</text>
+<line x1="80" y1="44" x2="80" y2="420" stroke="#555" stroke-width="1.5"/>
+<line x1="80" y1="420" x2="620" y2="420" stroke="#555" stroke-width="1.5"/>
+<path d="M80.0,373.1 L164.9,376.6 L316.6,381.5 L620.0,389.2" fill="none" stroke="#e74c3c" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="80.0" cy="373.1" r="4" fill="#e74c3c" stroke="#2b2d30" stroke-width="1.5"/>
+<text x="80.0" y="363.12533333333334" text-anchor="middle" fill="#e74c3c" font-size="10" font-weight="600">1.1k</text>
+<circle cx="164.9" cy="376.6" r="4" fill="#e74c3c" stroke="#2b2d30" stroke-width="1.5"/>
+<text x="164.9" y="366.63466666666665" text-anchor="middle" fill="#e74c3c" font-size="10" font-weight="600">1.0k</text>
+<circle cx="316.6" cy="381.5" r="4" fill="#e74c3c" stroke="#2b2d30" stroke-width="1.5"/>
+<text x="316.6" y="371.4808888888889" text-anchor="middle" fill="#e74c3c" font-size="10" font-weight="600">922</text>
+<circle cx="620.0" cy="389.2" r="4" fill="#e74c3c" stroke="#2b2d30" stroke-width="1.5"/>
+<text x="620.0" y="379.2097777777778" text-anchor="middle" fill="#e74c3c" font-size="10" font-weight="600">737</text>
+<path d="M80.0,161.3 L164.9,161.9 L316.6,174.0 L620.0,168.4" fill="none" stroke="#5dade2" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="80.0" cy="161.3" r="4" fill="#5dade2" stroke="#2b2d30" stroke-width="1.5"/>
+<text x="80.0" y="151.27022222222223" text-anchor="middle" fill="#5dade2" font-size="10" font-weight="600">6.2k</text>
+<circle cx="164.9" cy="161.9" r="4" fill="#5dade2" stroke="#2b2d30" stroke-width="1.5"/>
+<text x="164.9" y="151.93866666666668" text-anchor="middle" fill="#5dade2" font-size="10" font-weight="600">6.2k</text>
+<circle cx="316.6" cy="174.0" r="4" fill="#5dade2" stroke="#2b2d30" stroke-width="1.5"/>
+<text x="316.6" y="163.97066666666666" text-anchor="middle" fill="#5dade2" font-size="10" font-weight="600">5.9k</text>
+<circle cx="620.0" cy="168.4" r="4" fill="#5dade2" stroke="#2b2d30" stroke-width="1.5"/>
+<text x="620.0" y="158.41422222222224" text-anchor="middle" fill="#5dade2" font-size="10" font-weight="600">6.0k</text>
+<path d="M80.0,60.7 L164.9,104.1 L316.6,163.7 L620.0,246.3" fill="none" stroke="#58d68d" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="80.0" cy="60.7" r="4" fill="#58d68d" stroke="#2b2d30" stroke-width="1.5"/>
+<text x="80.0" y="50.71111111111111" text-anchor="middle" fill="#58d68d" font-size="10" font-weight="600">8.6k</text>
+<circle cx="164.9" cy="104.1" r="4" fill="#58d68d" stroke="#2b2d30" stroke-width="1.5"/>
+<text x="164.9" y="94.07644444444446" text-anchor="middle" fill="#58d68d" font-size="10" font-weight="600">7.6k</text>
+<circle cx="316.6" cy="163.7" r="4" fill="#58d68d" stroke="#2b2d30" stroke-width="1.5"/>
+<text x="316.6" y="153.65155555555555" text-anchor="middle" fill="#58d68d" font-size="10" font-weight="600">6.1k</text>
+<circle cx="620.0" cy="246.3" r="4" fill="#58d68d" stroke="#2b2d30" stroke-width="1.5"/>
+<text x="620.0" y="236.28799999999998" text-anchor="middle" fill="#58d68d" font-size="10" font-weight="600">4.2k</text>
+<path d="M80.0,134.3 L164.9,138.6 L316.6,134.5 L620.0,138.3" fill="none" stroke="#f4d03f" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="80.0" cy="134.3" r="4" fill="#f4d03f" stroke="#2b2d30" stroke-width="1.5"/>
+<text x="80.0" y="124.32355555555557" text-anchor="middle" fill="#f4d03f" font-size="10" font-weight="600">6.8k</text>
+<circle cx="164.9" cy="138.6" r="4" fill="#f4d03f" stroke="#2b2d30" stroke-width="1.5"/>
+<text x="164.9" y="128.62666666666667" text-anchor="middle" fill="#f4d03f" font-size="10" font-weight="600">6.7k</text>
+<circle cx="316.6" cy="134.5" r="4" fill="#f4d03f" stroke="#2b2d30" stroke-width="1.5"/>
+<text x="316.6" y="124.4906666666667" text-anchor="middle" fill="#f4d03f" font-size="10" font-weight="600">6.8k</text>
+<circle cx="620.0" cy="138.3" r="4" fill="#f4d03f" stroke="#2b2d30" stroke-width="1.5"/>
+<text x="620.0" y="128.2506666666667" text-anchor="middle" fill="#f4d03f" font-size="10" font-weight="600">6.7k</text>
+<path d="M80.0,75.3 L164.9,120.0" fill="none" stroke="#bb8fce" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="80.0" cy="75.3" r="4" fill="#bb8fce" stroke="#2b2d30" stroke-width="1.5"/>
+<text x="80.0" y="65.33333333333337" text-anchor="middle" fill="#bb8fce" font-size="10" font-weight="600">8.3k</text>
+<circle cx="164.9" cy="120.0" r="4" fill="#bb8fce" stroke="#2b2d30" stroke-width="1.5"/>
+<text x="164.9" y="110.03555555555556" text-anchor="middle" fill="#bb8fce" font-size="10" font-weight="600">7.2k</text>
+<line x1="164.9" y1="120.0" x2="316.6" y2="268.6" stroke="#7d3c98" stroke-width="2" stroke-dasharray="6,4" opacity="0.6"/>
+<path d="M316.6,268.6 L620.0,267.9" fill="none" stroke="#7d3c98" stroke-width="2.5" stroke-dasharray="6,4" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="316.6" cy="268.6" r="4" fill="#7d3c98" stroke="#2b2d30" stroke-width="1.5"/>
+<text x="316.6" y="258.5973333333333" text-anchor="middle" fill="#7d3c98" font-size="10" font-weight="600">3.6k</text>
+<circle cx="620.0" cy="267.9" r="4" fill="#7d3c98" stroke="#2b2d30" stroke-width="1.5"/>
+<text x="620.0" y="257.9288888888889" text-anchor="middle" fill="#7d3c98" font-size="10" font-weight="600">3.6k</text>
+<line x1="636" y1="60" x2="656" y2="60" stroke="#e74c3c" stroke-width="2.5" stroke-linecap="round"/>
+<circle cx="646" cy="60" r="3.5" fill="#e74c3c" stroke="#2b2d30" stroke-width="1"/>
+<text x="664" y="64" fill="#ccc" font-size="12">Express</text>
+<line x1="636" y1="84" x2="656" y2="84" stroke="#5dade2" stroke-width="2.5" stroke-linecap="round"/>
+<circle cx="646" cy="84" r="3.5" fill="#5dade2" stroke="#2b2d30" stroke-width="1"/>
+<text x="664" y="88" fill="#ccc" font-size="12">FindMyWay</text>
+<line x1="636" y1="108" x2="656" y2="108" stroke="#58d68d" stroke-width="2.5" stroke-linecap="round"/>
+<circle cx="646" cy="108" r="3.5" fill="#58d68d" stroke="#2b2d30" stroke-width="1"/>
+<text x="664" y="112" fill="#ccc" font-size="12">ProstoRouter</text>
+<line x1="636" y1="132" x2="656" y2="132" stroke="#f4d03f" stroke-width="2.5" stroke-linecap="round"/>
+<circle cx="646" cy="132" r="3.5" fill="#f4d03f" stroke="#2b2d30" stroke-width="1"/>
+<text x="664" y="136" fill="#ccc" font-size="12">Rou3</text>
+<line x1="636" y1="156" x2="656" y2="156" stroke="#bb8fce" stroke-width="2.5" stroke-linecap="round"/>
+<circle cx="646" cy="156" r="3.5" fill="#bb8fce" stroke="#2b2d30" stroke-width="1"/>
+<text x="664" y="160" fill="#ccc" font-size="12">Hono (RegExpRouter)</text>
+<line x1="636" y1="180" x2="656" y2="180" stroke="#7d3c98" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6,4"/>
+<circle cx="646" cy="180" r="3.5" fill="#7d3c98" stroke="#2b2d30" stroke-width="1"/>
+<text x="664" y="184" fill="#ccc" font-size="12">Hono (TrieRouter)</text>
+</svg>

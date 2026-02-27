@@ -1,0 +1,24 @@
+{
+  "name": "wooks-benchmark",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node ./src/index.js",
+    "dev": "node ./src/index-dev.js"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@prostojs/router": "^0.3.2",
+    "@wooksjs/event-http": "^0.7.3",
+    "@wooksjs/http-body": "^0.7.3",
+    "autocannon": "^7.15.0",
+    "bench-utils": "workspace:*",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.0.0",
+    "fastify": "^5.0.0",
+    "h3": "^1.13.0",
+    "hono": "^4.0.0",
+    "@hono/node-server": "^1.0.0"
+  }
+}

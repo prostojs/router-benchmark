@@ -1,111 +1,91 @@
-# router-benchmark
+# Complex Benchmark
 
-Benchmark of the most commonly used http routers.
+Benchmarks for the [Moost](https://moost.org/) stack — from the router at the foundation, through the HTTP framework, to the full decorator-driven application layer.
 
-Tested routers:
+**Moost** is built on [Wooks](https://wooks.moost.org/), which uses [@prostojs/router](https://github.com/prostojs/router) under the hood. These benchmarks verify that every layer of the stack performs competitively against established alternatives.
 
-- [find-my-way (fastify)](https://github.com/delvedor/find-my-way)
-- [express](https://www.npmjs.com/package/express)
-- [@prostojs/router](https://github.com/prostojs/router)
-- [radix3](https://github.com/unjs/radix3)
+## Benchmarks
 
-This benchmarks aims to test only http routers, so the method handling should not be included.
+| Benchmark | What it tests | Compares against |
+|-----------|---------------|------------------|
+| [router-benchmark](packages/router-benchmark/) | URI route matching + param extraction | find-my-way (Fastify), Rou3, Hono, Express |
+| [wooks-benchmark](packages/wooks-benchmark/) | Full HTTP request handling | Fastify, Express, Hono, H3 |
+| [moost-benchmark](packages/moost-benchmark/) | Decorator-based framework overhead | NestJS |
+
+## Why These Routes?
+
+Most framework benchmarks test "hello world" — a single `GET /` with no auth, no cookies, no body parsing. That tells you nothing about real-world performance where frameworks actually differ.
+
+These benchmarks model a **real enterprise SaaS application** (project management API) with routes, payloads, and traffic patterns you'd see in production.
+
+### Route Design
+
+The API has 21 routes across three authentication layers, modeled after a typical project management tool:
+
+| Layer | Routes | What it covers |
+|-------|--------|----------------|
+| **Public** | `GET /health`, `GET /static/*`, `POST /auth/login` | Health checks, static assets (with cache headers), login with Set-Cookie |
+| **Header-auth** (API clients) | `GET/POST/DELETE /api/v1/users/:id`, `/projects/:id`, `/organizations/settings/billing/invoices` | Bearer token validation, param extraction, deep static paths |
+| **Cookie-auth** (browser users) | `GET/PUT/DELETE /api/v1/projects/:projectId/tasks/:taskId`, `/tasks/:taskId/comments`, `/orgs/:orgId/teams/:teamId/projects/:projectId/tasks/:taskId` | Full 20-cookie jar parsing, 1-4 URL params, small and large JSON bodies |
+
+This exercises what actually matters in production:
+- **Cookie parsing** — every browser request carries ~20 cookies (session, analytics, tracking, consent, feature flags, A/B testing). Most benchmarks skip this entirely.
+- **Auth guards** — real APIs reject bad credentials before processing. Frameworks that parse bodies before checking auth waste CPU on every unauthorized request.
+- **Body parsing** — small JSON (single comment) and large JSON (100-item bulk operation) test different allocation patterns.
+- **Route depth** — from `/health` to `/api/v1/orgs/:orgId/teams/:teamId/projects/:projectId/tasks/:taskId` (4 params, 8 segments).
+- **Cache headers** — static assets and billing pages set different `Cache-Control` policies, adding response header overhead.
+
+### Traffic Distribution
+
+Each test case runs independently for the same duration, but the **weighted average** reflects realistic SaaS traffic proportions:
+
+| Category | Weight | Rationale |
+|----------|--------|-----------|
+| Cookie-auth reads | 42% | Browser users browsing projects, viewing tasks, navigating teams — the dominant traffic in any SaaS app |
+| Cookie-auth writes | 18% | Posting comments, updating task status, occasional bulk operations |
+| Header-auth (API) | 16% | Mobile apps, CI/CD integrations, third-party API consumers using Bearer tokens |
+| Public/static | 10% | Health checks (monitoring), static asset cache misses, documentation pages |
+| Auth failures | 5% | Expired sessions and tokens — normal operational churn |
+| 404s | 5% | Old bookmarks, crawler noise, mistyped URLs |
+| Bot/scanner | 4% | Large POST bodies with invalid credentials — attack traffic that good frameworks reject early |
+
+This means the headline "avg req/s" number answers: **"how fast would this framework handle a realistic mix of production traffic?"** — not "how fast can it return a string from a trivial GET".
 
 ## Results
 
-|Test Name|Express avg op/ms|FindMyWay avg op/ms|ProstoRouter avg op/ms|Radix3 avg op/ms|
-|:-|-:|-:|-:|-:|
-|Short static|1 792|7 070|6 912|10 326|
-|Static with same radix|1 388|4 662|8 537|14 058|
-|Dynamic route|739|1 768|1 888|959|
-|Mixed static dynamic|685|3 101|3 470|988|
-|Long static|637|2 174|8 934|14 000|
-|Wildcard|486|2 081|2 065|1 019|
-|**All together**|**663**|**2 328**|**2 893**|**1 549**|
+### Router — pure route matching (22 long routes)
 
+![Router Benchmark](packages/router-benchmark/results/results-long-chart.svg)
 
-## How the benchmark is taken
+ProstoRouter is the fastest on deep enterprise API routes. See [router-benchmark README](packages/router-benchmark/README.md) for full results across short, long, and mixed route shapes at 22–200 routes.
 
-To emulate a real world situation every router registers the following routes:
+### Wooks — full HTTP framework
+
+![Wooks Benchmark](packages/wooks-benchmark/results/results-chart.svg)
+
+Wooks leads on realistic SaaS traffic despite router differences compressing to just 1.5x at the framework level. See [wooks-benchmark README](packages/wooks-benchmark/README.md) for per-test breakdown.
+
+### Moost — DI framework overhead
+
+![Moost Benchmark](packages/moost-benchmark/results/results-chart.svg)
+
+Moost adds just 6% overhead on top of Wooks — half of NestJS's 10–12% DI cost. See [moost-benchmark README](packages/moost-benchmark/README.md) for detailed overhead analysis.
+
+## Running
+
+```bash
+pnpm install
+
+# Router benchmark
+pnpm bench:router         # basic benchmark (22 routes x 3 variants)
+pnpm bench:router:scale   # scaling benchmark (22-200 routes x 3 variants)
+
+# Wooks benchmark
+pnpm bench:wooks
+
+# Moost benchmark
+pnpm bench:moost
+
+# All benchmarks
+pnpm bench:all
 ```
-    { method: 'GET', url: '/user' },
-    { method: 'GET', url: '/admin' },
-    { method: 'GET', url: '/user/comments' },
-    { method: 'GET', url: '/user/avatar' },
-    { method: 'GET', url: '/user/rating' },
-    { method: 'GET', url: '/user/reviews' },
-    { method: 'GET', url: '/user/lookup/username/:username' },
-    { method: 'GET', url: '/user/lookup/email/:address' },
-    { method: 'GET', url: '/user/lookup/name/:firstName/:lastName' },
-    { method: 'GET', url: '/event/:id' },
-    { method: 'GET', url: '/event/:id/comments' },
-    { method: 'POST', url: '/event/:id/comment' },
-    { method: 'GET', url: '/map/:location/events' },
-    { method: 'GET', url: '/status' },
-    { method: 'GET', url: '/user/very/deeply/nested/route/hello/there/super/long' },
-    { method: 'GET', url: '/static/*' }
-```
-Then the following routes are tested:
-```
-    {
-        name: 'short static',
-        urls: [
-            ['GET', '/user'],
-            ['GET', '/admin'],
-        ]
-    },
-    {
-        name: 'static with same radix',
-        urls: [
-            ['GET', '/user/comments'],
-            ['GET', '/user/reviews'],
-        ]
-    },
-    {
-        name: 'dynamic route',
-        urls: [
-            ['GET', '/user/lookup/username/john'],
-            ['GET', '/user/lookup/name/John%20/Doe'],
-        ]
-    },
-    {
-        name: 'mixed static dynamic',
-        urls: [
-            ['GET', '/event/abcd1234/comments'],
-        ]
-    },
-    {
-        name: 'long static',
-        urls: [
-            ['GET', '/user/very/deeply/nested/route/hello/there/super/long'],
-            ['GET', '/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x'],
-        ]
-    },
-    {
-        name: 'wildcard',
-        urls: [
-            ['GET', '/static/index.html'],
-            ['GET', '/static/favicon.ico'],
-            ['GET', '/static/some%20file.xml'],
-            ['GET', '/static/some%20file%20with%20many%20spaces.xml'],
-        ]
-    },
-    {
-        name: 'all together',
-        urls: [
-            ['GET', '/user'],
-            ['GET', '/user/comments'],
-            ['GET', '/user/reviews'],
-            ['GET', '/user/lookup/username/john'],
-            ['GET', '/user/lookup/name/John%20/Doe'],
-            ['GET', '/event/abcd1234/comments'],
-            ['GET', '/user/very/deeply/nested/route/hello/there/super/long'],
-            ['GET', '/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x'],
-            ['GET', '/static/index.html'],
-            ['GET', '/static/favicon.ico'],
-            ['GET', '/static/some%20file.xml'],
-            ['GET', '/static/some%20file%20with%20many%20spaces.xml'],
-        ]
-    }
-```
-Every test is executed 200 000 times by five tries, the time is taken with `process.hrtime()`, the final result is expressed in operations avg per second.
