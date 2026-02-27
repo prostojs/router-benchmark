@@ -1,6 +1,7 @@
 import { createApp, createRouter, defineEventHandler, getRouterParams, getHeader, setResponseHeader, setResponseStatus, toNodeListener, readBody, parseCookies } from 'h3'
 import { createServer as createHttpServer } from 'node:http'
 import { AUTH_TOKEN, SESSION_COOKIE } from '../routes.js'
+import { createDb } from '../simulate-db.js'
 
 function requireHeaderAuth(event) {
   const auth = getHeader(event, 'authorization')
@@ -20,8 +21,9 @@ function requireCookieAuth(event) {
   return true
 }
 
-export function createServer() {
+export function createServer({ simulateDb } = {}) {
   return new Promise((resolve) => {
+    const db = simulateDb ? createDb() : null
     const app = createApp()
     const router = createRouter()
 
@@ -33,6 +35,7 @@ export function createServer() {
 
     router.post('/auth/login', defineEventHandler(async (event) => {
       await readBody(event)
+      if (db) await db.set('session')
       setResponseHeader(event, 'Set-Cookie', `session=${SESSION_COOKIE}; Path=/; HttpOnly`)
       setResponseStatus(event, 201)
       return 'token'
@@ -51,69 +54,80 @@ export function createServer() {
 
     // --- Header-auth guarded routes ---
 
-    router.get('/api/v1/users', defineEventHandler((event) => {
+    router.get('/api/v1/users', defineEventHandler(async (event) => {
       if (!requireHeaderAuth(event)) return 'Unauthorized'
+      if (db) await db.get('users')
       return 'users'
     }))
 
-    router.get('/api/v1/users/:userId', defineEventHandler((event) => {
+    router.get('/api/v1/users/:userId', defineEventHandler(async (event) => {
       if (!requireHeaderAuth(event)) return 'Unauthorized'
+      if (db) await db.get('user')
       const { userId } = getRouterParams(event)
       return userId
     }))
 
-    router.get('/api/v1/users/:userId/profile', defineEventHandler((event) => {
+    router.get('/api/v1/users/:userId/profile', defineEventHandler(async (event) => {
       if (!requireHeaderAuth(event)) return 'Unauthorized'
+      if (db) await db.get('profile')
       const { userId } = getRouterParams(event)
       return userId
     }))
 
-    router.get('/api/v1/projects', defineEventHandler((event) => {
+    router.get('/api/v1/projects', defineEventHandler(async (event) => {
       if (!requireHeaderAuth(event)) return 'Unauthorized'
+      if (db) await db.get('projects')
       return 'projects'
     }))
 
     router.post('/api/v1/projects', defineEventHandler(async (event) => {
       if (!requireHeaderAuth(event)) return 'Unauthorized'
       await readBody(event)
+      if (db) await db.set('project')
       setResponseStatus(event, 201)
       return 'created'
     }))
 
-    router.get('/api/v1/projects/:projectId', defineEventHandler((event) => {
+    router.get('/api/v1/projects/:projectId', defineEventHandler(async (event) => {
       if (!requireHeaderAuth(event)) return 'Unauthorized'
+      if (db) await db.get('project')
       const { projectId } = getRouterParams(event)
       return projectId
     }))
 
-    router.delete('/api/v1/projects/:projectId', defineEventHandler((event) => {
+    router.delete('/api/v1/projects/:projectId', defineEventHandler(async (event) => {
       if (!requireHeaderAuth(event)) return 'Unauthorized'
+      if (db) await db.del('project')
       const { projectId } = getRouterParams(event)
       return projectId
     }))
 
-    router.get('/api/v1/organizations/settings/billing/invoices', defineEventHandler((event) => {
+    router.get('/api/v1/organizations/settings/billing/invoices', defineEventHandler(async (event) => {
       if (!requireHeaderAuth(event)) return 'Unauthorized'
+      if (db) await db.get('invoices')
       setResponseHeader(event, 'Cache-Control', 'private, no-cache')
       return 'invoices'
     }))
 
     // --- Cookie-auth guarded routes ---
 
-    router.get('/api/v1/projects/:projectId/members', defineEventHandler((event) => {
+    router.get('/api/v1/projects/:projectId/members', defineEventHandler(async (event) => {
       if (!requireCookieAuth(event)) return 'Unauthorized'
+      if (db) await db.get('members')
       const { projectId } = getRouterParams(event)
       return projectId
     }))
 
-    router.get('/api/v1/projects/:projectId/tasks', defineEventHandler((event) => {
+    router.get('/api/v1/projects/:projectId/tasks', defineEventHandler(async (event) => {
       if (!requireCookieAuth(event)) return 'Unauthorized'
+      if (db) await db.get('tasks')
       const { projectId } = getRouterParams(event)
       return projectId
     }))
 
-    router.get('/api/v1/projects/:projectId/tasks/:taskId', defineEventHandler((event) => {
+    router.get('/api/v1/projects/:projectId/tasks/:taskId', defineEventHandler(async (event) => {
       if (!requireCookieAuth(event)) return 'Unauthorized'
+      if (db) await db.get('task')
       const { taskId } = getRouterParams(event)
       return taskId
     }))
@@ -121,19 +135,22 @@ export function createServer() {
     router.put('/api/v1/projects/:projectId/tasks/:taskId', defineEventHandler(async (event) => {
       if (!requireCookieAuth(event)) return 'Unauthorized'
       await readBody(event)
+      if (db) await db.set('task')
       setResponseStatus(event, 201)
       const { taskId } = getRouterParams(event)
       return taskId
     }))
 
-    router.delete('/api/v1/projects/:projectId/tasks/:taskId', defineEventHandler((event) => {
+    router.delete('/api/v1/projects/:projectId/tasks/:taskId', defineEventHandler(async (event) => {
       if (!requireCookieAuth(event)) return 'Unauthorized'
+      if (db) await db.del('task')
       const { taskId } = getRouterParams(event)
       return taskId
     }))
 
-    router.get('/api/v1/projects/:projectId/tasks/:taskId/comments', defineEventHandler((event) => {
+    router.get('/api/v1/projects/:projectId/tasks/:taskId/comments', defineEventHandler(async (event) => {
       if (!requireCookieAuth(event)) return 'Unauthorized'
+      if (db) await db.get('comments')
       const { taskId } = getRouterParams(event)
       return taskId
     }))
@@ -141,19 +158,22 @@ export function createServer() {
     router.post('/api/v1/projects/:projectId/tasks/:taskId/comments', defineEventHandler(async (event) => {
       if (!requireCookieAuth(event)) return 'Unauthorized'
       await readBody(event)
+      if (db) await db.set('comment')
       setResponseStatus(event, 201)
       const { taskId } = getRouterParams(event)
       return taskId
     }))
 
-    router.get('/api/v1/orgs/:orgId/teams/:teamId/projects/:projectId/tasks/:taskId', defineEventHandler((event) => {
+    router.get('/api/v1/orgs/:orgId/teams/:teamId/projects/:projectId/tasks/:taskId', defineEventHandler(async (event) => {
       if (!requireCookieAuth(event)) return 'Unauthorized'
+      if (db) await db.get('task')
       const { taskId } = getRouterParams(event)
       return taskId
     }))
 
-    router.get('/api/v1/organizations/settings/billing/payment-methods', defineEventHandler((event) => {
+    router.get('/api/v1/organizations/settings/billing/payment-methods', defineEventHandler(async (event) => {
       if (!requireCookieAuth(event)) return 'Unauthorized'
+      if (db) await db.get('methods')
       setResponseHeader(event, 'Cache-Control', 'private, no-cache')
       return 'methods'
     }))
@@ -161,7 +181,13 @@ export function createServer() {
     app.use(router)
     const server = createHttpServer(toNodeListener(app))
     server.listen(0, () => {
-      resolve({ server, close: () => new Promise((r) => server.close(r)) })
+      resolve({
+        server,
+        close: async () => {
+          if (db) db.close()
+          return new Promise((r) => server.close(r))
+        },
+      })
     })
   })
 }

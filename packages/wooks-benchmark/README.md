@@ -63,6 +63,28 @@ See [RESULTS.md](RESULTS.md) for the latest results.
 
 **Large body parsing** — all frameworks converge at ~9–11k req/s for 100-item JSON payloads. At this point, `JSON.parse()` itself is the bottleneck, and no framework can optimize around it.
 
+## With Simulated DB (Redis)
+
+What happens when handlers do real work? In production, every authenticated request hits a database. We added a Redis GET/SET/DEL call to every authenticated handler to simulate this — each request makes a real network round-trip to a local Redis server.
+
+See [RESULTS-DB.md](RESULTS-DB.md) for the full breakdown.
+
+![Summary (with DB)](results/results-db-chart.svg)
+
+| Framework | avg req/s | speed |
+|-----------|----------|-------|
+| Wooks | 50,854 | fastest |
+| Fastify | 49,879 | 1.0x slower |
+| h3 | 47,575 | 1.1x slower |
+| Hono | 45,542 | 1.1x slower |
+| Express | 37,868 | 1.3x slower |
+
+### The Gap Compresses
+
+Without DB calls, the fastest-to-slowest gap is **1.5x** (Wooks 70k vs Express 47k). With a single Redis call per authenticated request, it compresses to **1.3x** (Wooks 51k vs Express 38k). The top four frameworks (Wooks, Fastify, h3, Hono) are now within **12%** of each other.
+
+The more real server-side processing you add — database queries, cache lookups, business logic, external API calls — the more these framework differences compress. In a real application with multiple DB queries, template rendering, and I/O-bound work per request, the framework overhead becomes negligible. **Choose your framework for developer experience, not for benchmarks.**
+
 ## Methodology
 
 - Benchmark tool: [autocannon](https://github.com/mcollina/autocannon) with 100 connections, 10 pipelining
@@ -74,5 +96,6 @@ See [RESULTS.md](RESULTS.md) for the latest results.
 
 ```bash
 pnpm install
-pnpm bench:wooks
+pnpm bench:wooks        # pure framework overhead
+pnpm bench:wooks:db     # with simulated Redis DB calls (requires local Redis)
 ```

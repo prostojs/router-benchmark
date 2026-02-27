@@ -1,9 +1,10 @@
 /**
  * Benchmark worker — runs ONE framework in an isolated process.
  *
- * Usage:  tsx src/bench-one.ts <framework> [duration]
+ * Usage:  tsx src/bench-one.ts <framework> [duration] [--db]
  *   framework: "moost" | "nestjs-express" | "nestjs-fastify"
  *   duration:  seconds per test (default: 0.5)
+ *   --db:      enable simulated DB calls (1ms setTimeout per request)
  *
  * Outputs a single JSON line to stdout (prefixed with "RESULT:").
  */
@@ -16,8 +17,9 @@ import { tests } from './routes.js'
 
 const fwName = process.argv[2]
 const duration = parseFloat(process.argv[3]) || 0.5
+const simulateDb = process.argv.includes('--db')
 
-type CreateServer = () => Promise<{ server: Server; close: () => Promise<void> }>
+type CreateServer = (opts?: { simulateDb?: boolean }) => Promise<{ server: Server; close: () => Promise<void> }>
 
 async function loadCreateServer(fw: string): Promise<{ name: string; createServer: CreateServer }> {
   switch (fw) {
@@ -42,7 +44,7 @@ async function loadCreateServer(fw: string): Promise<{ name: string; createServe
 
 async function main() {
   const { name, createServer } = await loadCreateServer(fwName)
-  const { server, close } = await createServer()
+  const { server, close } = await createServer({ simulateDb })
   const address = server.address()
   const port = typeof address === 'object' && address ? address.port : address
   const baseUrl = `http://localhost:${port}`
@@ -60,7 +62,7 @@ async function main() {
 
   await new Promise((r) => setTimeout(r, 500))
 
-  process.stderr.write(`Benchmarking ${name}`)
+  process.stderr.write(`Benchmarking ${name}${simulateDb ? ' (DB)' : ''}`)
   const result = await runBenchmark({
     baseUrl,
     name,

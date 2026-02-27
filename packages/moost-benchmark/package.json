@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "tsx ./src/index.ts",
+    "start:db": "tsx ./src/index.ts --db",
     "quick": "tsx ./src/bench-quick.ts"
   },
   "dependencies": {
@@ -19,6 +20,7 @@
     "autocannon": "^7.15.0",
     "bench-utils": "workspace:*",
     "cookie-parser": "^1.4.7",
+    "ioredis": "^5.9.3",
     "moost": "^0.6.1",
     "reflect-metadata": "^0.1.14",
     "rxjs": "^7.8.0"

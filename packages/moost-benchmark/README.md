@@ -54,6 +54,26 @@ Not all request types are affected equally by the DI layer:
 
 Moost gives you the same decorator-driven DX as NestJS — guards, interceptors, dependency injection, class-based controllers — with roughly **half the runtime overhead**. On the most common production workload (cookie-authenticated reads), Moost on Wooks outperforms NestJS on Fastify by **14%** (77k vs 67k). On attack traffic (large body + bad auth), it's **3x faster** thanks to early rejection.
 
+## With Simulated DB (Redis)
+
+What happens when handlers do real work? We added a Redis GET/SET/DEL call to every authenticated handler — each request makes a real network round-trip to a local Redis server.
+
+See [RESULTS-DB.md](RESULTS-DB.md) for the full breakdown.
+
+![Summary (with DB)](results/results-db-chart.svg)
+
+| Framework | avg req/s | speed |
+|-----------|----------|-------|
+| Moost | 49,415 | fastest |
+| NestJS (Fastify) | 48,194 | 1.0x slower |
+| NestJS (Express) | 37,296 | 1.3x slower |
+
+### The Gap Compresses Further
+
+Without DB calls, the gap between Moost and NestJS (Fastify) is **10%** (66k vs 60k). With a single Redis call per authenticated request, it drops to just **2.5%** (49k vs 48k). Even the DI overhead difference between Moost and NestJS — 6% vs 12% — becomes almost invisible once real I/O enters the picture.
+
+The more real server-side processing you add — database queries, cache lookups, business logic, external API calls — the more framework and DI overhead differences compress until they become negligible. **Choose your DI framework for developer experience and architecture, not for benchmarks.**
+
 ## Methodology
 
 - Benchmark tool: [autocannon](https://github.com/mcollina/autocannon) with 100 connections, 10 pipelining
@@ -66,5 +86,6 @@ Moost gives you the same decorator-driven DX as NestJS — guards, interceptors,
 
 ```bash
 pnpm install
-pnpm bench:moost
+pnpm bench:moost        # pure framework overhead
+pnpm bench:moost:db     # with simulated Redis DB calls (requires local Redis)
 ```

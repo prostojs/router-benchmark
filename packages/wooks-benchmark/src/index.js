@@ -19,10 +19,11 @@ const frameworks = [
   { name: 'Hono',    createServer: createHonoServer },
 ]
 
-const duration = parseInt(process.argv[2], 10) || 0.5
+const simulateDb = process.argv.includes('--db')
+const duration = parseInt(process.argv.find(a => !isNaN(a) && a !== '--db'), 10) || 0.5
 
 async function startServer(createServer) {
-  const { server, close } = await createServer()
+  const { server, close } = await createServer({ simulateDb })
   const address = server.address()
   const port = typeof address === 'object' ? address.port : address
   const baseUrl = `http://localhost:${port}`
@@ -42,7 +43,7 @@ async function startServer(createServer) {
 }
 
 async function main() {
-  console.log(`Running with duration=${duration}s per test\n`)
+  console.log(`Running with duration=${duration}s per test${simulateDb ? ' (simulated DB)' : ''}\n`)
   const allResults = []
 
   for (const fw of frameworks) {
@@ -103,21 +104,24 @@ function writeResults(tableData, summary, allResults) {
   const pkgDir = new URL('..', import.meta.url).pathname
   const fastest = summary[0]
 
+  const dbSuffix = simulateDb ? '-db' : ''
+  const dbLabel = simulateDb ? ' (with simulated DB)' : ''
+
   // Bar chart
   const svgChart = generateBarChart(
     summary.map(s => ({ name: s.name, value: s.avg, errorRate: s.errorRate })),
-    { title: `HTTP Framework Benchmark — avg req/s`, unit: 'req/s' },
+    { title: `HTTP Framework Benchmark${dbLabel} — avg req/s`, unit: 'req/s' },
   )
 
   // Markdown
-  let md = `# HTTP Framework Benchmark Results\n\n`
+  let md = `# HTTP Framework Benchmark Results${dbLabel}\n\n`
   md += `Full HTTP request handling benchmark using [autocannon](https://github.com/mcollina/autocannon).\n\n`
   md += `- **${duration}s** per test, **100** connections, **10** pipelining\n`
   md += `- **${tests.length}** test cases covering auth, params, cookies, body parsing, wildcards, 404s\n`
   md += `- Generated: ${new Date().toISOString()}\n\n`
 
   md += `## Summary\n\n`
-  md += `![Summary](results/results-chart.svg)\n\n`
+  md += `![Summary](results/results${dbSuffix}-chart.svg)\n\n`
   md += `| Framework | avg req/s | speed | errors |\n`
   md += `|-----------|----------|-------|--------|\n`
   for (const entry of summary) {
@@ -152,8 +156,9 @@ function writeResults(tableData, summary, allResults) {
   }
 
   writeResultFiles(pkgDir, jsonData, md, {
+    prefix: simulateDb ? 'db' : '',
     resultsDir: 'results',
-    svgCharts: { 'results-chart.svg': svgChart },
+    svgCharts: { [`results${dbSuffix}-chart.svg`]: svgChart },
   })
 }
 

@@ -71,6 +71,28 @@ Wooks leads on realistic SaaS traffic despite router differences compressing to 
 
 Moost adds just 6% overhead on top of Wooks — half of NestJS's 10–12% DI cost. See [moost-benchmark README](packages/moost-benchmark/README.md) for detailed overhead analysis.
 
+### With Simulated DB — framework differences compress
+
+All the benchmarks above measure pure framework overhead with no real work in handlers. But production servers hit databases, caches, and external APIs on every request. How much do framework differences matter then?
+
+To find out, we added a **real Redis GET/SET/DEL call** to every authenticated handler. Each request makes an actual network round-trip to a local Redis server — simulating the fastest possible database call.
+
+#### Wooks — with DB
+
+![Wooks Benchmark (with DB)](packages/wooks-benchmark/results/results-db-chart.svg)
+
+The fastest-to-slowest gap compresses from **1.5x to 1.3x**. The top four frameworks are within 12% of each other. See [wooks-benchmark README](packages/wooks-benchmark/README.md#with-simulated-db-redis).
+
+#### Moost — with DB
+
+![Moost Benchmark (with DB)](packages/moost-benchmark/results/results-db-chart.svg)
+
+Moost vs NestJS (Fastify) drops from a **10% gap to just 2.5%**. See [moost-benchmark README](packages/moost-benchmark/README.md#with-simulated-db-redis).
+
+#### The takeaway
+
+A single Redis call already compresses framework differences significantly. In a real application with multiple DB queries, template rendering, and business logic, these differences become negligible. **The framework you enjoy writing code in matters more than the one that wins a benchmark.**
+
 ## Running
 
 ```bash
@@ -82,9 +104,11 @@ pnpm bench:router:scale   # scaling benchmark (22-200 routes x 3 variants)
 
 # Wooks benchmark
 pnpm bench:wooks
+pnpm bench:wooks:db    # with simulated Redis DB calls
 
 # Moost benchmark
 pnpm bench:moost
+pnpm bench:moost:db    # with simulated Redis DB calls
 
 # All benchmarks
 pnpm bench:all

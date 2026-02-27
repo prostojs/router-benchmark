@@ -1,6 +1,7 @@
 import Fastify from 'fastify'
 import cookie from '@fastify/cookie'
 import { AUTH_TOKEN, SESSION_COOKIE } from '../routes.js'
+import { createDb } from '../simulate-db.js'
 
 function requireHeaderAuth(request, reply) {
   if (request.headers.authorization !== `Bearer ${AUTH_TOKEN}`) {
@@ -18,7 +19,8 @@ function requireCookieAuth(request, reply) {
   return true
 }
 
-export async function createServer() {
+export async function createServer({ simulateDb } = {}) {
+  const db = simulateDb ? createDb() : null
   const fastify = Fastify()
 
   await fastify.register(cookie)
@@ -33,7 +35,8 @@ export async function createServer() {
     reply.send('ok')
   })
 
-  fastify.post('/auth/login', (request, reply) => {
+  fastify.post('/auth/login', async (request, reply) => {
+    if (db) await db.set('session')
     reply.header('Set-Cookie', `session=${SESSION_COOKIE}; Path=/; HttpOnly`)
     reply.status(201).send('token')
   })
@@ -50,91 +53,108 @@ export async function createServer() {
 
   // --- Header-auth guarded routes ---
 
-  fastify.get('/api/v1/users', (request, reply) => {
+  fastify.get('/api/v1/users', async (request, reply) => {
     if (!requireHeaderAuth(request, reply)) return
+    if (db) await db.get('users')
     reply.send('users')
   })
 
-  fastify.get('/api/v1/users/:userId', (request, reply) => {
+  fastify.get('/api/v1/users/:userId', async (request, reply) => {
     if (!requireHeaderAuth(request, reply)) return
+    if (db) await db.get('user')
     reply.send(request.params.userId)
   })
 
-  fastify.get('/api/v1/users/:userId/profile', (request, reply) => {
+  fastify.get('/api/v1/users/:userId/profile', async (request, reply) => {
     if (!requireHeaderAuth(request, reply)) return
+    if (db) await db.get('profile')
     reply.send(request.params.userId)
   })
 
-  fastify.get('/api/v1/projects', (request, reply) => {
+  fastify.get('/api/v1/projects', async (request, reply) => {
     if (!requireHeaderAuth(request, reply)) return
+    if (db) await db.get('projects')
     reply.send('projects')
   })
 
-  fastify.post('/api/v1/projects', (request, reply) => {
+  fastify.post('/api/v1/projects', async (request, reply) => {
     if (!requireHeaderAuth(request, reply)) return
+    if (db) await db.set('project')
     reply.status(201).send('created')
   })
 
-  fastify.get('/api/v1/projects/:projectId', (request, reply) => {
+  fastify.get('/api/v1/projects/:projectId', async (request, reply) => {
     if (!requireHeaderAuth(request, reply)) return
+    if (db) await db.get('project')
     reply.send(request.params.projectId)
   })
 
-  fastify.delete('/api/v1/projects/:projectId', (request, reply) => {
+  fastify.delete('/api/v1/projects/:projectId', async (request, reply) => {
     if (!requireHeaderAuth(request, reply)) return
+    if (db) await db.del('project')
     reply.send(request.params.projectId)
   })
 
-  fastify.get('/api/v1/organizations/settings/billing/invoices', (request, reply) => {
+  fastify.get('/api/v1/organizations/settings/billing/invoices', async (request, reply) => {
     if (!requireHeaderAuth(request, reply)) return
+    if (db) await db.get('invoices')
     reply.header('Cache-Control', 'private, no-cache')
     reply.send('invoices')
   })
 
   // --- Cookie-auth guarded routes ---
 
-  fastify.get('/api/v1/projects/:projectId/members', (request, reply) => {
+  fastify.get('/api/v1/projects/:projectId/members', async (request, reply) => {
     if (!requireCookieAuth(request, reply)) return
+    if (db) await db.get('members')
     reply.send(request.params.projectId)
   })
 
-  fastify.get('/api/v1/projects/:projectId/tasks', (request, reply) => {
+  fastify.get('/api/v1/projects/:projectId/tasks', async (request, reply) => {
     if (!requireCookieAuth(request, reply)) return
+    if (db) await db.get('tasks')
     reply.send(request.params.projectId)
   })
 
-  fastify.get('/api/v1/projects/:projectId/tasks/:taskId', (request, reply) => {
+  fastify.get('/api/v1/projects/:projectId/tasks/:taskId', async (request, reply) => {
     if (!requireCookieAuth(request, reply)) return
+    if (db) await db.get('task')
     reply.send(request.params.taskId)
   })
 
-  fastify.put('/api/v1/projects/:projectId/tasks/:taskId', (request, reply) => {
+  fastify.put('/api/v1/projects/:projectId/tasks/:taskId', async (request, reply) => {
     if (!requireCookieAuth(request, reply)) return
+    if (db) await db.set('task')
     reply.status(201).send(request.params.taskId)
   })
 
-  fastify.delete('/api/v1/projects/:projectId/tasks/:taskId', (request, reply) => {
+  fastify.delete('/api/v1/projects/:projectId/tasks/:taskId', async (request, reply) => {
     if (!requireCookieAuth(request, reply)) return
+    if (db) await db.del('task')
     reply.send(request.params.taskId)
   })
 
-  fastify.get('/api/v1/projects/:projectId/tasks/:taskId/comments', (request, reply) => {
+  fastify.get('/api/v1/projects/:projectId/tasks/:taskId/comments', async (request, reply) => {
     if (!requireCookieAuth(request, reply)) return
+    if (db) await db.get('comments')
     reply.send(request.params.taskId)
   })
 
-  fastify.post('/api/v1/projects/:projectId/tasks/:taskId/comments', (request, reply) => {
+  fastify.post('/api/v1/projects/:projectId/tasks/:taskId/comments', async (request, reply) => {
     if (!requireCookieAuth(request, reply)) return
+    if (db) await db.set('comment')
     reply.status(201).send(request.params.taskId)
   })
 
-  fastify.get('/api/v1/orgs/:orgId/teams/:teamId/projects/:projectId/tasks/:taskId', (request, reply) => {
+  fastify.get('/api/v1/orgs/:orgId/teams/:teamId/projects/:projectId/tasks/:taskId', async (request, reply) => {
     if (!requireCookieAuth(request, reply)) return
+    if (db) await db.get('task')
     reply.send(request.params.taskId)
   })
 
-  fastify.get('/api/v1/organizations/settings/billing/payment-methods', (request, reply) => {
+  fastify.get('/api/v1/organizations/settings/billing/payment-methods', async (request, reply) => {
     if (!requireCookieAuth(request, reply)) return
+    if (db) await db.get('methods')
     reply.header('Cache-Control', 'private, no-cache')
     reply.send('methods')
   })
@@ -142,6 +162,9 @@ export async function createServer() {
   await fastify.listen({ port: 0 })
   return {
     server: fastify.server,
-    close: () => fastify.close(),
+    close: async () => {
+      if (db) db.close()
+      return fastify.close()
+    },
   }
 }

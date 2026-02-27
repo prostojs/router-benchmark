@@ -1,9 +1,11 @@
 import { Moost } from 'moost'
 import { MoostHttp } from '@moostjs/event-http'
 import { createServer as createHttpServer } from 'node:http'
-import { PublicController, HeaderAuthController, CookieAuthController } from './app.controller.js'
+import { PublicController, HeaderAuthController, CookieAuthController, enableDbSimulation, closeDb } from './app.controller.js'
 
-export async function createServer() {
+export async function createServer({ simulateDb = false } = {}) {
+  if (simulateDb) enableDbSimulation()
+
   const app = new Moost({ logLevel: 'error' })
   const httpAdapter = new MoostHttp()
 
@@ -16,6 +18,7 @@ export async function createServer() {
   return {
     server,
     close: () => new Promise<void>((resolve) => {
+      closeDb()
       server.close(() => resolve())
     }),
   }

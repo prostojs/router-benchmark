@@ -8,6 +8,7 @@ const frameworks = [
   { name: 'Moost',            key: 'moost' },
 ]
 
+const simulateDb = process.argv.includes('--db')
 const duration = parseFloat(process.argv[2]) || 0.5
 
 interface TestResult {
@@ -27,7 +28,9 @@ interface BenchmarkResult {
 function runWorker(fwKey: string, dur: number): Promise<BenchmarkResult> {
   return new Promise((resolve, reject) => {
     const workerPath = new URL('./bench-one.ts', import.meta.url).pathname
-    const child = spawn('tsx', [workerPath, fwKey, String(dur)], {
+    const args = [workerPath, fwKey, String(dur)]
+    if (simulateDb) args.push('--db')
+    const child = spawn('tsx', args, {
       cwd: new URL('..', import.meta.url).pathname,
       stdio: ['ignore', 'pipe', 'inherit'],
     })
@@ -45,7 +48,7 @@ function runWorker(fwKey: string, dur: number): Promise<BenchmarkResult> {
 }
 
 async function main() {
-  console.log(`Running with duration=${duration}s per test\n`)
+  console.log(`Running with duration=${duration}s per test${simulateDb ? ' (simulated DB)' : ''}\n`)
   const allResults: BenchmarkResult[] = []
 
   for (const fw of frameworks) {
@@ -94,21 +97,24 @@ function writeResults(tableData: Record<string, Record<string, number>>, summary
   const pkgDir = new URL('..', import.meta.url).pathname
   const fastest = summary[0]
 
+  const dbSuffix = simulateDb ? '-db' : ''
+  const dbLabel = simulateDb ? ' (with simulated DB)' : ''
+
   // Bar chart
   const svgChart = generateBarChart(
     summary.map((s: any) => ({ name: s.name, value: s.avg, errorRate: s.errorRate })),
-    { title: `DI Framework Benchmark — avg req/s`, unit: 'req/s' },
+    { title: `DI Framework Benchmark${dbLabel} — avg req/s`, unit: 'req/s' },
   )
 
   // Markdown
-  let md = `# DI Framework Benchmark Results\n\n`
+  let md = `# DI Framework Benchmark Results${dbLabel}\n\n`
   md += `Full HTTP request handling benchmark using [autocannon](https://github.com/mcollina/autocannon).\n\n`
   md += `- **${duration}s** per test, **100** connections, **10** pipelining\n`
   md += `- **${tests.length}** test cases covering auth, params, cookies, body parsing, wildcards, 404s\n`
   md += `- Generated: ${new Date().toISOString()}\n\n`
 
   md += `## Summary\n\n`
-  md += `![Summary](results/results-chart.svg)\n\n`
+  md += `![Summary](results/results${dbSuffix}-chart.svg)\n\n`
   md += `| Framework | avg req/s | speed | errors |\n`
   md += `|-----------|----------|-------|--------|\n`
   for (const entry of summary) {
@@ -143,8 +149,9 @@ function writeResults(tableData: Record<string, Record<string, number>>, summary
   }
 
   writeResultFiles(pkgDir, jsonData, md, {
+    prefix: simulateDb ? 'db' : '',
     resultsDir: 'results',
-    svgCharts: { 'results-chart.svg': svgChart },
+    svgCharts: { [`results${dbSuffix}-chart.svg`]: svgChart },
   })
 }
 

@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "start": "node ./src/index.js",
+    "start:db": "node ./src/index.js --db",
     "dev": "node ./src/index-dev.js"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
+    "@hono/node-server": "^1.0.0",
     "@prostojs/router": "^0.3.2",
     "@wooksjs/event-http": "^0.7.3",
     "@wooksjs/http-body": "^0.7.3",
@@ -19,6 +21,6 @@
     "fastify": "^5.0.0",
     "h3": "^1.13.0",
     "hono": "^4.0.0",
-    "@hono/node-server": "^1.0.0"
+    "ioredis": "^5.9.3"
   }
 }

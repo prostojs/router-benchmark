@@ -3,8 +3,11 @@ import cookie from '@fastify/cookie'
 import { NestFactory } from '@nestjs/core'
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify'
 import { AppModule } from '../nestjs-shared/app.module.js'
+import { enableDbSimulation, closeDb } from '../nestjs-shared/app.controller.js'
 
-export async function createServer() {
+export async function createServer({ simulateDb = false } = {}) {
+  if (simulateDb) enableDbSimulation()
+
   const adapter = new FastifyAdapter()
   await adapter.getInstance().register(cookie)
 
@@ -17,6 +20,6 @@ export async function createServer() {
   const server = app.getHttpServer()
   return {
     server,
-    close: () => app.close(),
+    close: () => { closeDb(); return app.close() },
   }
 }
