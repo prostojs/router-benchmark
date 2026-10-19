@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 842" font-family="system-ui,-apple-system,sans-serif" font-size="12">
+<rect width="860" height="842" fill="#2b2d30" rx="8"/>
+<text x="430" y="30" text-anchor="middle" font-size="15" font-weight="600" fill="#e0e0e0">Validation throughput — unknown props: strip</text>
+<text x="430" y="50" text-anchor="middle" font-size="11" fill="#999">zod 4.6.7 (z.object()) vs @atscript/typescript 0.1.108 (unknownProps: 'strip') · Node v24.22.0 · Apple M4</text>
+<rect x="216" y="66" width="14" height="12" rx="3" fill="#3987e5"/>
+<text x="238" y="76" fill="#ccc">atscript validate()</text>
+<rect x="216" y="86" width="14" height="12" rx="3" fill="#d95926"/>
+<text x="238" y="96" fill="#ccc">zod safeParse()</text>
+<rect x="216" y="106" width="14" height="12" rx="3" fill="#199e70"/>
+<text x="238" y="116" fill="#ccc">zod z.compile() + safeParse()</text>
+<rect x="216" y="126" width="14" height="12" rx="3" fill="#c98500"/>
+<text x="238" y="136" fill="#ccc">zod z.compile() + validate() [boolean only]</text>
+<line x1="670" y1="152" x2="670" y2="816" stroke="#555" stroke-dasharray="3,3"/>
+<text x="670" y="830" text-anchor="middle" fill="#888" font-size="10">fastest in group = 100%</text>
+<text x="204" y="191" text-anchor="end" fill="#ccc" font-size="12">valid-order</text>
+<g><title>valid-order · atscript validate(): 424k ops/s (p25–p75 422k–425k)</title><rect x="216" y="156" width="49.5" height="14" fill="#3987e5" rx="4"/><text x="271.5" y="167" fill="#ccc" font-size="11">424k ops/s  <tspan fill="#888">11%</tspan></text></g>
+<g><title>valid-order · zod safeParse(): 407k ops/s (p25–p75 340k–443k)</title><rect x="216" y="172" width="47.5" height="14" fill="#d95926" rx="4"/><text x="269.5" y="183" fill="#ccc" font-size="11">407k ops/s  <tspan fill="#888">10%</tspan></text></g>
+<g><title>valid-order · zod z.compile() + safeParse(): 3.57M ops/s (p25–p75 3.10M–3.64M)</title><rect x="216" y="188" width="416.8" height="14" fill="#199e70" rx="4"/><text x="638.8" y="199" fill="#ccc" font-size="11">3.57M ops/s  <tspan fill="#888">92%</tspan></text></g>
+<g><title>valid-order · zod z.compile() + validate() [boolean only]: 3.89M ops/s (p25–p75 3.43M–3.91M)</title><rect x="216" y="204" width="454.0" height="14" fill="#c98500" rx="4"/><text x="676.0" y="215" fill="#ccc" font-size="11">3.89M ops/s</text></g>
+<text x="204" y="271" text-anchor="end" fill="#ccc" font-size="12">valid-order-paypal</text>
+<g><title>valid-order-paypal · atscript validate(): 440k ops/s (p25–p75 434k–442k)</title><rect x="216" y="236" width="48.6" height="14" fill="#3987e5" rx="4"/><text x="270.6" y="247" fill="#ccc" font-size="11">440k ops/s  <tspan fill="#888">11%</tspan></text></g>
+<g><title>valid-order-paypal · zod safeParse(): 441k ops/s (p25–p75 340k–448k)</title><rect x="216" y="252" width="48.8" height="14" fill="#d95926" rx="4"/><text x="270.8" y="263" fill="#ccc" font-size="11">441k ops/s  <tspan fill="#888">11%</tspan></text></g>
+<g><title>valid-order-paypal · zod z.compile() + safeParse(): 3.77M ops/s (p25–p75 3.25M–3.80M)</title><rect x="216" y="268" width="417.2" height="14" fill="#199e70" rx="4"/><text x="639.2" y="279" fill="#ccc" font-size="11">3.77M ops/s  <tspan fill="#888">92%</tspan></text></g>
+<g><title>valid-order-paypal · zod z.compile() + validate() [boolean only]: 4.10M ops/s (p25–p75 3.64M–4.17M)</title><rect x="216" y="284" width="454.0" height="14" fill="#c98500" rx="4"/><text x="676.0" y="295" fill="#ccc" font-size="11">4.10M ops/s</text></g>
+<text x="204" y="351" text-anchor="end" fill="#ccc" font-size="12">large-order-50-items</text>
+<g><title>large-order-50-items · atscript validate(): 70.1k ops/s (p25–p75 70.0k–70.3k)</title><rect x="216" y="316" width="49.0" height="14" fill="#3987e5" rx="4"/><text x="271.0" y="327" fill="#ccc" font-size="11">70.1k ops/s  <tspan fill="#888">11%</tspan></text></g>
+<g><title>large-order-50-items · zod safeParse(): 49.7k ops/s (p25–p75 45.1k–50.5k)</title><rect x="216" y="332" width="34.8" height="14" fill="#d95926" rx="4"/><text x="256.8" y="343" fill="#ccc" font-size="11">49.7k ops/s  <tspan fill="#888">8%</tspan></text></g>
+<g><title>large-order-50-items · zod z.compile() + safeParse(): 644k ops/s (p25–p75 542k–650k)</title><rect x="216" y="348" width="450.9" height="14" fill="#199e70" rx="4"/><text x="672.9" y="359" fill="#ccc" font-size="11">644k ops/s  <tspan fill="#888">99%</tspan></text></g>
+<g><title>large-order-50-items · zod z.compile() + validate() [boolean only]: 649k ops/s (p25–p75 563k–653k)</title><rect x="216" y="364" width="454.0" height="14" fill="#c98500" rx="4"/><text x="676.0" y="375" fill="#ccc" font-size="11">649k ops/s</text></g>
+<text x="204" y="431" text-anchor="end" fill="#ccc" font-size="12">unknown-props-order</text>
+<g><title>unknown-props-order · atscript validate(): 185k ops/s (p25–p75 183k–186k)</title><rect x="216" y="396" width="27.8" height="14" fill="#3987e5" rx="4"/><text x="249.8" y="407" fill="#ccc" font-size="11">185k ops/s  <tspan fill="#888">6%</tspan></text></g>
+<g><title>unknown-props-order · zod safeParse(): 454k ops/s (p25–p75 362k–456k)</title><rect x="216" y="412" width="68.2" height="14" fill="#d95926" rx="4"/><text x="290.2" y="423" fill="#ccc" font-size="11">454k ops/s  <tspan fill="#888">15%</tspan></text></g>
+<g><title>unknown-props-order · zod z.compile() + safeParse(): 2.99M ops/s (p25–p75 2.60M–3.02M)</title><rect x="216" y="428" width="449.7" height="14" fill="#199e70" rx="4"/><text x="671.7" y="439" fill="#ccc" font-size="11">2.99M ops/s  <tspan fill="#888">99%</tspan></text></g>
+<g><title>unknown-props-order · zod z.compile() + validate() [boolean only]: 3.02M ops/s (p25–p75 2.78M–3.13M)</title><rect x="216" y="444" width="454.0" height="14" fill="#c98500" rx="4"/><text x="676.0" y="455" fill="#ccc" font-size="11">3.02M ops/s</text></g>
+<text x="204" y="503" text-anchor="end" fill="#ccc" font-size="12">invalid-order-all-errors</text>
+<g><title>invalid-order-all-errors · atscript validate(): 330k ops/s (p25–p75 329k–330k)</title><rect x="216" y="476" width="454.0" height="14" fill="#3987e5" rx="4"/><text x="676.0" y="487" fill="#ccc" font-size="11">330k ops/s</text></g>
+<g><title>invalid-order-all-errors · zod safeParse(): 137k ops/s (p25–p75 105k–143k)</title><rect x="216" y="492" width="189.0" height="14" fill="#d95926" rx="4"/><text x="411.0" y="503" fill="#ccc" font-size="11">137k ops/s  <tspan fill="#888">42%</tspan></text></g>
+<g><title>invalid-order-all-errors · zod z.compile() + safeParse(): 127k ops/s (p25–p75 126k–142k)</title><rect x="216" y="508" width="174.9" height="14" fill="#199e70" rx="4"/><text x="396.9" y="519" fill="#ccc" font-size="11">127k ops/s  <tspan fill="#888">39%</tspan></text></g>
+<text x="204" y="559" text-anchor="end" fill="#ccc" font-size="12">invalid-order-first-error</text>
+<g><title>invalid-order-first-error · atscript validate(): 5.02M ops/s (p25–p75 5.02M–5.05M)</title><rect x="216" y="540" width="22.0" height="14" fill="#3987e5" rx="4"/><text x="244.0" y="551" fill="#ccc" font-size="11">5.02M ops/s  <tspan fill="#888">5%</tspan></text></g>
+<g><title>invalid-order-first-error · zod z.compile() + validate() [boolean only]: 103.5M ops/s (p25–p75 102.7M–104.0M)</title><rect x="216" y="556" width="454.0" height="14" fill="#c98500" rx="4"/><text x="676.0" y="567" fill="#ccc" font-size="11">103.5M ops/s</text></g>
+<text x="204" y="623" text-anchor="end" fill="#ccc" font-size="12">union-card</text>
+<g><title>union-card · atscript validate(): 4.09M ops/s (p25–p75 4.05M–4.13M)</title><rect x="216" y="588" width="78.5" height="14" fill="#3987e5" rx="4"/><text x="300.5" y="599" fill="#ccc" font-size="11">4.09M ops/s  <tspan fill="#888">17%</tspan></text></g>
+<g><title>union-card · zod safeParse(): 8.86M ops/s (p25–p75 8.83M–8.90M)</title><rect x="216" y="604" width="170.2" height="14" fill="#d95926" rx="4"/><text x="392.2" y="615" fill="#ccc" font-size="11">8.86M ops/s  <tspan fill="#888">37%</tspan></text></g>
+<g><title>union-card · zod z.compile() + safeParse(): 23.6M ops/s (p25–p75 23.5M–23.8M)</title><rect x="216" y="620" width="454.0" height="14" fill="#199e70" rx="4"/><text x="676.0" y="631" fill="#ccc" font-size="11">23.6M ops/s</text></g>
+<g><title>union-card · zod z.compile() + validate() [boolean only]: 23.4M ops/s (p25–p75 23.3M–23.5M)</title><rect x="216" y="636" width="449.3" height="14" fill="#c98500" rx="4"/><text x="671.3" y="647" fill="#ccc" font-size="11">23.4M ops/s  <tspan fill="#888">99%</tspan></text></g>
+<text x="204" y="703" text-anchor="end" fill="#ccc" font-size="12">union-paypal</text>
+<g><title>union-paypal · atscript validate(): 6.08M ops/s (p25–p75 6.07M–6.11M)</title><rect x="216" y="668" width="59.8" height="14" fill="#3987e5" rx="4"/><text x="281.8" y="679" fill="#ccc" font-size="11">6.08M ops/s  <tspan fill="#888">13%</tspan></text></g>
+<g><title>union-paypal · zod safeParse(): 5.83M ops/s (p25–p75 5.34M–5.87M)</title><rect x="216" y="684" width="57.3" height="14" fill="#d95926" rx="4"/><text x="279.3" y="695" fill="#ccc" font-size="11">5.83M ops/s  <tspan fill="#888">13%</tspan></text></g>
+<g><title>union-paypal · zod z.compile() + safeParse(): 45.6M ops/s (p25–p75 45.3M–45.6M)</title><rect x="216" y="700" width="447.9" height="14" fill="#199e70" rx="4"/><text x="669.9" y="711" fill="#ccc" font-size="11">45.6M ops/s  <tspan fill="#888">99%</tspan></text></g>
+<g><title>union-paypal · zod z.compile() + validate() [boolean only]: 46.2M ops/s (p25–p75 45.9M–46.4M)</title><rect x="216" y="716" width="454.0" height="14" fill="#c98500" rx="4"/><text x="676.0" y="727" fill="#ccc" font-size="11">46.2M ops/s</text></g>
+<text x="204" y="775" text-anchor="end" fill="#ccc" font-size="12">union-invalid</text>
+<g><title>union-invalid · atscript validate(): 1.68M ops/s (p25–p75 1.67M–1.68M)</title><rect x="216" y="748" width="454.0" height="14" fill="#3987e5" rx="4"/><text x="676.0" y="759" fill="#ccc" font-size="11">1.68M ops/s</text></g>
+<g><title>union-invalid · zod safeParse(): 603k ops/s (p25–p75 554k–615k)</title><rect x="216" y="764" width="163.2" height="14" fill="#d95926" rx="4"/><text x="385.2" y="775" fill="#ccc" font-size="11">603k ops/s  <tspan fill="#888">36%</tspan></text></g>
+<g><title>union-invalid · zod z.compile() + safeParse(): 620k ops/s (p25–p75 554k–628k)</title><rect x="216" y="780" width="167.8" height="14" fill="#199e70" rx="4"/><text x="389.8" y="791" fill="#ccc" font-size="11">620k ops/s  <tspan fill="#888">37%</tspan></text></g>
+</svg>

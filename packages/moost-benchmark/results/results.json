@@ -1,172 +1,2032 @@
 {
-  "timestamp": "2026-02-27T00:32:16.716Z",
-  "duration": 0.5,
-  "testCount": 20,
-  "perTest": {
-    "Short static": {
-      "NestJS (Express) req/s": 54512,
-      "NestJS (Express) err%": 0,
-      "NestJS (Fastify) req/s": 77984,
-      "NestJS (Fastify) err%": 0,
-      "Moost req/s": 79520,
-      "Moost err%": 0
-    },
-    "Login (set-cookie)": {
-      "NestJS (Express) req/s": 40496,
-      "NestJS (Express) err%": 0,
-      "NestJS (Fastify) req/s": 47984,
-      "NestJS (Fastify) err%": 0,
-      "Moost req/s": 43504,
-      "Moost err%": 0
-    },
-    "Wildcard + cache": {
-      "NestJS (Express) req/s": 54000,
-      "NestJS (Express) err%": 0,
-      "NestJS (Fastify) req/s": 80032,
-      "NestJS (Fastify) err%": 0,
-      "Moost req/s": 79008,
-      "Moost err%": 0
-    },
-    "Wildcard deep": {
-      "NestJS (Express) req/s": 50992,
-      "NestJS (Express) err%": 0,
-      "NestJS (Fastify) req/s": 81504,
-      "NestJS (Fastify) err%": 0,
-      "Moost req/s": 77984,
-      "Moost err%": 0
-    },
-    "Header-auth static": {
-      "NestJS (Express) req/s": 55504,
-      "NestJS (Express) err%": 0,
-      "NestJS (Fastify) req/s": 82016,
-      "NestJS (Fastify) err%": 0,
-      "Moost req/s": 82016,
-      "Moost err%": 0
-    },
-    "Header-auth param": {
-      "NestJS (Express) req/s": 54992,
-      "NestJS (Express) err%": 0,
-      "NestJS (Fastify) req/s": 80992,
-      "NestJS (Fastify) err%": 0,
-      "Moost req/s": 79520,
-      "Moost err%": 0
-    },
-    "Header-auth long static + cache": {
-      "NestJS (Express) req/s": 54992,
-      "NestJS (Express) err%": 0,
-      "NestJS (Fastify) req/s": 79008,
-      "NestJS (Fastify) err%": 0,
-      "Moost req/s": 79520,
-      "Moost err%": 0
-    },
-    "Header-auth POST small body": {
-      "NestJS (Express) req/s": 39504,
-      "NestJS (Express) err%": 0,
-      "NestJS (Fastify) req/s": 50512,
-      "NestJS (Fastify) err%": 0,
-      "Moost req/s": 45488,
-      "Moost err%": 0
-    },
-    "Header-auth FAIL (401)": {
-      "NestJS (Express) req/s": 40016,
-      "NestJS (Express) err%": 0,
-      "NestJS (Fastify) req/s": 50480,
-      "NestJS (Fastify) err%": 0,
-      "Moost req/s": 58512,
-      "Moost err%": 0
-    },
-    "Cookie-auth param+suffix": {
-      "NestJS (Express) req/s": 46000,
-      "NestJS (Express) err%": 0,
-      "NestJS (Fastify) req/s": 67488,
-      "NestJS (Fastify) err%": 0,
-      "Moost req/s": 77024,
-      "Moost err%": 0
-    },
-    "Cookie-auth two params": {
-      "NestJS (Express) req/s": 46000,
-      "NestJS (Express) err%": 0,
-      "NestJS (Fastify) req/s": 66528,
-      "NestJS (Fastify) err%": 0,
-      "Moost req/s": 76512,
-      "Moost err%": 0
-    },
-    "Cookie-auth four params": {
-      "NestJS (Express) req/s": 44496,
-      "NestJS (Express) err%": 0,
-      "NestJS (Fastify) req/s": 66976,
-      "NestJS (Fastify) err%": 0,
-      "Moost req/s": 76000,
-      "Moost err%": 0
-    },
-    "Cookie-auth POST small body": {
-      "NestJS (Express) req/s": 32504,
-      "NestJS (Express) err%": 0,
-      "NestJS (Fastify) req/s": 42992,
-      "NestJS (Fastify) err%": 0,
-      "Moost req/s": 42512,
-      "Moost err%": 0
-    },
-    "Cookie-auth PUT small body": {
-      "NestJS (Express) req/s": 32488,
-      "NestJS (Express) err%": 0,
-      "NestJS (Fastify) req/s": 42512,
-      "NestJS (Fastify) err%": 0,
-      "Moost req/s": 42000,
-      "Moost err%": 0
-    },
-    "Cookie-auth POST large body": {
-      "NestJS (Express) req/s": 10564,
-      "NestJS (Express) err%": 0,
-      "NestJS (Fastify) req/s": 9300,
-      "NestJS (Fastify) err%": 0,
-      "Moost req/s": 9300,
-      "Moost err%": 0
-    },
-    "Cookie-auth FAIL (401)": {
-      "NestJS (Express) req/s": 38512,
-      "NestJS (Express) err%": 0,
-      "NestJS (Fastify) req/s": 51024,
-      "NestJS (Fastify) err%": 0,
-      "Moost req/s": 57488,
-      "Moost err%": 0
-    },
-    "404 short": {
-      "NestJS (Express) req/s": 38992,
-      "NestJS (Express) err%": 0,
-      "NestJS (Fastify) req/s": 56016,
-      "NestJS (Fastify) err%": 0,
-      "Moost req/s": 77472,
-      "Moost err%": 0
-    },
-    "404 deep": {
-      "NestJS (Express) req/s": 38992,
-      "NestJS (Express) err%": 0,
-      "NestJS (Fastify) req/s": 56016,
-      "NestJS (Fastify) err%": 0,
-      "Moost req/s": 78496,
-      "Moost err%": 0
-    },
-    "POST large body + bad header-auth": {
-      "NestJS (Express) req/s": 10244,
-      "NestJS (Express) err%": 0,
-      "NestJS (Fastify) req/s": 9004,
-      "NestJS (Fastify) err%": 0,
-      "Moost req/s": 28984,
-      "Moost err%": 0
-    },
-    "POST large body + bad cookie-auth": {
-      "NestJS (Express) req/s": 9924,
-      "NestJS (Express) err%": 0,
-      "NestJS (Fastify) req/s": 9004,
-      "NestJS (Fastify) err%": 0,
-      "Moost req/s": 29000,
-      "Moost err%": 0
-    }
+  "title": "DI Framework Benchmark",
+  "mode": "pure",
+  "quick": false,
+  "only": null,
+  "environment": {
+    "date": "2026-10-19T12:04:36.322Z",
+    "node": "v24.22.0",
+    "v8": "13.6.233.17-node.57",
+    "os": "Darwin 27.0.0 (darwin arm64)",
+    "cpu": "Apple M4",
+    "cpuCount": 10,
+    "memoryGB": 24,
+    "nodeEnv": ""
+  },
+  "versions": {
+    "autocannon": "8.0.0",
+    "ioredis": "6.0.0",
+    "moost": "0.6.52",
+    "@moostjs/event-http": "0.6.52",
+    "@wooksjs/event-http": "0.7.30",
+    "wooks": "0.7.30",
+    "@prostojs/router": "0.3.6",
+    "@nestjs/core": "12.1.3",
+    "@nestjs/common": "12.1.3",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.2",
+    "@nestjs/platform-fastify": "12.1.3",
+    "fastify (via @nestjs/platform-fastify)": "5.12.7",
+    "@fastify/cookie": "11.1.3",
+    "@nestjs/platform-express": "12.1.3",
+    "express (via @nestjs/platform-express)": "5.3.0",
+    "cookie-parser": "1.4.7",
+    "fastify": "5.12.7",
+    "express": "5.3.0"
+  },
+  "settings": {
+    "warmupSec": 1,
+    "durationSec": 2,
+    "rounds": 1,
+    "connections": 100,
+    "pipelining": 10,
+    "workers": 0,
+    "maxErrorRate": 0.001,
+    "drainTimeoutMs": 5000,
+    "headlineMetric": "weightedHarmonicMeanOfMedianRps"
   },
   "summary": {
-    "Moost": 66049,
-    "NestJS (Fastify)": 60196,
-    "NestJS (Express)": 42359
+    "Fastify (no DI)": {
+      "mixRps": 107403,
+      "weightedArithmeticRps": 132044,
+      "roundMinRps": 107403,
+      "roundMaxRps": 107403,
+      "roundCv": 0,
+      "relative": "fastest",
+      "valid": true,
+      "invalidTests": []
+    },
+    "Wooks (no DI)": {
+      "mixRps": 100135,
+      "weightedArithmeticRps": 131846,
+      "roundMinRps": 100135,
+      "roundMaxRps": 100135,
+      "roundCv": 0,
+      "relative": "1.07x slower",
+      "valid": true,
+      "invalidTests": []
+    },
+    "Moost": {
+      "mixRps": 95304,
+      "weightedArithmeticRps": 125179,
+      "roundMinRps": 95304,
+      "roundMaxRps": 95304,
+      "roundCv": 0,
+      "relative": "1.13x slower",
+      "valid": true,
+      "invalidTests": []
+    },
+    "NestJS (Fastify)": {
+      "mixRps": 72506,
+      "weightedArithmeticRps": 108383,
+      "roundMinRps": 72506,
+      "roundMaxRps": 72506,
+      "roundCv": 0,
+      "relative": "1.48x slower",
+      "valid": true,
+      "invalidTests": []
+    },
+    "Express (no DI)": {
+      "mixRps": 63585,
+      "weightedArithmeticRps": 72473,
+      "roundMinRps": 63585,
+      "roundMaxRps": 63585,
+      "roundCv": 0,
+      "relative": "1.69x slower",
+      "valid": true,
+      "invalidTests": []
+    },
+    "NestJS (Express)": {
+      "mixRps": 47702,
+      "weightedArithmeticRps": 59551,
+      "roundMinRps": 47702,
+      "roundMaxRps": 47702,
+      "roundCv": 0,
+      "relative": "2.25x slower",
+      "valid": true,
+      "invalidTests": []
+    }
+  },
+  "perTest": {
+    "Short static": {
+      "weight": 3,
+      "expectStatus": 200,
+      "frameworks": {
+        "Moost": {
+          "medianRps": 177155,
+          "minRps": 177155,
+          "maxRps": 177155,
+          "cv": 0,
+          "rounds": [
+            177155
+          ],
+          "latencyP50ms": 6,
+          "latencyP99ms": 10,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 167036,
+          "minRps": 167036,
+          "maxRps": 167036,
+          "cv": 0,
+          "rounds": [
+            167036
+          ],
+          "latencyP50ms": 6,
+          "latencyP99ms": 12,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Express)": {
+          "medianRps": 94963.5,
+          "minRps": 94963.5,
+          "maxRps": 94963.5,
+          "cv": 0,
+          "rounds": [
+            94964
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 20,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Wooks (no DI)": {
+          "medianRps": 192018,
+          "minRps": 192018,
+          "maxRps": 192018,
+          "cv": 0,
+          "rounds": [
+            192018
+          ],
+          "latencyP50ms": 5,
+          "latencyP99ms": 11,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Fastify (no DI)": {
+          "medianRps": 166977.5,
+          "minRps": 166977.5,
+          "maxRps": 166977.5,
+          "cv": 0,
+          "rounds": [
+            166978
+          ],
+          "latencyP50ms": 6,
+          "latencyP99ms": 14,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Express (no DI)": {
+          "medianRps": 97482.5,
+          "minRps": 97482.5,
+          "maxRps": 97482.5,
+          "cv": 0,
+          "rounds": [
+            97483
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 22,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        }
+      }
+    },
+    "Login (set-cookie)": {
+      "weight": 2,
+      "expectStatus": 201,
+      "frameworks": {
+        "Moost": {
+          "medianRps": 89285,
+          "minRps": 89285,
+          "maxRps": 89285,
+          "cv": 0,
+          "rounds": [
+            89285
+          ],
+          "latencyP50ms": 9,
+          "latencyP99ms": 20,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 98358.5,
+          "minRps": 98358.5,
+          "maxRps": 98358.5,
+          "cv": 0,
+          "rounds": [
+            98359
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 17,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Express)": {
+          "medianRps": 56707.5,
+          "minRps": 56707.5,
+          "maxRps": 56707.5,
+          "cv": 0,
+          "rounds": [
+            56708
+          ],
+          "latencyP50ms": 15,
+          "latencyP99ms": 32,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Wooks (no DI)": {
+          "medianRps": 89965.5,
+          "minRps": 89965.5,
+          "maxRps": 89965.5,
+          "cv": 0,
+          "rounds": [
+            89966
+          ],
+          "latencyP50ms": 9,
+          "latencyP99ms": 19,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Fastify (no DI)": {
+          "medianRps": 105362.5,
+          "minRps": 105362.5,
+          "maxRps": 105362.5,
+          "cv": 0,
+          "rounds": [
+            105363
+          ],
+          "latencyP50ms": 7,
+          "latencyP99ms": 16,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Express (no DI)": {
+          "medianRps": 67649,
+          "minRps": 67649,
+          "maxRps": 67649,
+          "cv": 0,
+          "rounds": [
+            67649
+          ],
+          "latencyP50ms": 13,
+          "latencyP99ms": 26,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        }
+      }
+    },
+    "Wildcard + cache": {
+      "weight": 3,
+      "expectStatus": 200,
+      "frameworks": {
+        "Moost": {
+          "medianRps": 156586.5,
+          "minRps": 156586.5,
+          "maxRps": 156586.5,
+          "cv": 0,
+          "rounds": [
+            156587
+          ],
+          "latencyP50ms": 7,
+          "latencyP99ms": 9,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 167714,
+          "minRps": 167714,
+          "maxRps": 167714,
+          "cv": 0,
+          "rounds": [
+            167714
+          ],
+          "latencyP50ms": 4,
+          "latencyP99ms": 8,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Express)": {
+          "medianRps": 88889,
+          "minRps": 88889,
+          "maxRps": 88889,
+          "cv": 0,
+          "rounds": [
+            88889
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 16,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Wooks (no DI)": {
+          "medianRps": 163207.5,
+          "minRps": 163207.5,
+          "maxRps": 163207.5,
+          "cv": 0,
+          "rounds": [
+            163208
+          ],
+          "latencyP50ms": 7,
+          "latencyP99ms": 8,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Fastify (no DI)": {
+          "medianRps": 174978,
+          "minRps": 174978,
+          "maxRps": 174978,
+          "cv": 0,
+          "rounds": [
+            174978
+          ],
+          "latencyP50ms": 6,
+          "latencyP99ms": 7,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Express (no DI)": {
+          "medianRps": 97838,
+          "minRps": 97838,
+          "maxRps": 97838,
+          "cv": 0,
+          "rounds": [
+            97838
+          ],
+          "latencyP50ms": 7,
+          "latencyP99ms": 14,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        }
+      }
+    },
+    "Wildcard deep": {
+      "weight": 2,
+      "expectStatus": 200,
+      "frameworks": {
+        "Moost": {
+          "medianRps": 150514,
+          "minRps": 150514,
+          "maxRps": 150514,
+          "cv": 0,
+          "rounds": [
+            150514
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 10,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 162602,
+          "minRps": 162602,
+          "maxRps": 162602,
+          "cv": 0,
+          "rounds": [
+            162602
+          ],
+          "latencyP50ms": 5,
+          "latencyP99ms": 8,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Express)": {
+          "medianRps": 85937.5,
+          "minRps": 85937.5,
+          "maxRps": 85937.5,
+          "cv": 0,
+          "rounds": [
+            85938
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 16,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Wooks (no DI)": {
+          "medianRps": 158984.5,
+          "minRps": 158984.5,
+          "maxRps": 158984.5,
+          "cv": 0,
+          "rounds": [
+            158985
+          ],
+          "latencyP50ms": 7,
+          "latencyP99ms": 8,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Fastify (no DI)": {
+          "medianRps": 173445,
+          "minRps": 173445,
+          "maxRps": 173445,
+          "cv": 0,
+          "rounds": [
+            173445
+          ],
+          "latencyP50ms": 6,
+          "latencyP99ms": 8,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Express (no DI)": {
+          "medianRps": 94879.5,
+          "minRps": 94879.5,
+          "maxRps": 94879.5,
+          "cv": 0,
+          "rounds": [
+            94880
+          ],
+          "latencyP50ms": 10,
+          "latencyP99ms": 15,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        }
+      }
+    },
+    "Header-auth static": {
+      "weight": 4,
+      "expectStatus": 200,
+      "frameworks": {
+        "Moost": {
+          "medianRps": 165296.5,
+          "minRps": 165296.5,
+          "maxRps": 165296.5,
+          "cv": 0,
+          "rounds": [
+            165297
+          ],
+          "latencyP50ms": 7,
+          "latencyP99ms": 8,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 163039,
+          "minRps": 163039,
+          "maxRps": 163039,
+          "cv": 0,
+          "rounds": [
+            163039
+          ],
+          "latencyP50ms": 5,
+          "latencyP99ms": 9,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Express)": {
+          "medianRps": 91776.5,
+          "minRps": 91776.5,
+          "maxRps": 91776.5,
+          "cv": 0,
+          "rounds": [
+            91777
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 16,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Wooks (no DI)": {
+          "medianRps": 176915,
+          "minRps": 176915,
+          "maxRps": 176915,
+          "cv": 0,
+          "rounds": [
+            176915
+          ],
+          "latencyP50ms": 6,
+          "latencyP99ms": 7,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Fastify (no DI)": {
+          "medianRps": 180305.5,
+          "minRps": 180305.5,
+          "maxRps": 180305.5,
+          "cv": 0,
+          "rounds": [
+            180306
+          ],
+          "latencyP50ms": 6,
+          "latencyP99ms": 7,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Express (no DI)": {
+          "medianRps": 102368.5,
+          "minRps": 102368.5,
+          "maxRps": 102368.5,
+          "cv": 0,
+          "rounds": [
+            102369
+          ],
+          "latencyP50ms": 7,
+          "latencyP99ms": 14,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        }
+      }
+    },
+    "Header-auth param": {
+      "weight": 6,
+      "expectStatus": 200,
+      "frameworks": {
+        "Moost": {
+          "medianRps": 151786,
+          "minRps": 151786,
+          "maxRps": 151786,
+          "cv": 0,
+          "rounds": [
+            151786
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 9,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 154828.5,
+          "minRps": 154828.5,
+          "maxRps": 154828.5,
+          "cv": 0,
+          "rounds": [
+            154829
+          ],
+          "latencyP50ms": 4,
+          "latencyP99ms": 9,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Express)": {
+          "medianRps": 88557,
+          "minRps": 88557,
+          "maxRps": 88557,
+          "cv": 0,
+          "rounds": [
+            88557
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 16,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Wooks (no DI)": {
+          "medianRps": 166217,
+          "minRps": 166217,
+          "maxRps": 166217,
+          "cv": 0,
+          "rounds": [
+            166217
+          ],
+          "latencyP50ms": 7,
+          "latencyP99ms": 8,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Fastify (no DI)": {
+          "medianRps": 174549.5,
+          "minRps": 174549.5,
+          "maxRps": 174549.5,
+          "cv": 0,
+          "rounds": [
+            174550
+          ],
+          "latencyP50ms": 6,
+          "latencyP99ms": 9,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Express (no DI)": {
+          "medianRps": 100151,
+          "minRps": 100151,
+          "maxRps": 100151,
+          "cv": 0,
+          "rounds": [
+            100151
+          ],
+          "latencyP50ms": 7,
+          "latencyP99ms": 14,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        }
+      }
+    },
+    "Header-auth long static + cache": {
+      "weight": 3,
+      "expectStatus": 200,
+      "frameworks": {
+        "Moost": {
+          "medianRps": 153214.5,
+          "minRps": 153214.5,
+          "maxRps": 153214.5,
+          "cv": 0,
+          "rounds": [
+            153215
+          ],
+          "latencyP50ms": 7,
+          "latencyP99ms": 10,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 158380,
+          "minRps": 158380,
+          "maxRps": 158380,
+          "cv": 0,
+          "rounds": [
+            158380
+          ],
+          "latencyP50ms": 4,
+          "latencyP99ms": 9,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Express)": {
+          "medianRps": 86159,
+          "minRps": 86159,
+          "maxRps": 86159,
+          "cv": 0,
+          "rounds": [
+            86159
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 17,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Wooks (no DI)": {
+          "medianRps": 163767,
+          "minRps": 163767,
+          "maxRps": 163767,
+          "cv": 0,
+          "rounds": [
+            163767
+          ],
+          "latencyP50ms": 7,
+          "latencyP99ms": 10,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Fastify (no DI)": {
+          "medianRps": 174832.5,
+          "minRps": 174832.5,
+          "maxRps": 174832.5,
+          "cv": 0,
+          "rounds": [
+            174833
+          ],
+          "latencyP50ms": 6,
+          "latencyP99ms": 7,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Express (no DI)": {
+          "medianRps": 97349.5,
+          "minRps": 97349.5,
+          "maxRps": 97349.5,
+          "cv": 0,
+          "rounds": [
+            97350
+          ],
+          "latencyP50ms": 7,
+          "latencyP99ms": 14,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        }
+      }
+    },
+    "Header-auth POST small body": {
+      "weight": 3,
+      "expectStatus": 201,
+      "frameworks": {
+        "Moost": {
+          "medianRps": 88687.5,
+          "minRps": 88687.5,
+          "maxRps": 88687.5,
+          "cv": 0,
+          "rounds": [
+            88688
+          ],
+          "latencyP50ms": 9,
+          "latencyP99ms": 19,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 96764.5,
+          "minRps": 96764.5,
+          "maxRps": 96764.5,
+          "cv": 0,
+          "rounds": [
+            96765
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 18,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Express)": {
+          "medianRps": 55718,
+          "minRps": 55718,
+          "maxRps": 55718,
+          "cv": 0,
+          "rounds": [
+            55718
+          ],
+          "latencyP50ms": 16,
+          "latencyP99ms": 33,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Wooks (no DI)": {
+          "medianRps": 95353.5,
+          "minRps": 95353.5,
+          "maxRps": 95353.5,
+          "cv": 0,
+          "rounds": [
+            95354
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 18,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Fastify (no DI)": {
+          "medianRps": 115266.5,
+          "minRps": 115266.5,
+          "maxRps": 115266.5,
+          "cv": 0,
+          "rounds": [
+            115267
+          ],
+          "latencyP50ms": 7,
+          "latencyP99ms": 14,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Express (no DI)": {
+          "medianRps": 68190.5,
+          "minRps": 68190.5,
+          "maxRps": 68190.5,
+          "cv": 0,
+          "rounds": [
+            68191
+          ],
+          "latencyP50ms": 13,
+          "latencyP99ms": 26,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        }
+      }
+    },
+    "Header-auth FAIL (401)": {
+      "weight": 2,
+      "expectStatus": 401,
+      "frameworks": {
+        "Moost": {
+          "medianRps": 99257,
+          "minRps": 99257,
+          "maxRps": 99257,
+          "cv": 0,
+          "rounds": [
+            99257
+          ],
+          "latencyP50ms": 11,
+          "latencyP99ms": 14,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 74162,
+          "minRps": 74162,
+          "maxRps": 74162,
+          "cv": 0,
+          "rounds": [
+            74162
+          ],
+          "latencyP50ms": 16,
+          "latencyP99ms": 17,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Express)": {
+          "medianRps": 53580.5,
+          "minRps": 53580.5,
+          "maxRps": 53580.5,
+          "cv": 0,
+          "rounds": [
+            53581
+          ],
+          "latencyP50ms": 13,
+          "latencyP99ms": 26,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Wooks (no DI)": {
+          "medianRps": 140921.5,
+          "minRps": 140921.5,
+          "maxRps": 140921.5,
+          "cv": 0,
+          "rounds": [
+            140922
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 9,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Fastify (no DI)": {
+          "medianRps": 178424.5,
+          "minRps": 178424.5,
+          "maxRps": 178424.5,
+          "cv": 0,
+          "rounds": [
+            178425
+          ],
+          "latencyP50ms": 6,
+          "latencyP99ms": 7,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Express (no DI)": {
+          "medianRps": 104564.5,
+          "minRps": 104564.5,
+          "maxRps": 104564.5,
+          "cv": 0,
+          "rounds": [
+            104565
+          ],
+          "latencyP50ms": 7,
+          "latencyP99ms": 14,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        }
+      }
+    },
+    "Cookie-auth param+suffix": {
+      "weight": 14,
+      "expectStatus": 200,
+      "frameworks": {
+        "Moost": {
+          "medianRps": 146012.5,
+          "minRps": 146012.5,
+          "maxRps": 146012.5,
+          "cv": 0,
+          "rounds": [
+            146013
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 9,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 117795,
+          "minRps": 117795,
+          "maxRps": 117795,
+          "cv": 0,
+          "rounds": [
+            117795
+          ],
+          "latencyP50ms": 10,
+          "latencyP99ms": 13,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Express)": {
+          "medianRps": 62298.5,
+          "minRps": 62298.5,
+          "maxRps": 62298.5,
+          "cv": 0,
+          "rounds": [
+            62299
+          ],
+          "latencyP50ms": 11,
+          "latencyP99ms": 27,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Wooks (no DI)": {
+          "medianRps": 149489.5,
+          "minRps": 149489.5,
+          "maxRps": 149489.5,
+          "cv": 0,
+          "rounds": [
+            149490
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 9,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Fastify (no DI)": {
+          "medianRps": 133475,
+          "minRps": 133475,
+          "maxRps": 133475,
+          "cv": 0,
+          "rounds": [
+            133475
+          ],
+          "latencyP50ms": 9,
+          "latencyP99ms": 10,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Express (no DI)": {
+          "medianRps": 70509.5,
+          "minRps": 70509.5,
+          "maxRps": 70509.5,
+          "cv": 0,
+          "rounds": [
+            70510
+          ],
+          "latencyP50ms": 17,
+          "latencyP99ms": 20,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        }
+      }
+    },
+    "Cookie-auth two params": {
+      "weight": 20,
+      "expectStatus": 200,
+      "frameworks": {
+        "Moost": {
+          "medianRps": 136363.5,
+          "minRps": 136363.5,
+          "maxRps": 136363.5,
+          "cv": 0,
+          "rounds": [
+            136364
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 14,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 112839,
+          "minRps": 112839,
+          "maxRps": 112839,
+          "cv": 0,
+          "rounds": [
+            112839
+          ],
+          "latencyP50ms": 10,
+          "latencyP99ms": 17,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Express)": {
+          "medianRps": 60534.5,
+          "minRps": 60534.5,
+          "maxRps": 60534.5,
+          "cv": 0,
+          "rounds": [
+            60535
+          ],
+          "latencyP50ms": 12,
+          "latencyP99ms": 29,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Wooks (no DI)": {
+          "medianRps": 136599,
+          "minRps": 136599,
+          "maxRps": 136599,
+          "cv": 0,
+          "rounds": [
+            136599
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 18,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Fastify (no DI)": {
+          "medianRps": 126307.5,
+          "minRps": 126307.5,
+          "maxRps": 126307.5,
+          "cv": 0,
+          "rounds": [
+            126308
+          ],
+          "latencyP50ms": 9,
+          "latencyP99ms": 15,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Express (no DI)": {
+          "medianRps": 64849,
+          "minRps": 64849,
+          "maxRps": 64849,
+          "cv": 0,
+          "rounds": [
+            64849
+          ],
+          "latencyP50ms": 18,
+          "latencyP99ms": 27,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        }
+      }
+    },
+    "Cookie-auth four params": {
+      "weight": 8,
+      "expectStatus": 200,
+      "frameworks": {
+        "Moost": {
+          "medianRps": 136882.5,
+          "minRps": 136882.5,
+          "maxRps": 136882.5,
+          "cv": 0,
+          "rounds": [
+            136883
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 10,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 116877,
+          "minRps": 116877,
+          "maxRps": 116877,
+          "cv": 0,
+          "rounds": [
+            116877
+          ],
+          "latencyP50ms": 10,
+          "latencyP99ms": 12,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Express)": {
+          "medianRps": 59306,
+          "minRps": 59306,
+          "maxRps": 59306,
+          "cv": 0,
+          "rounds": [
+            59306
+          ],
+          "latencyP50ms": 12,
+          "latencyP99ms": 24,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Wooks (no DI)": {
+          "medianRps": 143695.5,
+          "minRps": 143695.5,
+          "maxRps": 143695.5,
+          "cv": 0,
+          "rounds": [
+            143696
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 9,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Fastify (no DI)": {
+          "medianRps": 135288,
+          "minRps": 135288,
+          "maxRps": 135288,
+          "cv": 0,
+          "rounds": [
+            135288
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 9,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Express (no DI)": {
+          "medianRps": 66018.5,
+          "minRps": 66018.5,
+          "maxRps": 66018.5,
+          "cv": 0,
+          "rounds": [
+            66019
+          ],
+          "latencyP50ms": 18,
+          "latencyP99ms": 21,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        }
+      }
+    },
+    "Cookie-auth POST small body": {
+      "weight": 8,
+      "expectStatus": 201,
+      "frameworks": {
+        "Moost": {
+          "medianRps": 82090.5,
+          "minRps": 82090.5,
+          "maxRps": 82090.5,
+          "cv": 0,
+          "rounds": [
+            82091
+          ],
+          "latencyP50ms": 10,
+          "latencyP99ms": 20,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 78325,
+          "minRps": 78325,
+          "maxRps": 78325,
+          "cv": 0,
+          "rounds": [
+            78325
+          ],
+          "latencyP50ms": 11,
+          "latencyP99ms": 23,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Express)": {
+          "medianRps": 39863,
+          "minRps": 39863,
+          "maxRps": 39863,
+          "cv": 0,
+          "rounds": [
+            39863
+          ],
+          "latencyP50ms": 22,
+          "latencyP99ms": 45,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Wooks (no DI)": {
+          "medianRps": 87223.5,
+          "minRps": 87223.5,
+          "maxRps": 87223.5,
+          "cv": 0,
+          "rounds": [
+            87224
+          ],
+          "latencyP50ms": 9,
+          "latencyP99ms": 20,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Fastify (no DI)": {
+          "medianRps": 91337.5,
+          "minRps": 91337.5,
+          "maxRps": 91337.5,
+          "cv": 0,
+          "rounds": [
+            91338
+          ],
+          "latencyP50ms": 9,
+          "latencyP99ms": 18,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Express (no DI)": {
+          "medianRps": 48800.5,
+          "minRps": 48800.5,
+          "maxRps": 48800.5,
+          "cv": 0,
+          "rounds": [
+            48801
+          ],
+          "latencyP50ms": 18,
+          "latencyP99ms": 37,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        }
+      }
+    },
+    "Cookie-auth PUT small body": {
+      "weight": 8,
+      "expectStatus": 201,
+      "frameworks": {
+        "Moost": {
+          "medianRps": 82619.5,
+          "minRps": 82619.5,
+          "maxRps": 82619.5,
+          "cv": 0,
+          "rounds": [
+            82620
+          ],
+          "latencyP50ms": 10,
+          "latencyP99ms": 20,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 78316.5,
+          "minRps": 78316.5,
+          "maxRps": 78316.5,
+          "cv": 0,
+          "rounds": [
+            78317
+          ],
+          "latencyP50ms": 11,
+          "latencyP99ms": 23,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Express)": {
+          "medianRps": 40182,
+          "minRps": 40182,
+          "maxRps": 40182,
+          "cv": 0,
+          "rounds": [
+            40182
+          ],
+          "latencyP50ms": 22,
+          "latencyP99ms": 45,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Wooks (no DI)": {
+          "medianRps": 88606.5,
+          "minRps": 88606.5,
+          "maxRps": 88606.5,
+          "cv": 0,
+          "rounds": [
+            88607
+          ],
+          "latencyP50ms": 9,
+          "latencyP99ms": 19,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Fastify (no DI)": {
+          "medianRps": 91723,
+          "minRps": 91723,
+          "maxRps": 91723,
+          "cv": 0,
+          "rounds": [
+            91723
+          ],
+          "latencyP50ms": 9,
+          "latencyP99ms": 18,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Express (no DI)": {
+          "medianRps": 49800.5,
+          "minRps": 49800.5,
+          "maxRps": 49800.5,
+          "cv": 0,
+          "rounds": [
+            49801
+          ],
+          "latencyP50ms": 17,
+          "latencyP99ms": 36,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        }
+      }
+    },
+    "Cookie-auth POST large body": {
+      "weight": 2,
+      "expectStatus": 201,
+      "frameworks": {
+        "Moost": {
+          "medianRps": 9199,
+          "minRps": 9199,
+          "maxRps": 9199,
+          "cv": 0,
+          "rounds": [
+            9199
+          ],
+          "latencyP50ms": 1,
+          "latencyP99ms": 259,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 12283,
+          "minRps": 12283,
+          "maxRps": 12283,
+          "cv": 0,
+          "rounds": [
+            12283
+          ],
+          "latencyP50ms": 0,
+          "latencyP99ms": 564,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Express)": {
+          "medianRps": 12411.5,
+          "minRps": 12411.5,
+          "maxRps": 12411.5,
+          "cv": 0,
+          "rounds": [
+            12412
+          ],
+          "latencyP50ms": 0,
+          "latencyP99ms": 472,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Wooks (no DI)": {
+          "medianRps": 9397,
+          "minRps": 9397,
+          "maxRps": 9397,
+          "cv": 0,
+          "rounds": [
+            9397
+          ],
+          "latencyP50ms": 1,
+          "latencyP99ms": 744,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Fastify (no DI)": {
+          "medianRps": 12715.5,
+          "minRps": 12715.5,
+          "maxRps": 12715.5,
+          "cv": 0,
+          "rounds": [
+            12716
+          ],
+          "latencyP50ms": 0,
+          "latencyP99ms": 528,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Express (no DI)": {
+          "medianRps": 12599,
+          "minRps": 12599,
+          "maxRps": 12599,
+          "cv": 0,
+          "rounds": [
+            12599
+          ],
+          "latencyP50ms": 0,
+          "latencyP99ms": 609,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        }
+      }
+    },
+    "Cookie-auth FAIL (401)": {
+      "weight": 3,
+      "expectStatus": 401,
+      "frameworks": {
+        "Moost": {
+          "medianRps": 100280.5,
+          "minRps": 100280.5,
+          "maxRps": 100280.5,
+          "cv": 0,
+          "rounds": [
+            100281
+          ],
+          "latencyP50ms": 11,
+          "latencyP99ms": 13,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 76011,
+          "minRps": 76011,
+          "maxRps": 76011,
+          "cv": 0,
+          "rounds": [
+            76011
+          ],
+          "latencyP50ms": 15,
+          "latencyP99ms": 16,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Express)": {
+          "medianRps": 52767.5,
+          "minRps": 52767.5,
+          "maxRps": 52767.5,
+          "cv": 0,
+          "rounds": [
+            52768
+          ],
+          "latencyP50ms": 13,
+          "latencyP99ms": 27,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Wooks (no DI)": {
+          "medianRps": 145581.5,
+          "minRps": 145581.5,
+          "maxRps": 145581.5,
+          "cv": 0,
+          "rounds": [
+            145582
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 9,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Fastify (no DI)": {
+          "medianRps": 180673,
+          "minRps": 180673,
+          "maxRps": 180673,
+          "cv": 0,
+          "rounds": [
+            180673
+          ],
+          "latencyP50ms": 6,
+          "latencyP99ms": 7,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Express (no DI)": {
+          "medianRps": 97429.5,
+          "minRps": 97429.5,
+          "maxRps": 97429.5,
+          "cv": 0,
+          "rounds": [
+            97430
+          ],
+          "latencyP50ms": 11,
+          "latencyP99ms": 14,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        }
+      }
+    },
+    "404 short": {
+      "weight": 3,
+      "expectStatus": 404,
+      "frameworks": {
+        "Moost": {
+          "medianRps": 160660.5,
+          "minRps": 160660.5,
+          "maxRps": 160660.5,
+          "cv": 0,
+          "rounds": [
+            160661
+          ],
+          "latencyP50ms": 7,
+          "latencyP99ms": 10,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 84701.5,
+          "minRps": 84701.5,
+          "maxRps": 84701.5,
+          "cv": 0,
+          "rounds": [
+            84702
+          ],
+          "latencyP50ms": 14,
+          "latencyP99ms": 15,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Express)": {
+          "medianRps": 51645,
+          "minRps": 51645,
+          "maxRps": 51645,
+          "cv": 0,
+          "rounds": [
+            51645
+          ],
+          "latencyP50ms": 24,
+          "latencyP99ms": 28,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Wooks (no DI)": {
+          "medianRps": 153299,
+          "minRps": 153299,
+          "maxRps": 153299,
+          "cv": 0,
+          "rounds": [
+            153299
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 8,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Fastify (no DI)": {
+          "medianRps": 156281,
+          "minRps": 156281,
+          "maxRps": 156281,
+          "cv": 0,
+          "rounds": [
+            156281
+          ],
+          "latencyP50ms": 7,
+          "latencyP99ms": 11,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Express (no DI)": {
+          "medianRps": 96877.5,
+          "minRps": 96877.5,
+          "maxRps": 96877.5,
+          "cv": 0,
+          "rounds": [
+            96878
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 17,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        }
+      }
+    },
+    "404 deep": {
+      "weight": 2,
+      "expectStatus": 404,
+      "frameworks": {
+        "Moost": {
+          "medianRps": 156809,
+          "minRps": 156809,
+          "maxRps": 156809,
+          "cv": 0,
+          "rounds": [
+            156809
+          ],
+          "latencyP50ms": 7,
+          "latencyP99ms": 9,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 84762,
+          "minRps": 84762,
+          "maxRps": 84762,
+          "cv": 0,
+          "rounds": [
+            84762
+          ],
+          "latencyP50ms": 14,
+          "latencyP99ms": 14,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Express)": {
+          "medianRps": 51406.5,
+          "minRps": 51406.5,
+          "maxRps": 51406.5,
+          "cv": 0,
+          "rounds": [
+            51407
+          ],
+          "latencyP50ms": 24,
+          "latencyP99ms": 26,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Wooks (no DI)": {
+          "medianRps": 154028,
+          "minRps": 154028,
+          "maxRps": 154028,
+          "cv": 0,
+          "rounds": [
+            154028
+          ],
+          "latencyP50ms": 7,
+          "latencyP99ms": 9,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Fastify (no DI)": {
+          "medianRps": 171485,
+          "minRps": 171485,
+          "maxRps": 171485,
+          "cv": 0,
+          "rounds": [
+            171485
+          ],
+          "latencyP50ms": 7,
+          "latencyP99ms": 8,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Express (no DI)": {
+          "medianRps": 96967.5,
+          "minRps": 96967.5,
+          "maxRps": 96967.5,
+          "cv": 0,
+          "rounds": [
+            96968
+          ],
+          "latencyP50ms": 8,
+          "latencyP99ms": 17,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        }
+      }
+    },
+    "POST large body + bad header-auth": {
+      "weight": 2,
+      "expectStatus": 401,
+      "frameworks": {
+        "Moost": {
+          "medianRps": 62004.5,
+          "minRps": 62004.5,
+          "maxRps": 62004.5,
+          "cv": 0,
+          "rounds": [
+            62005
+          ],
+          "latencyP50ms": 0,
+          "latencyP99ms": 94,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 11760,
+          "minRps": 11760,
+          "maxRps": 11760,
+          "cv": 0,
+          "rounds": [
+            11760
+          ],
+          "latencyP50ms": 0,
+          "latencyP99ms": 716,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Express)": {
+          "medianRps": 12210,
+          "minRps": 12210,
+          "maxRps": 12210,
+          "cv": 0,
+          "rounds": [
+            12210
+          ],
+          "latencyP50ms": 0,
+          "latencyP99ms": 495,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Wooks (no DI)": {
+          "medianRps": 63904.5,
+          "minRps": 63904.5,
+          "maxRps": 63904.5,
+          "cv": 0,
+          "rounds": [
+            63905
+          ],
+          "latencyP50ms": 0,
+          "latencyP99ms": 91,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Fastify (no DI)": {
+          "medianRps": 76558,
+          "minRps": 76558,
+          "maxRps": 76558,
+          "cv": 0,
+          "rounds": [
+            76558
+          ],
+          "latencyP50ms": 0,
+          "latencyP99ms": 74,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Express (no DI)": {
+          "medianRps": 56526.5,
+          "minRps": 56526.5,
+          "maxRps": 56526.5,
+          "cv": 0,
+          "rounds": [
+            56527
+          ],
+          "latencyP50ms": 0,
+          "latencyP99ms": 106,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        }
+      }
+    },
+    "POST large body + bad cookie-auth": {
+      "weight": 2,
+      "expectStatus": 401,
+      "frameworks": {
+        "Moost": {
+          "medianRps": 58963,
+          "minRps": 58963,
+          "maxRps": 58963,
+          "cv": 0,
+          "rounds": [
+            58963
+          ],
+          "latencyP50ms": 0,
+          "latencyP99ms": 99,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 11743,
+          "minRps": 11743,
+          "maxRps": 11743,
+          "cv": 0,
+          "rounds": [
+            11743
+          ],
+          "latencyP50ms": 0,
+          "latencyP99ms": 624,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Express)": {
+          "medianRps": 12006.5,
+          "minRps": 12006.5,
+          "maxRps": 12006.5,
+          "cv": 0,
+          "rounds": [
+            12007
+          ],
+          "latencyP50ms": 0,
+          "latencyP99ms": 505,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Wooks (no DI)": {
+          "medianRps": 62266.5,
+          "minRps": 62266.5,
+          "maxRps": 62266.5,
+          "cv": 0,
+          "rounds": [
+            62267
+          ],
+          "latencyP50ms": 0,
+          "latencyP99ms": 93,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Fastify (no DI)": {
+          "medianRps": 75619,
+          "minRps": 75619,
+          "maxRps": 75619,
+          "cv": 0,
+          "rounds": [
+            75619
+          ],
+          "latencyP50ms": 0,
+          "latencyP99ms": 78,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "Express (no DI)": {
+          "medianRps": 51973,
+          "minRps": 51973,
+          "maxRps": 51973,
+          "cv": 0,
+          "rounds": [
+            51973
+          ],
+          "latencyP50ms": 0,
+          "latencyP99ms": 117,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        }
+      }
+    }
   }
 }

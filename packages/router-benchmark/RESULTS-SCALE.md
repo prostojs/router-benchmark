@@ -1,91 +1,88 @@
 # Router Scaling Benchmark
 
-Measures how router lookup performance changes as the number of registered routes grows.
-Three route-shape variants are tested to reveal different scaling characteristics.
-
-- **500,000** operations per test, **5** runs averaged
-- Route counts: 22, 50, 100, 200
-- Generated: 2026-02-27T00:24:12.887Z
+Lookup throughput (route match + param extraction, op/ms) as the number of registered routes grows. All routers are verified to return identical matches/params before measuring. Generated 2026-10-19T11:52:46.847Z.
 
 ---
 
 ## Short Routes (2–5 segments)
 
-Shallow paths like `/users/:id`, `/posts/:id/comments`, `/orders/:id/items`.
-Many distinct top-level prefixes, few path segments per route.
+Shallow paths like `/users/:id`, `/posts/:id/comments`.
 
-![Short routes](results/results-scale-short-chart.svg)
+![Short Routes (2–5 segments)](results/results-scale-short-chart.svg)
 
-| Router | 22 routes | 50 routes | 100 routes | 200 routes | degradation |
-|--------|---------|---------|---------|---------|-------------|
-| Express | 2393 | 994 | 654 | 295 | 8.1x |
-| FindMyWay | 29182 | 13038 | 13571 | 10804 | 2.7x |
-| ProstoRouter | 44665 | 14411 | 10855 | 9400 | 4.8x |
-| Rou3 | 38861 | 17533 | 12495 | 10481 | 3.7x |
-| Hono (RegExpRouter) | 42409 | 12525 | 10162 | 6627 | 6.4x |
-
-- **Express**: 2393 → 295 op/ms (8.1x, degrades)
-- **FindMyWay**: 29182 → 10804 op/ms (2.7x, degrades)
-- **ProstoRouter**: 44665 → 9400 op/ms (4.8x, degrades)
-- **Rou3**: 38861 → 10481 op/ms (3.7x, degrades)
-- **Hono (RegExpRouter)**: 42409 → 6627 op/ms (6.4x, degrades)
+| Router | 22 routes | 50 routes | 100 routes | 200 routes | first → last |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| ProstoRouter | 43,846 | 13,815 | 14,018 | 12,457 | 3.5x |
+| FindMyWay | 35,058 | 19,641 | 19,711 | 14,889 | 2.4x |
+| Rou3 | 54,610 | 19,960 | 18,345 | 14,981 | 3.6x |
+| Rou3 (compiled) | 136,846 | 39,929 | 39,308 | 38,184 | 3.6x |
+| Hono | 56,849 (RegExpRouter) | 13,751 (RegExpRouter) | 11,226 (RegExpRouter) | 6,990 (RegExpRouter) | 8.1x |
+| Express | 2,384 | 970 | 637 | 297 | 8.0x |
 
 ---
 
 ## Long Routes (deep enterprise API)
 
 Deep paths like `/api/v1/organizations/:orgId/workspaces/:wsId/projects/:projectId`.
-Shared `/api/v1/` prefix, many segments per route (5–10), realistic enterprise SaaS API.
 
-![Long routes](results/results-scale-long-chart.svg)
+![Long Routes (deep enterprise API)](results/results-scale-long-chart.svg)
 
-| Router | 22 routes | 50 routes | 100 routes | 200 routes | degradation |
-|--------|---------|---------|---------|---------|-------------|
-| Express | 1122 | 1038 | 922 | 737 | 1.5x |
-| FindMyWay | 6193 | 6177 | 5889 | 6022 | 1.0x |
-| ProstoRouter | 8600 | 7562 | 6136 | 4158 | 2.1x |
-| Rou3 | 6838 | 6735 | 6834 | 6744 | 1.0x |
-| Hono (RegExpRouter) | 8250 | 7180 | - | - | 1.1x |
-| Hono (TrieRouter) | - | - | 3624 | 3640 | 1.0x |
-
-- **Express**: 1122 → 737 op/ms (1.5x, slight decline)
-- **FindMyWay**: 6193 → 6022 op/ms (1.0x, stable)
-- **ProstoRouter**: 8600 → 4158 op/ms (2.1x, degrades)
-- **Rou3**: 6838 → 6744 op/ms (1.0x, stable)
-- **Hono (RegExpRouter)**: 8250 → 7180 op/ms (1.1x, stable)
-- **Hono (TrieRouter)**: 3624 → 3640 op/ms (1.0x, stable)
+| Router | 22 routes | 50 routes | 100 routes | 200 routes | first → last |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| ProstoRouter | 8,794 | 7,739 | 6,421 | 5,167 | 1.7x |
+| FindMyWay | 10,816 | 10,639 | 10,479 | 10,540 | 1.0x |
+| Rou3 | 4,877 | 6,733 | 4,868 | 6,738 | 0.7x |
+| Rou3 (compiled) | 37,150 | 29,886 | 30,720 | 30,924 | 1.2x |
+| Hono | 8,894 (RegExpRouter) | 7,505 (RegExpRouter) | 4,505 (TrieRouter) | 4,521 (TrieRouter) | 2.0x |
+| Express | 1,131 | 1,059 | 937 | 697 | 1.6x |
 
 ---
 
 ## Mixed Routes (short + long)
 
 Half short (2–5 segments) + half long (deep enterprise API) routes.
-Exercises routers with both shallow many-prefix and deep shared-prefix routes in the same tree.
 
-![Mixed routes](results/results-scale-mixed-chart.svg)
+![Mixed Routes (short + long)](results/results-scale-mixed-chart.svg)
 
-| Router | 20 routes | 48 routes | 98 routes | 198 routes | degradation |
-|--------|---------|---------|---------|---------|-------------|
-| Express | 2246 | 1026 | 591 | 347 | 6.5x |
-| FindMyWay | 18218 | 9924 | 9350 | 9194 | 2.0x |
-| ProstoRouter | 21767 | 10680 | 8332 | 7895 | 2.8x |
-| Rou3 | 19802 | 12028 | 5873 | 6567 | 3.0x |
-| Hono (RegExpRouter) | 35978 | 13647 | 7257 | - | 5.0x |
-| Hono (TrieRouter) | - | - | - | 3462 | - |
-
-- **Express**: 2246 → 347 op/ms (6.5x, degrades)
-- **FindMyWay**: 18218 → 9194 op/ms (2.0x, degrades)
-- **ProstoRouter**: 21767 → 7895 op/ms (2.8x, degrades)
-- **Rou3**: 19802 → 6567 op/ms (3.0x, degrades)
-- **Hono (RegExpRouter)**: 35978 → 7257 op/ms (5.0x, degrades)
+| Router | 20 routes | 48 routes | 98 routes | 198 routes | first → last |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| ProstoRouter | 29,220 | 11,505 | 9,366 | 9,004 | 3.2x |
+| FindMyWay | 28,315 | 15,967 | 14,542 | 14,230 | 2.0x |
+| Rou3 | 30,839 | 15,834 | 11,981 | 10,736 | 2.9x |
+| Rou3 (compiled) | 57,038 | 41,001 | 36,674 | 36,419 | 1.6x |
+| Hono | 52,955 (RegExpRouter) | 15,128 (RegExpRouter) | 7,801 (RegExpRouter) | 4,072 (TrieRouter) | 13.0x |
+| Express | 2,206 | 949 | 601 | 286 | 7.7x |
 
 ---
 
-## Key Takeaways
+## Environment
 
-- **Short routes** have higher absolute throughput (shorter strings, fewer segments to match) but all routers degrade more steeply because the route set has many distinct prefixes competing in each bucket.
-- **Long routes** have lower absolute throughput but trie-based routers (Rou3, FindMyWay) stay nearly flat — the shared prefix structure plays to their strength.
-- **Mixed routes** sit between the two — routers must handle both patterns efficiently.
-- **Regex-alternation routers** (ProstoRouter, Hono RegExpRouter) degrade as route count grows because V8 tests regex alternatives sequentially — O(n) per bucket.
-- **Rou3** shows the best scaling profile: near-constant performance regardless of route count.
-- **FindMyWay** is also stable but at a lower absolute level due to its more complex trie implementation.
+|  |  |
+| --- | --- |
+| Date | 2026-10-19T11:52:46.847Z |
+| Node.js | v24.22.0 (V8 13.6.233.17-node.57) |
+| OS | Darwin 27.0.0 (darwin arm64) |
+| CPU | Apple M4 (10 logical cores) |
+| Memory | 24 GB |
+
+### Settings
+
+| Setting | Value |
+| --- | --- |
+| Route counts (target; tables show the actual count per shape) | 22, 50, 100, 200 |
+| Rounds | 1 (router order rotated each round; fresh process per router × workload × round) |
+| Warmup | 500 ms per test (time-based; also calibrates batch size) |
+| Samples | 5 per test per round, ~100 ms each (process.hrtime.bigint) |
+| Reported value | median of per-round medians, op/ms (lookups per millisecond) |
+| Node flags | --expose-gc (gc() before sampling) |
+
+### Package versions
+
+| Package | Version |
+| --- | --- |
+| @prostojs/router | 0.3.6 |
+| find-my-way | 9.10.0 |
+| rou3 | 1.0.0 |
+| hono | 4.13.13 |
+| express | 5.3.0 |
+

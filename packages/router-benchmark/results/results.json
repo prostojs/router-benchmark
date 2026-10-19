@@ -1,154 +1,772 @@
 {
-  "timestamp": "2026-02-27T00:23:12.011Z",
-  "operations": 200000,
-  "tries": 2,
+  "quick": false,
+  "only": null,
+  "environment": {
+    "date": "2026-10-19T11:51:11.304Z",
+    "node": "v24.22.0",
+    "v8": "13.6.233.17-node.57",
+    "os": "Darwin 27.0.0 (darwin arm64)",
+    "cpu": "Apple M4",
+    "cpuCount": 10,
+    "memoryGB": 24,
+    "nodeEnv": ""
+  },
+  "versions": {
+    "@prostojs/router": "0.3.6",
+    "find-my-way": "9.10.0",
+    "rou3": "1.0.0",
+    "hono": "4.13.13",
+    "express": "5.3.0"
+  },
+  "settings": {
+    "rounds": 1,
+    "warmupMs": 500,
+    "samples": 5,
+    "sampleMs": 100,
+    "unit": "op/ms"
+  },
   "variants": {
     "short": {
       "routeCount": 22,
+      "summary": {
+        "Rou3 (compiled)": 135452,
+        "Hono (RegExpRouter)": 56638,
+        "Rou3": 56277,
+        "ProstoRouter": 43488,
+        "FindMyWay": 34096,
+        "Express": 2438
+      },
       "perTest": {
         "All together": {
-          "Express": 2348,
-          "FindMyWay": 22374,
-          "ProstoRouter": 36385,
-          "Rou3": 32242,
-          "Hono (RegExpRouter)": 37863
+          "Rou3 (compiled)": {
+            "median": 135451.77726647988,
+            "roundMin": 135451.77726647988,
+            "roundMax": 135451.77726647988,
+            "sampleCv": 0.009093853229835082,
+            "samples": 5
+          },
+          "Hono (RegExpRouter)": {
+            "median": 56637.87438598753,
+            "roundMin": 56637.87438598753,
+            "roundMax": 56637.87438598753,
+            "sampleCv": 0.001777593514841762,
+            "samples": 5
+          },
+          "Rou3": {
+            "median": 56277.099200958684,
+            "roundMin": 56277.099200958684,
+            "roundMax": 56277.099200958684,
+            "sampleCv": 0.028858622607692157,
+            "samples": 5
+          },
+          "ProstoRouter": {
+            "median": 43488.151347777675,
+            "roundMin": 43488.151347777675,
+            "roundMax": 43488.151347777675,
+            "sampleCv": 0.025203567739443062,
+            "samples": 5
+          },
+          "FindMyWay": {
+            "median": 34096.08486215025,
+            "roundMin": 34096.08486215025,
+            "roundMax": 34096.08486215025,
+            "sampleCv": 0.017787309782497675,
+            "samples": 5
+          },
+          "Express": {
+            "median": 2438.4520777057746,
+            "roundMin": 2438.4520777057746,
+            "roundMax": 2438.4520777057746,
+            "sampleCv": 0.013074613028038303,
+            "samples": 5
+          }
         }
-      },
-      "summary": {
-        "Hono (RegExpRouter)": 37863,
-        "ProstoRouter": 36385,
-        "Rou3": 32242,
-        "FindMyWay": 22374,
-        "Express": 2348
       }
     },
     "long": {
       "routeCount": 22,
+      "summary": {
+        "Rou3 (compiled)": 39335,
+        "FindMyWay": 11090,
+        "ProstoRouter": 9604,
+        "Hono (RegExpRouter)": 8906,
+        "Rou3": 6537,
+        "Express": 1144
+      },
       "perTest": {
         "Short static": {
-          "Express": 3960,
-          "FindMyWay": 21374,
-          "ProstoRouter": 35449,
-          "Rou3": 61430,
-          "Hono (RegExpRouter)": 41855
+          "Rou3 (compiled)": {
+            "median": 154697.81705232998,
+            "roundMin": 154697.81705232998,
+            "roundMax": 154697.81705232998,
+            "sampleCv": 0.0033247565663673305,
+            "samples": 5
+          },
+          "FindMyWay": {
+            "median": 41997.19095685722,
+            "roundMin": 41997.19095685722,
+            "roundMax": 41997.19095685722,
+            "sampleCv": 0.0031710054113902337,
+            "samples": 5
+          },
+          "ProstoRouter": {
+            "median": 62570.50767136546,
+            "roundMin": 62570.50767136546,
+            "roundMax": 62570.50767136546,
+            "sampleCv": 0.00923443953523698,
+            "samples": 5
+          },
+          "Hono (RegExpRouter)": {
+            "median": 57277.34419658281,
+            "roundMin": 57277.34419658281,
+            "roundMax": 57277.34419658281,
+            "sampleCv": 0.0010514537713399903,
+            "samples": 5
+          },
+          "Rou3": {
+            "median": 250380.81403343842,
+            "roundMin": 250380.81403343842,
+            "roundMax": 250380.81403343842,
+            "sampleCv": 0.0008419519854357372,
+            "samples": 5
+          },
+          "Express": {
+            "median": 4176.604140923538,
+            "roundMin": 4176.604140923538,
+            "roundMax": 4176.604140923538,
+            "sampleCv": 0.016460558270045438,
+            "samples": 5
+          }
         },
         "Long static": {
-          "Express": 2110,
-          "FindMyWay": 7471,
-          "ProstoRouter": 39124,
-          "Rou3": 63406,
-          "Hono (RegExpRouter)": 42788
+          "Rou3 (compiled)": {
+            "median": 151101.68863273936,
+            "roundMin": 151101.68863273936,
+            "roundMax": 151101.68863273936,
+            "sampleCv": 0.003729019935668007,
+            "samples": 5
+          },
+          "FindMyWay": {
+            "median": 14232.70176270074,
+            "roundMin": 14232.70176270074,
+            "roundMax": 14232.70176270074,
+            "sampleCv": 0.021080278227591537,
+            "samples": 5
+          },
+          "ProstoRouter": {
+            "median": 47628.51948418805,
+            "roundMin": 47628.51948418805,
+            "roundMax": 47628.51948418805,
+            "sampleCv": 0.005957832016845514,
+            "samples": 5
+          },
+          "Hono (RegExpRouter)": {
+            "median": 57890.984020708274,
+            "roundMin": 57890.984020708274,
+            "roundMax": 57890.984020708274,
+            "sampleCv": 0.0016376392398447855,
+            "samples": 5
+          },
+          "Rou3": {
+            "median": 96880.985059883,
+            "roundMin": 96880.985059883,
+            "roundMax": 96880.985059883,
+            "sampleCv": 0.00032182995886199033,
+            "samples": 5
+          },
+          "Express": {
+            "median": 2030.16994649719,
+            "roundMin": 2030.16994649719,
+            "roundMax": 2030.16994649719,
+            "sampleCv": 0.003501027917875207,
+            "samples": 5
+          }
         },
         "Wildcard": {
-          "Express": 1380,
-          "FindMyWay": 10971,
-          "ProstoRouter": 8977,
-          "Rou3": 8323,
-          "Hono (RegExpRouter)": 11914
+          "Rou3 (compiled)": {
+            "median": 31133.31759335773,
+            "roundMin": 31133.31759335773,
+            "roundMax": 31133.31759335773,
+            "sampleCv": 0.006640257650390816,
+            "samples": 5
+          },
+          "FindMyWay": {
+            "median": 22002.79727641716,
+            "roundMin": 22002.79727641716,
+            "roundMax": 22002.79727641716,
+            "sampleCv": 0.026033298244153586,
+            "samples": 5
+          },
+          "ProstoRouter": {
+            "median": 10561.294392268454,
+            "roundMin": 10561.294392268454,
+            "roundMax": 10561.294392268454,
+            "sampleCv": 0.011553134192582339,
+            "samples": 5
+          },
+          "Hono (RegExpRouter)": {
+            "median": 13168.926382746371,
+            "roundMin": 13168.926382746371,
+            "roundMax": 13168.926382746371,
+            "sampleCv": 0.003036671826006291,
+            "samples": 5
+          },
+          "Rou3": {
+            "median": 6223.46814508859,
+            "roundMin": 6223.46814508859,
+            "roundMax": 6223.46814508859,
+            "sampleCv": 0.06133748002848378,
+            "samples": 5
+          },
+          "Express": {
+            "median": 1337.553610683827,
+            "roundMin": 1337.553610683827,
+            "roundMax": 1337.553610683827,
+            "sampleCv": 0.06315732153166198,
+            "samples": 5
+          }
         },
         "Single param": {
-          "Express": 1853,
-          "FindMyWay": 8531,
-          "ProstoRouter": 9864,
-          "Rou3": 9098,
-          "Hono (RegExpRouter)": 7913
+          "Rou3 (compiled)": {
+            "median": 36554.89683564305,
+            "roundMin": 36554.89683564305,
+            "roundMax": 36554.89683564305,
+            "sampleCv": 0.039688106823334714,
+            "samples": 5
+          },
+          "FindMyWay": {
+            "median": 14875.120307024066,
+            "roundMin": 14875.120307024066,
+            "roundMax": 14875.120307024066,
+            "sampleCv": 0.005399577873197888,
+            "samples": 5
+          },
+          "ProstoRouter": {
+            "median": 10891.28027792475,
+            "roundMin": 10891.28027792475,
+            "roundMax": 10891.28027792475,
+            "sampleCv": 0.010650135776553047,
+            "samples": 5
+          },
+          "Hono (RegExpRouter)": {
+            "median": 8572.330383206669,
+            "roundMin": 8572.330383206669,
+            "roundMax": 8572.330383206669,
+            "sampleCv": 0.006855118467377475,
+            "samples": 5
+          },
+          "Rou3": {
+            "median": 9539.907608750113,
+            "roundMin": 9539.907608750113,
+            "roundMax": 9539.907608750113,
+            "sampleCv": 0.007916735747657111,
+            "samples": 5
+          },
+          "Express": {
+            "median": 1919.7389580225713,
+            "roundMin": 1919.7389580225713,
+            "roundMax": 1919.7389580225713,
+            "sampleCv": 0.018228944824412657,
+            "samples": 5
+          }
         },
         "Param + suffix": {
-          "Express": 1748,
-          "FindMyWay": 7015,
-          "ProstoRouter": 8898,
-          "Rou3": 8078,
-          "Hono (RegExpRouter)": 7810
+          "Rou3 (compiled)": {
+            "median": 35242.295006287895,
+            "roundMin": 35242.295006287895,
+            "roundMax": 35242.295006287895,
+            "sampleCv": 0.005929719128759046,
+            "samples": 5
+          },
+          "FindMyWay": {
+            "median": 12228.212585223217,
+            "roundMin": 12228.212585223217,
+            "roundMax": 12228.212585223217,
+            "sampleCv": 0.007014213672048341,
+            "samples": 5
+          },
+          "ProstoRouter": {
+            "median": 9269.16182557919,
+            "roundMin": 9269.16182557919,
+            "roundMax": 9269.16182557919,
+            "sampleCv": 0.0021112327901207503,
+            "samples": 5
+          },
+          "Hono (RegExpRouter)": {
+            "median": 8526.88358793517,
+            "roundMin": 8526.88358793517,
+            "roundMax": 8526.88358793517,
+            "sampleCv": 0.017906666309365504,
+            "samples": 5
+          },
+          "Rou3": {
+            "median": 8547.825915776275,
+            "roundMin": 8547.825915776275,
+            "roundMax": 8547.825915776275,
+            "sampleCv": 0.0009310943247518069,
+            "samples": 5
+          },
+          "Express": {
+            "median": 1761.4925765861483,
+            "roundMin": 1761.4925765861483,
+            "roundMax": 1761.4925765861483,
+            "sampleCv": 0.012659664002182368,
+            "samples": 5
+          }
         },
         "Param + tasks": {
-          "Express": 1480,
-          "FindMyWay": 6740,
-          "ProstoRouter": 8713,
-          "Rou3": 7938,
-          "Hono (RegExpRouter)": 7748
+          "Rou3 (compiled)": {
+            "median": 34728.22810323473,
+            "roundMin": 34728.22810323473,
+            "roundMax": 34728.22810323473,
+            "sampleCv": 0.004494911945560601,
+            "samples": 5
+          },
+          "FindMyWay": {
+            "median": 11463.948293190288,
+            "roundMin": 11463.948293190288,
+            "roundMax": 11463.948293190288,
+            "sampleCv": 0.009261412483481894,
+            "samples": 5
+          },
+          "ProstoRouter": {
+            "median": 8977.914977107552,
+            "roundMin": 8977.914977107552,
+            "roundMax": 8977.914977107552,
+            "sampleCv": 0.006492163094654067,
+            "samples": 5
+          },
+          "Hono (RegExpRouter)": {
+            "median": 8375.347838167863,
+            "roundMin": 8375.347838167863,
+            "roundMax": 8375.347838167863,
+            "sampleCv": 0.003466946535691338,
+            "samples": 5
+          },
+          "Rou3": {
+            "median": 8672.995970443251,
+            "roundMin": 8672.995970443251,
+            "roundMax": 8672.995970443251,
+            "sampleCv": 0.0017525819158627457,
+            "samples": 5
+          },
+          "Express": {
+            "median": 1399.4575390650118,
+            "roundMin": 1399.4575390650118,
+            "roundMax": 1399.4575390650118,
+            "sampleCv": 0.044663191624745364,
+            "samples": 5
+          }
         },
         "Two params": {
-          "Express": 1192,
-          "FindMyWay": 5413,
-          "ProstoRouter": 8632,
-          "Rou3": 7078,
-          "Hono (RegExpRouter)": 6594
+          "Rou3 (compiled)": {
+            "median": 32998.14099247733,
+            "roundMin": 32998.14099247733,
+            "roundMax": 32998.14099247733,
+            "sampleCv": 0.005259099246575418,
+            "samples": 5
+          },
+          "FindMyWay": {
+            "median": 9259.428695816128,
+            "roundMin": 9259.428695816128,
+            "roundMax": 9259.428695816128,
+            "sampleCv": 0.006902230651989049,
+            "samples": 5
+          },
+          "ProstoRouter": {
+            "median": 8644.276128828358,
+            "roundMin": 8644.276128828358,
+            "roundMax": 8644.276128828358,
+            "sampleCv": 0.03709837816315702,
+            "samples": 5
+          },
+          "Hono (RegExpRouter)": {
+            "median": 7011.887073584082,
+            "roundMin": 7011.887073584082,
+            "roundMax": 7011.887073584082,
+            "sampleCv": 0.007398352235144151,
+            "samples": 5
+          },
+          "Rou3": {
+            "median": 7736.193975552059,
+            "roundMin": 7736.193975552059,
+            "roundMax": 7736.193975552059,
+            "sampleCv": 0.001413832038639323,
+            "samples": 5
+          },
+          "Express": {
+            "median": 1124.0037179285314,
+            "roundMin": 1124.0037179285314,
+            "roundMax": 1124.0037179285314,
+            "sampleCv": 0.008416090260166396,
+            "samples": 5
+          }
         },
         "Two params + suffix": {
-          "Express": 1034,
-          "FindMyWay": 4624,
-          "ProstoRouter": 7883,
-          "Rou3": 6400,
-          "Hono (RegExpRouter)": 6571
+          "Rou3 (compiled)": {
+            "median": 32153.316314183274,
+            "roundMin": 32153.316314183274,
+            "roundMax": 32153.316314183274,
+            "sampleCv": 0.006536374345387077,
+            "samples": 5
+          },
+          "FindMyWay": {
+            "median": 8215.14323071437,
+            "roundMin": 8215.14323071437,
+            "roundMax": 8215.14323071437,
+            "sampleCv": 0.00887228886189457,
+            "samples": 5
+          },
+          "ProstoRouter": {
+            "median": 7669.396246348112,
+            "roundMin": 7669.396246348112,
+            "roundMax": 7669.396246348112,
+            "sampleCv": 0.01252010940252955,
+            "samples": 5
+          },
+          "Hono (RegExpRouter)": {
+            "median": 6960.728006952347,
+            "roundMin": 6960.728006952347,
+            "roundMax": 6960.728006952347,
+            "sampleCv": 0.015007902909585298,
+            "samples": 5
+          },
+          "Rou3": {
+            "median": 7017.099391938106,
+            "roundMin": 7017.099391938106,
+            "roundMax": 7017.099391938106,
+            "sampleCv": 0.0012327541656663057,
+            "samples": 5
+          },
+          "Express": {
+            "median": 1032.905771405382,
+            "roundMin": 1032.905771405382,
+            "roundMax": 1032.905771405382,
+            "sampleCv": 0.01912932619859904,
+            "samples": 5
+          }
         },
         "Four params": {
-          "Express": 800,
-          "FindMyWay": 3725,
-          "ProstoRouter": 6247,
-          "Rou3": 4534,
-          "Hono (RegExpRouter)": 5147
+          "Rou3 (compiled)": {
+            "median": 29278.824258995555,
+            "roundMin": 29278.824258995555,
+            "roundMax": 29278.824258995555,
+            "sampleCv": 0.009086859850424562,
+            "samples": 5
+          },
+          "FindMyWay": {
+            "median": 6924.093074881653,
+            "roundMin": 6924.093074881653,
+            "roundMax": 6924.093074881653,
+            "sampleCv": 0.007597482374223769,
+            "samples": 5
+          },
+          "ProstoRouter": {
+            "median": 5929.353406384468,
+            "roundMin": 5929.353406384468,
+            "roundMax": 5929.353406384468,
+            "sampleCv": 0.0036234794198108642,
+            "samples": 5
+          },
+          "Hono (RegExpRouter)": {
+            "median": 5208.976682348085,
+            "roundMin": 5208.976682348085,
+            "roundMax": 5208.976682348085,
+            "sampleCv": 0.003413703786290753,
+            "samples": 5
+          },
+          "Rou3": {
+            "median": 4462.118903872558,
+            "roundMin": 4462.118903872558,
+            "roundMax": 4462.118903872558,
+            "sampleCv": 0.0020775519125282122,
+            "samples": 5
+          },
+          "Express": {
+            "median": 793.3618830850512,
+            "roundMin": 793.3618830850512,
+            "roundMax": 793.3618830850512,
+            "sampleCv": 0.013621139403566388,
+            "samples": 5
+          }
         },
         "POST with params": {
-          "Express": 761,
-          "FindMyWay": 5058,
-          "ProstoRouter": 7606,
-          "Rou3": 5790,
-          "Hono (RegExpRouter)": 7651
+          "Rou3 (compiled)": {
+            "median": 32381.816665950842,
+            "roundMin": 32381.816665950842,
+            "roundMax": 32381.816665950842,
+            "sampleCv": 0.006656741145114791,
+            "samples": 5
+          },
+          "FindMyWay": {
+            "median": 8941.389904423406,
+            "roundMin": 8941.389904423406,
+            "roundMax": 8941.389904423406,
+            "sampleCv": 0.009574002060025481,
+            "samples": 5
+          },
+          "ProstoRouter": {
+            "median": 7960.768572584495,
+            "roundMin": 7960.768572584495,
+            "roundMax": 7960.768572584495,
+            "sampleCv": 0.023363734748553442,
+            "samples": 5
+          },
+          "Hono (RegExpRouter)": {
+            "median": 8354.290781844968,
+            "roundMin": 8354.290781844968,
+            "roundMax": 8354.290781844968,
+            "sampleCv": 0.007662157278710294,
+            "samples": 5
+          },
+          "Rou3": {
+            "median": 5595.02444839588,
+            "roundMin": 5595.02444839588,
+            "roundMax": 5595.02444839588,
+            "sampleCv": 0.0012324941654666527,
+            "samples": 5
+          },
+          "Express": {
+            "median": 749.704938169593,
+            "roundMin": 749.704938169593,
+            "roundMax": 749.704938169593,
+            "sampleCv": 0.021524516252418222,
+            "samples": 5
+          }
         },
         "PUT with params": {
-          "Express": 853,
-          "FindMyWay": 6583,
-          "ProstoRouter": 8553,
-          "Rou3": 6480,
-          "Hono (RegExpRouter)": 7810
+          "Rou3 (compiled)": {
+            "median": 33007.70179776432,
+            "roundMin": 33007.70179776432,
+            "roundMax": 33007.70179776432,
+            "sampleCv": 0.00977665633978444,
+            "samples": 5
+          },
+          "FindMyWay": {
+            "median": 11224.879363917727,
+            "roundMin": 11224.879363917727,
+            "roundMax": 11224.879363917727,
+            "sampleCv": 0.009484633678673162,
+            "samples": 5
+          },
+          "ProstoRouter": {
+            "median": 8649.089763371148,
+            "roundMin": 8649.089763371148,
+            "roundMax": 8649.089763371148,
+            "sampleCv": 0.01728375115627794,
+            "samples": 5
+          },
+          "Hono (RegExpRouter)": {
+            "median": 8392.5222409233,
+            "roundMin": 8392.5222409233,
+            "roundMax": 8392.5222409233,
+            "sampleCv": 0.0048018037748979656,
+            "samples": 5
+          },
+          "Rou3": {
+            "median": 6205.1120610200605,
+            "roundMin": 6205.1120610200605,
+            "roundMax": 6205.1120610200605,
+            "sampleCv": 0.0043822568202151035,
+            "samples": 5
+          },
+          "Express": {
+            "median": 871.9231325134638,
+            "roundMin": 871.9231325134638,
+            "roundMax": 871.9231325134638,
+            "sampleCv": 0.01229854848811669,
+            "samples": 5
+          }
         },
         "DELETE with params": {
-          "Express": 668,
-          "FindMyWay": 6722,
-          "ProstoRouter": 8548,
-          "Rou3": 6508,
-          "Hono (RegExpRouter)": 7735
+          "Rou3 (compiled)": {
+            "median": 33284.21967830749,
+            "roundMin": 33284.21967830749,
+            "roundMax": 33284.21967830749,
+            "sampleCv": 0.005453247775662396,
+            "samples": 5
+          },
+          "FindMyWay": {
+            "median": 11279.566692458782,
+            "roundMin": 11279.566692458782,
+            "roundMax": 11279.566692458782,
+            "sampleCv": 0.009022988764806953,
+            "samples": 5
+          },
+          "ProstoRouter": {
+            "median": 8856.081014076035,
+            "roundMin": 8856.081014076035,
+            "roundMax": 8856.081014076035,
+            "sampleCv": 0.018181375762344708,
+            "samples": 5
+          },
+          "Hono (RegExpRouter)": {
+            "median": 8362.946960216232,
+            "roundMin": 8362.946960216232,
+            "roundMax": 8362.946960216232,
+            "sampleCv": 0.011578050458907118,
+            "samples": 5
+          },
+          "Rou3": {
+            "median": 6139.073188083813,
+            "roundMin": 6139.073188083813,
+            "roundMax": 6139.073188083813,
+            "sampleCv": 0.0028295700755440706,
+            "samples": 5
+          },
+          "Express": {
+            "median": 662.8547759838876,
+            "roundMin": 662.8547759838876,
+            "roundMax": 662.8547759838876,
+            "sampleCv": 0.007418021336153165,
+            "samples": 5
+          }
         },
         "404 not found": {
-          "Express": 1863,
-          "FindMyWay": 13305,
-          "ProstoRouter": 11066,
-          "Rou3": 10244,
-          "Hono (RegExpRouter)": 30858
+          "Rou3 (compiled)": {
+            "median": 45141.37134100381,
+            "roundMin": 45141.37134100381,
+            "roundMax": 45141.37134100381,
+            "sampleCv": 0.004526840859761501,
+            "samples": 5
+          },
+          "FindMyWay": {
+            "median": 29272.590876090104,
+            "roundMin": 29272.590876090104,
+            "roundMax": 29272.590876090104,
+            "sampleCv": 0.0123482207312485,
+            "samples": 5
+          },
+          "ProstoRouter": {
+            "median": 12863.525391885127,
+            "roundMin": 12863.525391885127,
+            "roundMax": 12863.525391885127,
+            "sampleCv": 0.005031919133671403,
+            "samples": 5
+          },
+          "Hono (RegExpRouter)": {
+            "median": 42297.18001199096,
+            "roundMin": 42297.18001199096,
+            "roundMax": 42297.18001199096,
+            "sampleCv": 0.0015475287624317014,
+            "samples": 5
+          },
+          "Rou3": {
+            "median": 10155.22780082908,
+            "roundMin": 10155.22780082908,
+            "roundMax": 10155.22780082908,
+            "sampleCv": 0.00037831428636933106,
+            "samples": 5
+          },
+          "Express": {
+            "median": 1779.6853180747446,
+            "roundMin": 1779.6853180747446,
+            "roundMax": 1779.6853180747446,
+            "sampleCv": 0.011725339920769745,
+            "samples": 5
+          }
         },
         "All together": {
-          "Express": 1141,
-          "FindMyWay": 6283,
-          "ProstoRouter": 9020,
-          "Rou3": 7157,
-          "Hono (RegExpRouter)": 8250
+          "Rou3 (compiled)": {
+            "median": 39335.08792820393,
+            "roundMin": 39335.08792820393,
+            "roundMax": 39335.08792820393,
+            "sampleCv": 0.0011476620113243113,
+            "samples": 5
+          },
+          "FindMyWay": {
+            "median": 11089.592539557263,
+            "roundMin": 11089.592539557263,
+            "roundMax": 11089.592539557263,
+            "sampleCv": 0.0018151912402344394,
+            "samples": 5
+          },
+          "ProstoRouter": {
+            "median": 9604.35247253535,
+            "roundMin": 9604.35247253535,
+            "roundMax": 9604.35247253535,
+            "sampleCv": 0.002046065767236516,
+            "samples": 5
+          },
+          "Hono (RegExpRouter)": {
+            "median": 8905.781414495457,
+            "roundMin": 8905.781414495457,
+            "roundMax": 8905.781414495457,
+            "sampleCv": 0.03268593429999462,
+            "samples": 5
+          },
+          "Rou3": {
+            "median": 6537.441900471874,
+            "roundMin": 6537.441900471874,
+            "roundMax": 6537.441900471874,
+            "sampleCv": 0.002973886316030308,
+            "samples": 5
+          },
+          "Express": {
+            "median": 1144.453565278431,
+            "roundMin": 1144.453565278431,
+            "roundMax": 1144.453565278431,
+            "sampleCv": 0.014482964842738984,
+            "samples": 5
+          }
         }
-      },
-      "summary": {
-        "ProstoRouter": 9020,
-        "Hono (RegExpRouter)": 8250,
-        "Rou3": 7157,
-        "FindMyWay": 6283,
-        "Express": 1141
       }
     },
     "mixed": {
       "routeCount": 20,
+      "summary": {
+        "Rou3 (compiled)": 56940,
+        "Hono (RegExpRouter)": 53412,
+        "Rou3": 30704,
+        "ProstoRouter": 29171,
+        "FindMyWay": 28068,
+        "Express": 2177
+      },
       "perTest": {
         "All together": {
-          "Express": 2201,
-          "FindMyWay": 16786,
-          "ProstoRouter": 21432,
-          "Rou3": 20828,
-          "Hono (RegExpRouter)": 37617
+          "Rou3 (compiled)": {
+            "median": 56940.28682868854,
+            "roundMin": 56940.28682868854,
+            "roundMax": 56940.28682868854,
+            "sampleCv": 0.0204234242622819,
+            "samples": 5
+          },
+          "Hono (RegExpRouter)": {
+            "median": 53412.027539658775,
+            "roundMin": 53412.027539658775,
+            "roundMax": 53412.027539658775,
+            "sampleCv": 0.0024471603647657817,
+            "samples": 5
+          },
+          "Rou3": {
+            "median": 30703.91737155981,
+            "roundMin": 30703.91737155981,
+            "roundMax": 30703.91737155981,
+            "sampleCv": 0.0032026886411633503,
+            "samples": 5
+          },
+          "ProstoRouter": {
+            "median": 29171.39967720187,
+            "roundMin": 29171.39967720187,
+            "roundMax": 29171.39967720187,
+            "sampleCv": 0.020484595569155273,
+            "samples": 5
+          },
+          "FindMyWay": {
+            "median": 28067.71851004879,
+            "roundMin": 28067.71851004879,
+            "roundMax": 28067.71851004879,
+            "sampleCv": 0.013295773076033858,
+            "samples": 5
+          },
+          "Express": {
+            "median": 2176.582264310894,
+            "roundMin": 2176.582264310894,
+            "roundMax": 2176.582264310894,
+            "sampleCv": 0.013581548795139236,
+            "samples": 5
+          }
         }
-      },
-      "summary": {
-        "Hono (RegExpRouter)": 37617,
-        "ProstoRouter": 21432,
-        "Rou3": 20828,
-        "FindMyWay": 16786,
-        "Express": 2201
       }
     }
   }

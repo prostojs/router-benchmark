@@ -2,7 +2,7 @@
 
 Benchmarks for the [Moost](https://moost.org/) stack — from the router at the foundation, through the HTTP framework, to the full decorator-driven application layer.
 
-**Moost** is built on [Wooks](https://wooks.moost.org/), which uses [@prostojs/router](https://github.com/prostojs/router) under the hood. These benchmarks verify that every layer of the stack performs competitively against established alternatives.
+**Moost** is built on [Wooks](https://wooks.moost.org/), which uses [@prostojs/router](https://github.com/prostojs/router) under the hood. These benchmarks measure every layer of the stack against established alternatives.
 
 ## Benchmarks
 
@@ -25,14 +25,14 @@ The API has 22 routes across three authentication layers, modeled after a typica
 
 | Layer | Routes | What it covers |
 |-------|--------|----------------|
-| **Public** | `GET /health`, `GET /static/*`, `POST /auth/login` | Health checks, static assets (with cache headers), login with Set-Cookie |
-| **Header-auth** (API clients) | `GET/POST/DELETE /api/v1/users/:id`, `/projects/:id`, `/organizations/settings/billing/invoices` | Bearer token validation, param extraction, deep static paths |
-| **Cookie-auth** (browser users) | `GET/PUT/DELETE /api/v1/projects/:projectId/tasks/:taskId`, `/tasks/:taskId/comments`, `/orgs/:orgId/teams/:teamId/projects/:projectId/tasks/:taskId` | Full 20-cookie jar parsing, 1-4 URL params, small and large JSON bodies |
+| **Public** | `GET /`, `GET /health`, `POST /auth/login`, `GET /static/*`, `GET /api/v1/docs/*` | Health checks, static assets and docs (with cache headers), login with Set-Cookie |
+| **Header-auth** (API clients) | `GET /api/v1/users`, `GET /api/v1/users/:userId`, `GET /api/v1/users/:userId/profile`, `GET/POST /api/v1/projects`, `GET/DELETE /api/v1/projects/:projectId`, `GET /api/v1/organizations/settings/billing/invoices` | Bearer token validation, param extraction, deep static paths |
+| **Cookie-auth** (browser users) | `GET /api/v1/projects/:projectId/members`, `GET /api/v1/projects/:projectId/tasks`, `GET/PUT/DELETE /api/v1/projects/:projectId/tasks/:taskId`, `GET/POST /api/v1/projects/:projectId/tasks/:taskId/comments`, `GET /api/v1/orgs/:orgId/teams/:teamId/projects/:projectId/tasks/:taskId`, `GET /api/v1/organizations/settings/billing/payment-methods` | Full 20-cookie jar parsing, 1-4 URL params, small and large JSON bodies |
 
 This exercises what actually matters in production:
 - **Cookie parsing** — every browser request carries ~20 cookies (session, analytics, tracking, consent, feature flags, A/B testing). Most benchmarks skip this entirely.
-- **Auth guards** — real APIs reject bad credentials before processing. Frameworks that parse bodies before checking auth waste CPU on every unauthorized request.
-- **Body parsing** — small JSON (single comment) and large JSON (100-item bulk operation) test different allocation patterns.
+- **Auth guards** — real APIs reject bad credentials before processing. A framework that parses the body before checking auth spends CPU on every unauthorized request. Every server here except NestJS rejects before parsing the body; NestJS parses it first, which is its default behaviour (see the [moost benchmark](packages/moost-benchmark/README.md#methodology)).
+- **Body parsing** — small JSON (single comment) and large JSON (100-item bulk operation, ~25 KB) test different allocation patterns.
 - **Route depth** — from `/health` to `/api/v1/orgs/:orgId/teams/:teamId/projects/:projectId/tasks/:taskId` (4 params, 8 segments).
 - **Cache headers** — static assets and billing pages set different `Cache-Control` policies, adding response header overhead.
 
@@ -48,51 +48,57 @@ Each test case runs independently for the same duration; the headline number com
 | Public/static | 10% | Health checks (monitoring), static asset cache misses, documentation pages |
 | Auth failures | 5% | Expired sessions and tokens — normal operational churn |
 | 404s | 5% | Old bookmarks, crawler noise, mistyped URLs |
-| Bot/scanner | 4% | Large POST bodies with invalid credentials — attack traffic that good frameworks reject early |
+| Bot/scanner | 4% | Large POST bodies with invalid credentials — attack traffic a framework can reject before parsing the body |
 
-This means the headline "avg req/s" number answers: **"how fast would this framework handle a realistic mix of production traffic?"** — not "how fast can it return a string from a trivial GET".
+This means the headline "traffic-mix req/s" number answers: **"how fast would this framework handle a realistic mix of production traffic?"** — not "how fast can it return a string from a trivial GET".
 
 ## Results
+
+The published results are an **indicative estimate from a single round on a laptop**: Apple M4 MacBook Air (fanless), Node.js 24.22, with reduced run settings (HTTP: 1 round, 1 s warmup + 2 s measured per test, 1 s measured in DB mode; router: 1 round, 5 samples; validator: 1 round, 10 samples). Every results file records the environment, the package versions and the settings. Treat differences of a few percent as noise.
 
 ### Router — pure route matching (22 long routes)
 
 ![Router Benchmark](packages/router-benchmark/results/results-long-chart.svg)
 
-ProstoRouter is the fastest on deep enterprise API routes. See [router-benchmark README](packages/router-benchmark/README.md) for full results across short, long, and mixed route shapes at 22–200 routes.
+The compiled rou3 router (`rou3/compiler`) is the fastest on every route shape (about 135k op/ms on short routes, 39k on long, 57k on mixed). ProstoRouter (`@prostojs/router`, used by Wooks and Moost) is mid-pack: 43k op/ms on short routes, 9.6k on long and 29k on mixed; find-my-way is ahead of it on long routes. See the [router-benchmark README](packages/router-benchmark/README.md) for all shapes and the 22–200 route scaling series.
 
 ### Wooks — full HTTP framework
 
 ![Wooks Benchmark](packages/wooks-benchmark/results/results-chart.svg)
 
-Wooks leads on realistic SaaS traffic despite router differences compressing to just 1.5x at the framework level. See [wooks-benchmark README](packages/wooks-benchmark/README.md) for per-test breakdown.
+Fastify has the highest traffic-mix throughput (115,880 req/s). Wooks is 1.08x behind (107,749), followed by Hono (98,364), h3 (86,165) and Express (63,060). Wooks has the highest throughput on the cookie-authenticated GET routes, and the lowest of all five on the large (~25 KB) JSON POST. See the [wooks-benchmark README](packages/wooks-benchmark/README.md) for the per-test breakdown.
 
 ### Moost — DI framework overhead
 
 ![Moost Benchmark](packages/moost-benchmark/results/results-chart.svg)
 
-Moost adds just 6% overhead on top of Wooks — half of NestJS's 10–12% DI cost. See [moost-benchmark README](packages/moost-benchmark/README.md) for detailed overhead analysis.
+The same run also measures the HTTP frameworks without DI. Moost costs 4.8% of traffic-mix throughput on top of Wooks (95,304 vs 100,135 req/s). NestJS costs 32.5% on top of Fastify (72,506 vs 107,403) and 25% on top of Express (47,702 vs 63,585). A large part of NestJS's cost comes from the bot/scanner tests, because NestJS parses the request body before its guards run. See the [moost-benchmark README](packages/moost-benchmark/README.md) for the per-category analysis.
 
-### With Simulated DB — framework differences compress
+### Validator — atscript vs zod
 
-All the benchmarks above measure pure framework overhead with no real work in handlers. But production servers hit databases, caches, and external APIs on every request. How much do framework differences matter then?
+![Validator Benchmark (strip mode)](packages/validator-benchmark/results/strip-chart.svg)
 
-To find out, we added a **real Redis GET/SET/DEL call** to every authenticated handler. Each request makes an actual network round-trip to a local Redis server — simulating the fastest possible database call.
+Same `Order` model, same accept/reject decisions and the same violations detected on invalid input (checked by a pre-flight). Against zod's default `safeParse()`, the atscript validator is about level on a valid order, about 1.4x faster on a valid 50-item order and 2.4–2.8x faster on invalid input. zod's ahead-of-time `z.compile()` is 8–9x faster than atscript on valid input; atscript is still faster on invalid input. atscript is slower when it has to strip unknown properties (2.4x behind `safeParse()`) and on the standalone payment union when its first branch matches. atscript has no compile mode yet; one is planned. See the [validator-benchmark README](packages/validator-benchmark/README.md) and [RESULTS.md](packages/validator-benchmark/RESULTS.md).
+
+### With simulated DB
+
+All the benchmarks above measure pure framework overhead with no real work in handlers. Production servers hit databases, caches and external APIs on every request. To see how much the framework differences matter then, the DB mode adds a **real Redis GET/SET/DEL call** to every authenticated handler: one network round-trip to a local Redis server per request.
 
 #### Wooks — with DB
 
 ![Wooks Benchmark (with DB)](packages/wooks-benchmark/results/results-db-chart.svg)
 
-The fastest-to-slowest gap compresses from **1.5x to 1.3x**. The top four frameworks are within 12% of each other. See [wooks-benchmark README](packages/wooks-benchmark/README.md#with-simulated-db-redis).
+Fastify 78,315 req/s, Wooks 75,499 (1.04x behind), Hono 61,399, h3 60,826, Express 48,914. The fastest-to-slowest ratio narrows from 1.84x to 1.60x. See the [wooks-benchmark README](packages/wooks-benchmark/README.md#with-simulated-db-redis).
 
 #### Moost — with DB
 
 ![Moost Benchmark (with DB)](packages/moost-benchmark/results/results-db-chart.svg)
 
-Moost vs NestJS (Fastify) drops from a **10% gap to just 2.5%**. See [moost-benchmark README](packages/moost-benchmark/README.md#with-simulated-db-redis).
+Moost 68,346 req/s, NestJS (Fastify) 59,632, NestJS (Express) 42,168. Moost's lead over NestJS (Fastify) narrows from 1.31x to 1.15x, and it comes from the bot/scanner tests, where NestJS parses the body before its guards run. Without those two tests NestJS (Fastify) is slightly ahead (about 72k vs 69k req/s); it is faster on the header-auth routes, Moost on 404s. See the [moost-benchmark README](packages/moost-benchmark/README.md#with-simulated-db-redis).
 
 #### The takeaway
 
-A single Redis call already compresses framework differences significantly. In a real application with multiple DB queries, template rendering, and business logic, these differences become negligible. **The framework you enjoy writing code in matters more than the one that wins a benchmark.**
+A single Redis call per request already narrows the framework differences. A real application does more per request (several queries, rendering, business logic), so the share of time spent in the framework gets smaller still. Measure your own workload before choosing a framework for speed.
 
 ## Running
 

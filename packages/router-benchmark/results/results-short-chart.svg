@@ -1,24 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 318" font-family="system-ui,-apple-system,sans-serif" font-size="12">
-<rect width="700" height="318" fill="#2b2d30" rx="8"/>
-<text x="350" y="30" text-anchor="middle" font-size="15" font-weight="600" fill="#e0e0e0">Short Routes (2–5 segments) — 22 routes (avg op/ms)</text>
-<text x="178" y="73" text-anchor="end" fill="#bbb" font-size="13" font-weight="400">Hono (RegExpRouter)</text>
-<rect x="190" y="50" width="410.0" height="36" fill="#5dade2" rx="4" opacity="0.85"/>
-<text x="608" y="73" fill="#ccc" font-size="12" font-weight="600">37.9k op/ms</text>
-<text x="608" y="86" fill="#6a6" font-size="10">fastest</text>
-<text x="178" y="121" text-anchor="end" fill="#bbb" font-size="13" font-weight="400">ProstoRouter</text>
-<rect x="190" y="98" width="394.0" height="36" fill="#58d68d" rx="4" opacity="0.85"/>
-<text x="591.9954573066054" y="121" fill="#ccc" font-size="12" font-weight="600">36.4k op/ms</text>
-<text x="591.9954573066054" y="134" fill="#777" font-size="10">1.0x slower</text>
-<text x="178" y="169" text-anchor="end" fill="#bbb" font-size="13" font-weight="400">Rou3</text>
-<rect x="190" y="146" width="349.1" height="36" fill="#bb8fce" rx="4" opacity="0.85"/>
-<text x="547.1329266038085" y="169" fill="#ccc" font-size="12" font-weight="600">32.2k op/ms</text>
-<text x="547.1329266038085" y="182" fill="#777" font-size="10">1.2x slower</text>
-<text x="178" y="217" text-anchor="end" fill="#bbb" font-size="13" font-weight="400">FindMyWay</text>
-<rect x="190" y="194" width="242.3" height="36" fill="#f4d03f" rx="4" opacity="0.85"/>
-<text x="440.27715711908724" y="217" fill="#ccc" font-size="12" font-weight="600">22.4k op/ms</text>
-<text x="440.27715711908724" y="230" fill="#777" font-size="10">1.7x slower</text>
-<text x="178" y="265" text-anchor="end" fill="#bbb" font-size="13" font-weight="400">Express</text>
-<rect x="190" y="242" width="25.4" height="36" fill="#48c9b0" rx="4" opacity="0.85"/>
-<text x="223.42534928558223" y="265" fill="#ccc" font-size="12" font-weight="600">2.3k op/ms</text>
-<text x="223.42534928558223" y="278" fill="#777" font-size="10">16.1x slower</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 380" font-family="system-ui,-apple-system,sans-serif" font-size="12">
+<rect width="700" height="380" fill="#2b2d30" rx="8"/>
+<text x="350" y="30" text-anchor="middle" font-size="15" font-weight="600" fill="#e0e0e0">Short Routes (2–5 segments) — 22 routes (op/ms)</text>
+<text x="350" y="48" text-anchor="middle" font-size="10" fill="#999">v24.22.0 · Apple M4 · median of 1 rounds · whiskers = min–max round median</text>
+<text x="178" y="87" text-anchor="end" fill="#bbb" font-size="13">Rou3 (compiled)</text>
+<rect x="190" y="64" width="410.0" height="36" fill="#5dade2" rx="4" opacity="0.85"/>
+<text x="608" y="87" fill="#ccc" font-size="12" font-weight="600">135.5k op/ms</text>
+<text x="608" y="100" fill="#777" font-size="10">fastest</text>
+<text x="178" y="135" text-anchor="end" fill="#bbb" font-size="13">Hono (RegExpRouter)</text>
+<rect x="190" y="112" width="171.4" height="36" fill="#58d68d" rx="4" opacity="0.85"/>
+<text x="369.4376065555066" y="135" fill="#ccc" font-size="12" font-weight="600">56.6k op/ms</text>
+<text x="369.4376065555066" y="148" fill="#777" font-size="10">2.39x slower</text>
+<text x="178" y="183" text-anchor="end" fill="#bbb" font-size="13">Rou3</text>
+<rect x="190" y="160" width="170.3" height="36" fill="#bb8fce" rx="4" opacity="0.85"/>
+<text x="368.3455734434506" y="183" fill="#ccc" font-size="12" font-weight="600">56.3k op/ms</text>
+<text x="368.3455734434506" y="196" fill="#777" font-size="10">2.41x slower</text>
+<text x="178" y="231" text-anchor="end" fill="#bbb" font-size="13">ProstoRouter</text>
+<rect x="190" y="208" width="131.6" height="36" fill="#f4d03f" rx="4" opacity="0.85"/>
+<text x="329.63461131640133" y="231" fill="#ccc" font-size="12" font-weight="600">43.5k op/ms</text>
+<text x="329.63461131640133" y="244" fill="#777" font-size="10">3.11x slower</text>
+<text x="178" y="279" text-anchor="end" fill="#bbb" font-size="13">FindMyWay</text>
+<rect x="190" y="256" width="103.2" height="36" fill="#48c9b0" rx="4" opacity="0.85"/>
+<text x="301.20569486496555" y="279" fill="#ccc" font-size="12" font-weight="600">34.1k op/ms</text>
+<text x="301.20569486496555" y="292" fill="#777" font-size="10">3.97x slower</text>
+<text x="178" y="327" text-anchor="end" fill="#bbb" font-size="13">Express</text>
+<rect x="190" y="304" width="7.4" height="36" fill="#85c1e9" rx="4" opacity="0.85"/>
+<text x="205.38096887346475" y="327" fill="#ccc" font-size="12" font-weight="600">2.4k op/ms</text>
+<text x="205.38096887346475" y="340" fill="#777" font-size="10">55.55x slower</text>
 </svg>

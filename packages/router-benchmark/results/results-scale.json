@@ -1,112 +1,503 @@
 {
-  "timestamp": "2026-02-27T00:24:12.887Z",
-  "operations": 500000,
-  "tries": 5,
-  "routeCounts": [
-    22,
-    50,
-    100,
-    200
-  ],
+  "quick": false,
+  "only": null,
+  "environment": {
+    "date": "2026-10-19T11:52:46.847Z",
+    "node": "v24.22.0",
+    "v8": "13.6.233.17-node.57",
+    "os": "Darwin 27.0.0 (darwin arm64)",
+    "cpu": "Apple M4",
+    "cpuCount": 10,
+    "memoryGB": 24,
+    "nodeEnv": ""
+  },
+  "versions": {
+    "@prostojs/router": "0.3.6",
+    "find-my-way": "9.10.0",
+    "rou3": "1.0.0",
+    "hono": "4.13.13",
+    "express": "5.3.0"
+  },
+  "settings": {
+    "rounds": 1,
+    "warmupMs": 500,
+    "samples": 5,
+    "sampleMs": 100,
+    "unit": "op/ms",
+    "routeCounts": [
+      22,
+      50,
+      100,
+      200
+    ]
+  },
   "variants": {
     "short": {
-      "Express": {
-        "22": 2393,
-        "50": 994,
-        "100": 654,
-        "200": 295
+      "prosto": {
+        "name": "ProstoRouter",
+        "points": {
+          "22": {
+            "median": 43846,
+            "min": 43846,
+            "max": 43846
+          },
+          "50": {
+            "median": 13815,
+            "min": 13815,
+            "max": 13815
+          },
+          "100": {
+            "median": 14018,
+            "min": 14018,
+            "max": 14018
+          },
+          "200": {
+            "median": 12457,
+            "min": 12457,
+            "max": 12457
+          }
+        }
       },
-      "FindMyWay": {
-        "22": 29182,
-        "50": 13038,
-        "100": 13571,
-        "200": 10804
+      "find-my-way": {
+        "name": "FindMyWay",
+        "points": {
+          "22": {
+            "median": 35058,
+            "min": 35058,
+            "max": 35058
+          },
+          "50": {
+            "median": 19641,
+            "min": 19641,
+            "max": 19641
+          },
+          "100": {
+            "median": 19711,
+            "min": 19711,
+            "max": 19711
+          },
+          "200": {
+            "median": 14889,
+            "min": 14889,
+            "max": 14889
+          }
+        }
       },
-      "ProstoRouter": {
-        "22": 44665,
-        "50": 14411,
-        "100": 10855,
-        "200": 9400
+      "rou3": {
+        "name": "Rou3",
+        "points": {
+          "22": {
+            "median": 54610,
+            "min": 54610,
+            "max": 54610
+          },
+          "50": {
+            "median": 19960,
+            "min": 19960,
+            "max": 19960
+          },
+          "100": {
+            "median": 18345,
+            "min": 18345,
+            "max": 18345
+          },
+          "200": {
+            "median": 14981,
+            "min": 14981,
+            "max": 14981
+          }
+        }
       },
-      "Rou3": {
-        "22": 38861,
-        "50": 17533,
-        "100": 12495,
-        "200": 10481
+      "rou3-compiled": {
+        "name": "Rou3 (compiled)",
+        "points": {
+          "22": {
+            "median": 136846,
+            "min": 136846,
+            "max": 136846
+          },
+          "50": {
+            "median": 39929,
+            "min": 39929,
+            "max": 39929
+          },
+          "100": {
+            "median": 39308,
+            "min": 39308,
+            "max": 39308
+          },
+          "200": {
+            "median": 38184,
+            "min": 38184,
+            "max": 38184
+          }
+        }
       },
-      "Hono (RegExpRouter)": {
-        "22": 42409,
-        "50": 12525,
-        "100": 10162,
-        "200": 6627
+      "hono": {
+        "name": "Hono",
+        "points": {
+          "22": {
+            "median": 56849,
+            "min": 56849,
+            "max": 56849,
+            "backend": "RegExpRouter"
+          },
+          "50": {
+            "median": 13751,
+            "min": 13751,
+            "max": 13751,
+            "backend": "RegExpRouter"
+          },
+          "100": {
+            "median": 11226,
+            "min": 11226,
+            "max": 11226,
+            "backend": "RegExpRouter"
+          },
+          "200": {
+            "median": 6990,
+            "min": 6990,
+            "max": 6990,
+            "backend": "RegExpRouter"
+          }
+        }
+      },
+      "express": {
+        "name": "Express",
+        "points": {
+          "22": {
+            "median": 2384,
+            "min": 2384,
+            "max": 2384
+          },
+          "50": {
+            "median": 970,
+            "min": 970,
+            "max": 970
+          },
+          "100": {
+            "median": 637,
+            "min": 637,
+            "max": 637
+          },
+          "200": {
+            "median": 297,
+            "min": 297,
+            "max": 297
+          }
+        }
       }
     },
     "long": {
-      "Express": {
-        "22": 1122,
-        "50": 1038,
-        "100": 922,
-        "200": 737
+      "prosto": {
+        "name": "ProstoRouter",
+        "points": {
+          "22": {
+            "median": 8794,
+            "min": 8794,
+            "max": 8794
+          },
+          "50": {
+            "median": 7739,
+            "min": 7739,
+            "max": 7739
+          },
+          "100": {
+            "median": 6421,
+            "min": 6421,
+            "max": 6421
+          },
+          "200": {
+            "median": 5167,
+            "min": 5167,
+            "max": 5167
+          }
+        }
       },
-      "FindMyWay": {
-        "22": 6193,
-        "50": 6177,
-        "100": 5889,
-        "200": 6022
+      "find-my-way": {
+        "name": "FindMyWay",
+        "points": {
+          "22": {
+            "median": 10816,
+            "min": 10816,
+            "max": 10816
+          },
+          "50": {
+            "median": 10639,
+            "min": 10639,
+            "max": 10639
+          },
+          "100": {
+            "median": 10479,
+            "min": 10479,
+            "max": 10479
+          },
+          "200": {
+            "median": 10540,
+            "min": 10540,
+            "max": 10540
+          }
+        }
       },
-      "ProstoRouter": {
-        "22": 8600,
-        "50": 7562,
-        "100": 6136,
-        "200": 4158
+      "rou3": {
+        "name": "Rou3",
+        "points": {
+          "22": {
+            "median": 4877,
+            "min": 4877,
+            "max": 4877
+          },
+          "50": {
+            "median": 6733,
+            "min": 6733,
+            "max": 6733
+          },
+          "100": {
+            "median": 4868,
+            "min": 4868,
+            "max": 4868
+          },
+          "200": {
+            "median": 6738,
+            "min": 6738,
+            "max": 6738
+          }
+        }
       },
-      "Rou3": {
-        "22": 6838,
-        "50": 6735,
-        "100": 6834,
-        "200": 6744
+      "rou3-compiled": {
+        "name": "Rou3 (compiled)",
+        "points": {
+          "22": {
+            "median": 37150,
+            "min": 37150,
+            "max": 37150
+          },
+          "50": {
+            "median": 29886,
+            "min": 29886,
+            "max": 29886
+          },
+          "100": {
+            "median": 30720,
+            "min": 30720,
+            "max": 30720
+          },
+          "200": {
+            "median": 30924,
+            "min": 30924,
+            "max": 30924
+          }
+        }
       },
-      "Hono (RegExpRouter)": {
-        "22": 8250,
-        "50": 7180
+      "hono": {
+        "name": "Hono",
+        "points": {
+          "22": {
+            "median": 8894,
+            "min": 8894,
+            "max": 8894,
+            "backend": "RegExpRouter"
+          },
+          "50": {
+            "median": 7505,
+            "min": 7505,
+            "max": 7505,
+            "backend": "RegExpRouter"
+          },
+          "100": {
+            "median": 4505,
+            "min": 4505,
+            "max": 4505,
+            "backend": "TrieRouter"
+          },
+          "200": {
+            "median": 4521,
+            "min": 4521,
+            "max": 4521,
+            "backend": "TrieRouter"
+          }
+        }
       },
-      "Hono (TrieRouter)": {
-        "100": 3624,
-        "200": 3640
+      "express": {
+        "name": "Express",
+        "points": {
+          "22": {
+            "median": 1131,
+            "min": 1131,
+            "max": 1131
+          },
+          "50": {
+            "median": 1059,
+            "min": 1059,
+            "max": 1059
+          },
+          "100": {
+            "median": 937,
+            "min": 937,
+            "max": 937
+          },
+          "200": {
+            "median": 697,
+            "min": 697,
+            "max": 697
+          }
+        }
       }
     },
     "mixed": {
-      "Express": {
-        "20": 2246,
-        "48": 1026,
-        "98": 591,
-        "198": 347
+      "prosto": {
+        "name": "ProstoRouter",
+        "points": {
+          "20": {
+            "median": 29220,
+            "min": 29220,
+            "max": 29220
+          },
+          "48": {
+            "median": 11505,
+            "min": 11505,
+            "max": 11505
+          },
+          "98": {
+            "median": 9366,
+            "min": 9366,
+            "max": 9366
+          },
+          "198": {
+            "median": 9004,
+            "min": 9004,
+            "max": 9004
+          }
+        }
       },
-      "FindMyWay": {
-        "20": 18218,
-        "48": 9924,
-        "98": 9350,
-        "198": 9194
+      "find-my-way": {
+        "name": "FindMyWay",
+        "points": {
+          "20": {
+            "median": 28315,
+            "min": 28315,
+            "max": 28315
+          },
+          "48": {
+            "median": 15967,
+            "min": 15967,
+            "max": 15967
+          },
+          "98": {
+            "median": 14542,
+            "min": 14542,
+            "max": 14542
+          },
+          "198": {
+            "median": 14230,
+            "min": 14230,
+            "max": 14230
+          }
+        }
       },
-      "ProstoRouter": {
-        "20": 21767,
-        "48": 10680,
-        "98": 8332,
-        "198": 7895
+      "rou3": {
+        "name": "Rou3",
+        "points": {
+          "20": {
+            "median": 30839,
+            "min": 30839,
+            "max": 30839
+          },
+          "48": {
+            "median": 15834,
+            "min": 15834,
+            "max": 15834
+          },
+          "98": {
+            "median": 11981,
+            "min": 11981,
+            "max": 11981
+          },
+          "198": {
+            "median": 10736,
+            "min": 10736,
+            "max": 10736
+          }
+        }
       },
-      "Rou3": {
-        "20": 19802,
-        "48": 12028,
-        "98": 5873,
-        "198": 6567
+      "rou3-compiled": {
+        "name": "Rou3 (compiled)",
+        "points": {
+          "20": {
+            "median": 57038,
+            "min": 57038,
+            "max": 57038
+          },
+          "48": {
+            "median": 41001,
+            "min": 41001,
+            "max": 41001
+          },
+          "98": {
+            "median": 36674,
+            "min": 36674,
+            "max": 36674
+          },
+          "198": {
+            "median": 36419,
+            "min": 36419,
+            "max": 36419
+          }
+        }
       },
-      "Hono (RegExpRouter)": {
-        "20": 35978,
-        "48": 13647,
-        "98": 7257
+      "hono": {
+        "name": "Hono",
+        "points": {
+          "20": {
+            "median": 52955,
+            "min": 52955,
+            "max": 52955,
+            "backend": "RegExpRouter"
+          },
+          "48": {
+            "median": 15128,
+            "min": 15128,
+            "max": 15128,
+            "backend": "RegExpRouter"
+          },
+          "98": {
+            "median": 7801,
+            "min": 7801,
+            "max": 7801,
+            "backend": "RegExpRouter"
+          },
+          "198": {
+            "median": 4072,
+            "min": 4072,
+            "max": 4072,
+            "backend": "TrieRouter"
+          }
+        }
       },
-      "Hono (TrieRouter)": {
-        "198": 3462
+      "express": {
+        "name": "Express",
+        "points": {
+          "20": {
+            "median": 2206,
+            "min": 2206,
+            "max": 2206
+          },
+          "48": {
+            "median": 949,
+            "min": 949,
+            "max": 949
+          },
+          "98": {
+            "median": 601,
+            "min": 601,
+            "max": 601
+          },
+          "198": {
+            "median": 286,
+            "min": 286,
+            "max": 286
+          }
+        }
       }
     }
   }

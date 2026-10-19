@@ -37,65 +37,69 @@ Each server is written the way a competent user of that framework would write it
 
 So every framework rejects unauthorized requests **without parsing the body**.
 
-## Key Insight: Routing Doesn't Matter Much in Practice
+## Routing Is a Small Part of the Cost
 
-The [router benchmark](../router-benchmark/) shows **up to 16x differences** between the fastest and slowest routers (ProstoRouter 38k vs Express 2k op/ms). But in this full framework benchmark, the gap compresses to just **1.5x** (Wooks 70k vs Express 47k req/s).
+The [router benchmark](../router-benchmark/) shows differences of up to 56x between the fastest and slowest routers (compiled rou3 135k vs Express 2.4k op/ms on short routes). In this full framework benchmark the fastest-to-slowest ratio is **1.84x** (Fastify vs Express traffic-mix throughput).
 
-Why? Because routing is a tiny fraction of what a real HTTP server does. The rest — TCP handling, HTTP parsing, header inspection, cookie parsing, body deserialization, response building — dominates the total cost. A router that's 4x faster than another might save microseconds per request, but those microseconds are dwarfed by the milliseconds spent parsing a 20-cookie jar or deserializing a JSON body.
+Routing is a small fraction of what an HTTP server does per request. TCP handling, HTTP parsing, header inspection, cookie parsing, body deserialization and response building make up most of the cost. A lookup takes tens of nanoseconds in most of the routers tested (ProstoRouter: about 23 ns on short routes, compiled rou3: about 7 ns), and under a microsecond even in Express. A request served at 100k req/s takes about 10 µs. A router that is 3x faster than another saves tens of nanoseconds per request.
 
-This is why **framework architecture matters more than raw router speed**.
+So framework architecture matters more than raw router speed. For example, Wooks' router (ProstoRouter) is 3.1x behind compiled rou3 on short routes, yet Wooks has higher traffic-mix throughput than h3, which uses rou3.
 
 ## Results
 
-See [RESULTS.md](RESULTS.md) for the latest results.
+See [RESULTS.md](RESULTS.md) for the full results, including per-test numbers and p99 latency. Indicative estimate, single round on a laptop: Apple M4 MacBook Air (fanless), Node.js 24.22, 1 round of 1 s warmup + 2 s measured per test. Treat differences of a few percent as noise.
 
 ![Summary](results/results-chart.svg)
 
-| Framework | avg req/s | speed |
-|-----------|----------|-------|
-| Wooks | 70,332 | fastest |
-| Fastify | 68,273 | 1.0x slower |
-| h3 | 64,860 | 1.1x slower |
-| Hono | 59,466 | 1.2x slower |
-| Express | 47,147 | 1.5x slower |
+| Framework | traffic-mix req/s | relative |
+|-----------|----------:|-------|
+| Fastify | 115,880 | fastest |
+| Wooks | 107,749 | 1.08x slower |
+| Hono | 98,364 | 1.18x slower |
+| h3 | 86,165 | 1.34x slower |
+| Express | 63,060 | 1.84x slower |
 
-### Where Wooks Wins
+### Where Wooks Leads
 
-**Cookie-auth reads (42% of traffic)** — the dominant workload in any SaaS app. Wooks handles cookie-authenticated GET requests at ~82k req/s, compared to Fastify's ~73k and h3/Hono's ~65k. This is where Wooks' lazy cookie parsing pays off — cookies are only parsed when accessed, not on every request.
+**Cookie-auth reads (42% of traffic)** — the dominant workload in a browser-facing SaaS app. Wooks handles the three cookie-authenticated GET tests at 157–166k req/s, 9–14% ahead of Fastify (143–147k) and well ahead of Hono (117–120k), h3 (~100–105k) and Express (64–70k). Wooks parses cookies lazily: the cookie header is only parsed when a handler reads a cookie.
 
-**Early auth rejection** — when a request arrives with a large JSON body but invalid credentials, Wooks rejects it at ~34k req/s without ever parsing the body. Fastify and Express parse the body first and only then check auth, dropping to ~9k req/s. h3 also rejects early (~39k). This is 3–4x faster on attack traffic.
+### Where Wooks Trails
 
-### Where Others Win
+**Large JSON body** — on the 100-item (~25 KB) POST, Wooks is the slowest of the five at 9,380 req/s; the others reach 12,500–13,900 (Fastify 12,658). This test has only 2% weight, but because the headline is a harmonic mean, slow tests pull it down hard: without this test Wooks and Fastify are level (both about 143k req/s).
 
-**Static routes and auth failures** — Fastify leads on simple GETs without cookies (~88k) and 404s (~86k), thanks to its highly optimized find-my-way trie and fast error handling.
+**Auth failures (401)** — Fastify (199–201k) and Hono (167–169k) are faster than Wooks (142–150k). Wooks is ahead of Express (92–105k) and h3 (~79k).
 
-**Body parsing** — h3 has the fastest JSON body parsing (~57–70k on small POSTs vs ~47–56k for Wooks/Fastify). This is likely due to h3's minimal overhead and direct body reading.
+**404s** — Fastify (192k) is ahead of Wooks (170–172k); Hono is ahead on the short 404 and level on the deep one. h3 (82–84k) and Express (99–102k) are behind.
 
-### What's Equal
+**Login (set-cookie)** — Fastify 112,849 vs Wooks 96,806; Wooks is ahead of h3, Hono and Express.
 
-**Large body parsing** — all frameworks converge at ~9–11k req/s for 100-item JSON payloads. At this point, `JSON.parse()` itself is the bottleneck, and no framework can optimize around it.
+**Small JSON bodies, static and header-auth routes** — Fastify is ahead of Wooks by 2–7% on most of these, by 13% on the deep wildcard route and by 20% on the header-auth small POST.
+
+### Early auth rejection
+
+Every server here checks auth before parsing the body, so large POST bodies with bad credentials are rejected without parsing. On those two tests Fastify is the fastest (79–84k req/s), followed by Wooks and Hono (66–69k), Express (52–57k) and h3 (47–49k).
 
 ## With Simulated DB (Redis)
 
-What happens when handlers do real work? In production, every authenticated request hits a database. We added a Redis GET/SET/DEL call to every authenticated handler to simulate this — each request makes a real network round-trip to a local Redis server.
+What happens when handlers do real work? In production, every authenticated request hits a database. The DB mode adds a Redis GET/SET/DEL call to every authenticated handler — each request makes a real network round-trip to a local Redis server. (Single round, 1 s warmup + 1 s measured per test.)
 
 See [RESULTS-DB.md](RESULTS-DB.md) for the full breakdown.
 
 ![Summary (with DB)](results/results-db-chart.svg)
 
-| Framework | avg req/s | speed |
-|-----------|----------|-------|
-| Wooks | 50,854 | fastest |
-| Fastify | 49,879 | 1.0x slower |
-| h3 | 47,575 | 1.1x slower |
-| Hono | 45,542 | 1.1x slower |
-| Express | 37,868 | 1.3x slower |
+| Framework | traffic-mix req/s | relative |
+|-----------|----------:|-------|
+| Fastify | 78,315 | fastest |
+| Wooks | 75,499 | 1.04x slower |
+| Hono | 61,399 | 1.28x slower |
+| h3 | 60,826 | 1.29x slower |
+| Express | 48,914 | 1.60x slower |
 
-### The Gap Compresses
+### The Gap Narrows
 
-Without DB calls, the fastest-to-slowest gap is **1.5x** (Wooks 70k vs Express 47k). With a single Redis call per authenticated request, it compresses to **1.3x** (Wooks 51k vs Express 38k). The top four frameworks (Wooks, Fastify, h3, Hono) are now within **12%** of each other.
+Without DB calls, the fastest-to-slowest ratio is **1.84x**; with one Redis call per authenticated request it is **1.60x**, and Wooks is 4% behind Fastify instead of 8%. With the DB call, Wooks and Fastify are level on the cookie-auth reads, Wooks is ahead on the static and wildcard routes and on 404s, and Wooks is still the slowest on the large-body POST.
 
-The more real server-side processing you add — database queries, cache lookups, business logic, external API calls — the more these framework differences compress. In a real application with multiple DB queries, template rendering, and I/O-bound work per request, the framework overhead becomes negligible. **Choose your framework for developer experience, not for benchmarks.**
+The more real work each request does — database queries, cache lookups, business logic, external API calls — the smaller the share of time spent in the framework. Measure your own workload before choosing a framework for speed.
 
 ## Methodology
 
@@ -103,7 +107,7 @@ The more real server-side processing you add — database queries, cache lookups
 - Handlers are synchronous in pure mode (no per-request Promise/microtask that is not the framework's own cost); only `--db` mode returns a promise for the Redis round-trip. Handlers that read the body themselves (Wooks, h3) stay `async`.
 - The load generator ([autocannon](https://github.com/mcollina/autocannon), 100 connections, pipelining 10) runs in the orchestrator process, which does nothing else during a measurement.
 - **Pre-flight equivalence check** on every server start: each test (plus two invalid-body checks) is sent once and status, body and relevant headers are compared with the expected values; any mismatch aborts the run.
-- Per test: **2 s warmup** (discarded) + **5 s measured**; **3 rounds** with the framework order rotated; the per-test value is the **median** over rounds (min–max and CV are reported).
+- Per test (defaults): **2 s warmup** (discarded) + **5 s measured**; **3 rounds** with the framework order rotated (the published results used a reduced run: 1 round, 1 s warmup + 2 s measured, 1 s measured in DB mode); the per-test value is the **median** over rounds (min–max and CV are reported).
 - **Drain between runs:** autocannon stops by destroying its sockets, possibly mid-request. After every run the orchestrator asks the server process (over its IPC channel, never during a measurement) to report once all client connections are closed; if any are still open after 5 s the run aborts.
 - Any measured run with more than 0.1% unexpected status codes / socket errors is marked **INVALID** and flagged in the results.
 - The headline number is the **traffic-mix throughput**: the weighted *harmonic* mean of the per-test medians using the traffic weights in the [root README](../../README.md#traffic-distribution) — i.e. the req/s of a server receiving that request mix. (A weighted arithmetic mean of rates would over-weight cheap requests; it is still shown for reference.)
