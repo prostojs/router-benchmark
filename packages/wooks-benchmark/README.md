@@ -8,8 +8,8 @@ A benchmark comparing full HTTP request handling for Node.js frameworks, using a
 |-----------|--------|-------------|
 | [Wooks](https://wooks.moost.org/) | @prostojs/router | Composable HTTP framework with lazy context |
 | [Fastify](https://fastify.dev/) | find-my-way | Performance-focused framework with schema validation |
-| [h3](https://h3.unjs.io/) | rou3 | Minimal HTTP framework (Nitro/Nuxt) |
-| [Hono](https://hono.dev/) | RegExpRouter / TrieRouter | Ultralight, multi-runtime framework |
+| [h3](https://h3.dev/) v2 | rou3 | Minimal web-standard HTTP framework, served via its own `serve()` (srvx) |
+| [Hono](https://hono.dev/) | SmartRouter (RegExpRouter / TrieRouter) | Ultralight, multi-runtime framework, via `@hono/node-server` |
 | [Express](https://expressjs.com/) | path-to-regexp | The original Node.js framework (baseline) |
 
 ## What This Measures
@@ -23,7 +23,19 @@ Unlike the [router benchmark](../router-benchmark/), which isolates pure route m
 - JSON body parsing (small and large payloads)
 - Response serialization with cache headers
 
-Each framework implements the same 21-route project management API with identical behavior — same auth logic, same cookie parsing, same response bodies.
+Each framework implements the same 22-route project management API with identical behavior — same status codes, response bodies, `Cache-Control`/`Set-Cookie` headers, auth checks, cookie parsing and JSON body parsing + validation (non-object or malformed bodies → 400). An automated pre-flight check verifies this for every server before it is measured.
+
+Each server is written the way a competent user of that framework would write it:
+
+| Framework | Auth | Body parsing / validation |
+|-----------|------|---------------------------|
+| Wooks | composable called first in the handler | `useBody().parseBody()` after auth |
+| Fastify | per-route `onRequest` hook (runs before the content-type parser) | built-in parser + JSON schema `{ type: 'object' }` |
+| h3 | per-route middleware | `readBody()` in the handler |
+| Hono | per-route middleware | built-in `validator('json')` after the auth middleware |
+| Express | per-route middleware | `express.json()` placed after the auth middleware |
+
+So every framework rejects unauthorized requests **without parsing the body**.
 
 ## Key Insight: Routing Doesn't Matter Much in Practice
 
@@ -87,15 +99,21 @@ The more real server-side processing you add — database queries, cache lookups
 
 ## Methodology
 
-- Benchmark tool: [autocannon](https://github.com/mcollina/autocannon) with 100 connections, 10 pipelining
-- Each test runs independently for 0.5s
-- The headline "avg req/s" is a **weighted average** reflecting realistic SaaS traffic (see [root README](../../README.md#traffic-distribution) for the distribution)
-- Each framework runs in a separate child process to avoid interference
+- Every framework server runs in its **own child process** (`NODE_ENV=production`, logging disabled, bound to 127.0.0.1), started fresh for each round and killed afterwards — one server at a time.
+- The load generator ([autocannon](https://github.com/mcollina/autocannon), 100 connections, pipelining 10) runs in the orchestrator process, which does nothing else during a measurement.
+- **Pre-flight equivalence check** on every server start: each test (plus two invalid-body checks) is sent once and status, body and relevant headers are compared with the expected values; any mismatch aborts the run.
+- Per test: **2 s warmup** (discarded) + **5 s measured**; **3 rounds** with the framework order rotated; the per-test value is the **median** over rounds (min–max and CV are reported).
+- Any measured run with more than 0.1% unexpected status codes / socket errors is marked **INVALID** and flagged in the results.
+- The headline number is the **traffic-mix throughput**: the weighted *harmonic* mean of the per-test medians using the traffic weights in the [root README](../../README.md#traffic-distribution) — i.e. the req/s of a server receiving that request mix. (A weighted arithmetic mean of rates would over-weight cheap requests; it is still shown for reference.)
+- Results files record Node.js version, CPU, OS, the exact package versions and all run settings.
+
+All settings are configurable: `--warmup <s> --duration <s> --rounds <n> --connections <n> --pipelining <n> --workers <n> --only wooks,fastify --quick` (or `BENCH_*` env vars). `--quick` is a smoke test (1 s per test, 1 round) — its numbers are not meaningful.
 
 ## Running
 
 ```bash
 pnpm install
-pnpm bench:wooks        # pure framework overhead
-pnpm bench:wooks:db     # with simulated Redis DB calls (requires local Redis)
+pnpm bench:wooks        # pure framework overhead (~40 min)
+pnpm bench:wooks:db     # with simulated Redis DB calls (requires Redis on 127.0.0.1:6379; ~40 min)
+pnpm --filter wooks-benchmark quick   # smoke test (~3 min, numbers not meaningful)
 ```

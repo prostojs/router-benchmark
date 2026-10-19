@@ -7,10 +7,10 @@
     "bench:router:scale": "pnpm --filter router-benchmark scale",
     "bench:wooks": "pnpm --filter wooks-benchmark start",
     "bench:wooks:db": "pnpm --filter wooks-benchmark start:db",
-    "bench:wooks:dev": "pnpm --filter wooks-benchmark dev",
-    "bench:moost": "pnpm --filter moost-benchmark start -- 1",
-    "bench:moost:db": "pnpm --filter moost-benchmark start:db -- 1",
-    "bench:all": "pnpm bench:router && pnpm bench:wooks && pnpm bench:moost"
+    "bench:moost": "pnpm --filter moost-benchmark start",
+    "bench:moost:db": "pnpm --filter moost-benchmark start:db",
+    "bench:all": "pnpm bench:router && pnpm bench:router:scale && pnpm bench:wooks && pnpm bench:moost",
+    "smoke": "pnpm --filter router-benchmark start --quick && pnpm --filter router-benchmark scale --quick && pnpm --filter wooks-benchmark quick && pnpm --filter moost-benchmark quick"
   },
   "repository": {
     "type": "git",
@@ -21,7 +21,6 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "@nestjs/core",
-      "@prostojs/dye",
       "esbuild"
     ]
   }

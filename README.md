@@ -8,9 +8,9 @@ Benchmarks for the [Moost](https://moost.org/) stack — from the router at the 
 
 | Benchmark | What it tests | Compares against |
 |-----------|---------------|------------------|
-| [router-benchmark](packages/router-benchmark/) | URI route matching + param extraction | find-my-way (Fastify), Rou3, Hono, Express |
-| [wooks-benchmark](packages/wooks-benchmark/) | Full HTTP request handling | Fastify, Express, Hono, H3 |
-| [moost-benchmark](packages/moost-benchmark/) | Decorator-based framework overhead | NestJS |
+| [router-benchmark](packages/router-benchmark/) | URI route matching + param extraction | find-my-way (Fastify), rou3 (h3; plain and compiled), Hono SmartRouter, Express |
+| [wooks-benchmark](packages/wooks-benchmark/) | Full HTTP request handling | Fastify, Express, Hono, h3 |
+| [moost-benchmark](packages/moost-benchmark/) | Decorator-based framework overhead | NestJS (Express and Fastify platforms) |
 
 ## Why These Routes?
 
@@ -20,7 +20,7 @@ These benchmarks model a **real enterprise SaaS application** (project managemen
 
 ### Route Design
 
-The API has 21 routes across three authentication layers, modeled after a typical project management tool:
+The API has 22 routes across three authentication layers, modeled after a typical project management tool:
 
 | Layer | Routes | What it covers |
 |-------|--------|----------------|
@@ -37,7 +37,7 @@ This exercises what actually matters in production:
 
 ### Traffic Distribution
 
-Each test case runs independently for the same duration, but the **weighted average** reflects realistic SaaS traffic proportions:
+Each test case runs independently for the same duration; the headline number combines them with these traffic weights as a **weighted harmonic mean** — the throughput of a server receiving this request mix (an arithmetic mean of rates would over-weight the cheap requests):
 
 | Category | Weight | Rationale |
 |----------|--------|-----------|
@@ -110,6 +110,13 @@ pnpm bench:wooks:db    # with simulated Redis DB calls
 pnpm bench:moost
 pnpm bench:moost:db    # with simulated Redis DB calls
 
-# All benchmarks
+# All benchmarks (router + scale + wooks + moost, ~90 min)
 pnpm bench:all
+
+# Smoke test of everything (minutes; numbers not meaningful)
+pnpm smoke
 ```
+
+Smoke (`--quick`) results are written to a git-ignored `.quick/` directory inside each package, never over the published results.
+
+All benchmark dependencies are pinned to exact versions from the npm registry; the versions, Node.js version, CPU, OS and run settings are written into every results file. Each package README has a **Methodology** section.

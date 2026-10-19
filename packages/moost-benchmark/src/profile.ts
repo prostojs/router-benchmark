@@ -1,10 +1,12 @@
 /**
  * Profile the Moost server handling requests using the Node.js inspector API.
  *
- * Usage: tsx ./src/profile.ts ["test name"] [duration_seconds]
+ * Usage: NODE_ENV=production node --import tsx ./src/profile.ts ["test name"] [duration_seconds]
+ * (developer tool — profiles server and load generator in one process; not used for results)
  */
 import { Session } from 'node:inspector/promises'
-import { writeFileSync } from 'node:fs'
+import { writeFileSync, mkdirSync } from 'node:fs'
+// @ts-ignore — autocannon ships no type declarations
 import autocannon from 'autocannon'
 import { createServer } from './servers/moost/main.js'
 import { tests } from './routes.js'
@@ -13,9 +15,8 @@ const testName = process.argv[2] || 'Short static'
 const duration = parseFloat(process.argv[3]) || 5
 
 async function main() {
-  const { server, close } = await createServer()
-  const addr = server.address() as { port: number }
-  const test = tests.find((t) => t.name === testName)
+  const addr = await createServer()
+  const test = (tests as Array<{ name: string; path: string; method: string; headers: Record<string, string>; body?: string }>).find((t) => t.name === testName)
   if (!test) {
     console.error(`Test "${testName}" not found`)
     process.exit(1)
@@ -41,6 +42,7 @@ async function main() {
 
   // Stop profiler and save
   const { profile } = await session.post('Profiler.stop')
+  mkdirSync('./prof', { recursive: true })
   const outFile = `./prof/${testName.replaceAll(' ', '-').toLowerCase()}.cpuprofile`
   writeFileSync(outFile, JSON.stringify(profile))
   session.disconnect()
@@ -48,7 +50,7 @@ async function main() {
   console.log(`req/s: ${Math.round(result.requests.average)}`)
   console.log(`Profile saved to ${outFile}`)
 
-  await close()
+  process.exit(0)
 }
 
 main().catch(console.error)

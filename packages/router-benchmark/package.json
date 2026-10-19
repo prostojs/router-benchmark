@@ -5,14 +5,15 @@
   "type": "module",
   "scripts": {
     "start": "node ./src/index.js",
-    "scale": "node ./src/index-scale.js"
+    "scale": "node ./src/index-scale.js",
+    "quick": "node ./src/index.js --quick && node ./src/index-scale.js --quick"
   },
   "dependencies": {
-    "@prostojs/router": "^0.3.2",
+    "@prostojs/router": "0.3.6",
     "bench-utils": "workspace:*",
-    "express": "^5.0.0",
-    "find-my-way": "^9.0.0",
-    "hono": "^4.0.0",
-    "rou3": "^0.5.0"
+    "express": "5.3.0",
+    "find-my-way": "9.10.0",
+    "hono": "4.13.13",
+    "rou3": "1.0.0"
   }
 }

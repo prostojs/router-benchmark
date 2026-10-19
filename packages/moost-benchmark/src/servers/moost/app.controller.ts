@@ -1,6 +1,6 @@
-import { Get, Post, Put, Delete, SetHeader, Body } from '@moostjs/event-http'
+import { Get, Post, Put, Delete, SetHeader, Body, HttpError } from '@moostjs/event-http'
 import { Controller, Param, Intercept } from 'moost'
-import { SESSION_COOKIE } from '../../routes.js'
+import { SESSION_COOKIE, isValidBody } from '../../routes.js'
 import { headerAuthGuard, cookieAuthGuard } from './guards.js'
 import { createDb, type Db } from '../../simulate-db.js'
 
@@ -8,8 +8,9 @@ let db: Db | null = null
 export function enableDbSimulation() {
   db = createDb()
 }
-export function closeDb() {
-  if (db) db.close()
+
+function assertValidBody(body: unknown) {
+  if (!isValidBody(body)) throw new HttpError(400, 'Invalid body')
 }
 
 // --- Public routes ---
@@ -24,7 +25,7 @@ export class PublicController {
 
   @Post('auth/login')
   @SetHeader('Set-Cookie', `session=${SESSION_COOKIE}; Path=/; HttpOnly`)
-  async login(@Body() _body: unknown) { if (db) await db.set('session'); return 'token' }
+  async login(@Body() body: unknown) { assertValidBody(body); if (db) await db.set('session'); return 'token' }
 
   @Get('static/*')
   @SetHeader('Cache-Control', 'public, max-age=31536000, immutable')
@@ -53,7 +54,7 @@ export class HeaderAuthController {
   async getProjects() { if (db) await db.get('projects'); return 'projects' }
 
   @Post('projects')
-  async createProject(@Body() _body: unknown) { if (db) await db.set('project'); return 'created' }
+  async createProject(@Body() body: unknown) { assertValidBody(body); if (db) await db.set('project'); return 'created' }
 
   @Get('projects/:projectId')
   async getProject(@Param('projectId') projectId: string) { if (db) await db.get('project'); return projectId }
@@ -81,7 +82,7 @@ export class CookieAuthController {
   async getTask(@Param('taskId') taskId: string) { if (db) await db.get('task'); return taskId }
 
   @Put('projects/:projectId/tasks/:taskId')
-  async updateTask(@Param('taskId') taskId: string, @Body() _body: unknown) { if (db) await db.set('task'); return taskId }
+  async updateTask(@Param('taskId') taskId: string, @Body() body: unknown) { assertValidBody(body); if (db) await db.set('task'); return taskId }
 
   @Delete('projects/:projectId/tasks/:taskId')
   async deleteTask(@Param('taskId') taskId: string) { if (db) await db.del('task'); return taskId }
@@ -90,7 +91,7 @@ export class CookieAuthController {
   async getComments(@Param('taskId') taskId: string) { if (db) await db.get('comments'); return taskId }
 
   @Post('projects/:projectId/tasks/:taskId/comments')
-  async addComment(@Param('taskId') taskId: string, @Body() _body: unknown) { if (db) await db.set('comment'); return taskId }
+  async addComment(@Param('taskId') taskId: string, @Body() body: unknown) { assertValidBody(body); if (db) await db.set('comment'); return taskId }
 
   @Get('orgs/:orgId/teams/:teamId/projects/:projectId/tasks/:taskId')
   async getDeepTask(@Param('taskId') taskId: string) { if (db) await db.get('task'); return taskId }

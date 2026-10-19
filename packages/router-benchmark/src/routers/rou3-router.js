@@ -1,19 +1,18 @@
-import { RouterInterface } from './router-interface.js'
 import { createRouter, addRoute, findRoute } from 'rou3'
 
-export class Rou3RouterInterface extends RouterInterface {
+const EMPTY = Object.freeze({})
+
+export class Rou3RouterInterface {
     init() {
         this.router = createRouter()
     }
     registerRoutes(routes) {
-        routes.forEach(route => {
-            // rou3 uses ** for wildcard catch-all
-            const url = route.url.replace(/\*$/, '**')
-            addRoute(this.router, route.method, url, 'ok')
-        })
+        // rou3 uses ** for a multi-segment catch-all
+        for (const route of routes) addRoute(this.router, route.method, route.url.replace(/\*$/, '**'), 'ok')
     }
     lookup(method, url) {
-        return findRoute(this.router, method, url)
+        const r = findRoute(this.router, method, url)
+        return r === undefined ? null : (r.params ?? EMPTY)
     }
     getName() {
         return 'Rou3'

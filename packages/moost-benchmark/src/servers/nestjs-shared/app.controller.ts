@@ -9,8 +9,9 @@ import {
   UseGuards,
   Header,
   HttpCode,
+  BadRequestException,
 } from '@nestjs/common'
-import { SESSION_COOKIE } from '../../routes.js'
+import { SESSION_COOKIE, isValidBody } from '../../routes.js'
 import { HeaderAuthGuard, CookieAuthGuard } from './guards.js'
 import { createDb, type Db } from '../../simulate-db.js'
 
@@ -18,8 +19,9 @@ let db: Db | null = null
 export function enableDbSimulation() {
   db = createDb()
 }
-export function closeDb() {
-  if (db) db.close()
+
+function assertValidBody(body: unknown) {
+  if (!isValidBody(body)) throw new BadRequestException('Invalid body')
 }
 
 // --- Public routes ---
@@ -34,7 +36,7 @@ export class PublicController {
 
   @Post('auth/login')
   @Header('Set-Cookie', `session=${SESSION_COOKIE}; Path=/; HttpOnly`)
-  async login(@Body() _body: unknown) { if (db) await db.set('session'); return 'token' }
+  async login(@Body() body: unknown) { assertValidBody(body); if (db) await db.set('session'); return 'token' }
 
   @Get('static/*')
   @Header('Cache-Control', 'public, max-age=31536000, immutable')
@@ -63,7 +65,7 @@ export class HeaderAuthController {
   async getProjects() { if (db) await db.get('projects'); return 'projects' }
 
   @Post('projects')
-  async createProject(@Body() _body: unknown) { if (db) await db.set('project'); return 'created' }
+  async createProject(@Body() body: unknown) { assertValidBody(body); if (db) await db.set('project'); return 'created' }
 
   @Get('projects/:projectId')
   async getProject(@Param('projectId') projectId: string) { if (db) await db.get('project'); return projectId }
@@ -92,7 +94,7 @@ export class CookieAuthController {
 
   @Put('projects/:projectId/tasks/:taskId')
   @HttpCode(201)
-  async updateTask(@Param('taskId') taskId: string, @Body() _body: unknown) { if (db) await db.set('task'); return taskId }
+  async updateTask(@Param('taskId') taskId: string, @Body() body: unknown) { assertValidBody(body); if (db) await db.set('task'); return taskId }
 
   @Delete('projects/:projectId/tasks/:taskId')
   async deleteTask(@Param('taskId') taskId: string) { if (db) await db.del('task'); return taskId }
@@ -101,7 +103,7 @@ export class CookieAuthController {
   async getComments(@Param('taskId') taskId: string) { if (db) await db.get('comments'); return taskId }
 
   @Post('projects/:projectId/tasks/:taskId/comments')
-  async addComment(@Param('taskId') taskId: string, @Body() _body: unknown) { if (db) await db.set('comment'); return taskId }
+  async addComment(@Param('taskId') taskId: string, @Body() body: unknown) { assertValidBody(body); if (db) await db.set('comment'); return taskId }
 
   @Get('orgs/:orgId/teams/:teamId/projects/:projectId/tasks/:taskId')
   async getDeepTask(@Param('taskId') taskId: string) { if (db) await db.get('task'); return taskId }

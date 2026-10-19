@@ -1,8 +1,0 @@
-{
-  "compilerOptions": {
-    "types": [
-      "@prostojs/dye/global",
-      "@prostojs/dye/global"
-    ]
-  }
-}

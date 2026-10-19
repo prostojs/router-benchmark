@@ -1,19 +1,17 @@
-import { RouterInterface } from './router-interface.js'
 import Router from 'find-my-way'
 
-function noop () {}
+function noop() {}
 
-export class FindMyWayInterface extends RouterInterface {
+export class FindMyWayInterface {
     init() {
         this.router = Router()
     }
     registerRoutes(routes) {
-        routes.forEach(route => {
-            this.router.on(route.method, route.url, noop)
-        })
+        for (const route of routes) this.router.on(route.method, route.url, noop)
     }
     lookup(method, url) {
-        return this.router.find(method, url)
+        const r = this.router.find(method, url)
+        return r === null ? null : r.params
     }
     getName() {
         return 'FindMyWay'

@@ -14,6 +14,10 @@ import { resolve } from 'node:path'
  */
 export function writeResultFiles(pkgDir, jsonData, markdown, opts = {}) {
   const { prefix = '', resultsDir = '', svgCharts = {} } = opts
+  // Smoke (--quick) and partial (--only) runs must never overwrite the published results: write them
+  // into a git-ignored `.quick/` directory with the same layout instead.
+  if (jsonData?.quick) pkgDir = resolve(pkgDir, '.quick')
+  mkdirSync(pkgDir, { recursive: true })
 
   const artifactDir = resultsDir ? resolve(pkgDir, resultsDir) : pkgDir
   if (resultsDir) {

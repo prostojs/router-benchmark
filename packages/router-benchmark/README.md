@@ -6,11 +6,14 @@ A benchmark comparing URI router performance for Node.js, focused on **route mat
 
 | Router | Version | Description |
 |--------|---------|-------------|
-| [@prostojs/router](https://github.com/nicksap/prostojs/tree/main/packages/router) | latest | Regex-based, feature-rich router |
-| [find-my-way](https://github.com/delvedor/find-my-way) | latest | Radix trie router (Fastify's default) |
-| [rou3](https://github.com/h3js/rou3) | latest | Radix trie router (unjs/h3) |
-| [hono](https://github.com/honojs/hono) | latest | RegExpRouter with TrieRouter fallback |
-| [express](https://github.com/expressjs/express) | latest | Layer-based linear matching (baseline) |
+| [@prostojs/router](https://github.com/prostojs/router) | see results | Regex-based, feature-rich router (used by Wooks/Moost) |
+| [find-my-way](https://github.com/delvedor/find-my-way) | see results | Radix trie router (Fastify's default) |
+| [rou3](https://github.com/h3js/rou3) | see results | Radix trie router (h3) — `findRoute()` |
+| rou3 (compiled) | see results | rou3's JIT compiler `compileRouter()` from `rou3/compiler` |
+| [hono](https://github.com/honojs/hono) | see results | Hono's default `SmartRouter` (RegExpRouter with TrieRouter fallback) |
+| [express](https://github.com/expressjs/express) | see results | Layer-based linear matching (baseline) |
+
+Exact versions of every run are recorded in the results files. h3 is not listed separately: its router *is* rou3.
 
 ## Approach
 
@@ -36,19 +39,25 @@ Short routes with many distinct prefixes stress routers differently than deep ro
 
 Each variant generates a workload that exercises statics, parametric routes with 1–4 params, wildcards, different HTTP methods, and 404 misses — spread across different route branches to avoid always hitting the same trie node.
 
+## Methodology
+
+- **Equivalence pre-flight:** before measuring, every router is run on every workload URL in-process and must return the same match / no-match outcome and the same named params as all other routers (wildcard captures are exposed under router-specific keys and are not compared). Any disagreement aborts the run.
+- **Process isolation:** each router × workload × round runs in a **fresh Node.js process** (`node --expose-gc`, `NODE_ENV=production`), so JIT state, inline caches and heap are never shared between routers.
+- **Warmup + calibration:** time-based warmup (500 ms per test) that also calibrates the batch size; `gc()` before sampling.
+- **Sampling:** 10 timed samples of ~100 ms per test (`process.hrtime.bigint()`), yielding to the event loop between samples (outside the timed region) so deferred work such as Express' `setImmediate` callbacks never leaks into another sample.
+- **No dead-code elimination:** every lookup result is consumed (hit counter, verified against the expected number of matches) and the returned params object is stored in a module-level sink, so params extraction cannot be optimized away.
+- **Rounds:** 5 rounds with router order rotated; reported value = median of per-round medians (op/ms), plus min–max round medians and the coefficient of variation of all samples.
+- Options: `--rounds n --warmup ms --samples n --sample-ms ms --only prosto,rou3 --quick` (or `BENCH_ROUNDS`, `BENCH_WARMUP_MS`, `BENCH_SAMPLES`, `BENCH_SAMPLE_MS`). `--quick` is a smoke test; its numbers are not meaningful.
+
 ## Two benchmarks
 
-### Basic benchmark (`npm run bench`)
+### Basic benchmark (`pnpm bench:router`, ~12 min)
 
-Tests all three route shapes at ~22 routes each (the original route set size). Runs each workload 100,000 operations × 2 runs. Measures per-test breakdown and overall average op/ms.
+All three route shapes at 22 routes each; per-test breakdown for the long (enterprise API) shape. See [RESULTS.md](RESULTS.md).
 
-See [RESULTS.md](RESULTS.md) for the latest results.
+### Scaling benchmark (`pnpm bench:router:scale`, ~10 min)
 
-### Scaling benchmark (`npm run bench:scale`)
-
-Tests how performance changes as route count grows: **22 → 50 → 100 → 200** routes. Runs 500,000 operations × 5 runs per data point. Produces line charts showing degradation curves.
-
-See [RESULTS-SCALE.md](RESULTS-SCALE.md) for the latest results.
+How performance changes as route count grows: **22 → 50 → 100 → 200** routes, for each shape. Produces line charts. See [RESULTS-SCALE.md](RESULTS-SCALE.md).
 
 ## Results at a Glance
 
@@ -114,6 +123,7 @@ Most trie-based routers (find-my-way, Rou3) sacrifice some of these features for
 
 ```bash
 pnpm install
-pnpm run bench        # basic benchmark
-pnpm run bench:scale  # scaling benchmark
+pnpm bench:router         # basic benchmark (~12 min)
+pnpm bench:router:scale   # scaling benchmark (~10 min)
+pnpm --filter router-benchmark quick   # smoke test of both (numbers not meaningful)
 ```

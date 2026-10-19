@@ -1,5 +1,2 @@
 packages:
   - 'packages/*'
-  - '../../wooksjs/packages/*'
-  - '../../moostjs/packages/*'
-  - '../../prostojs/router'

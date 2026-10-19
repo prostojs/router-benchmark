@@ -1,30 +1,13 @@
-import { ExpressInterface } from "./routers/express.js";
-import { FindMyWayInterface } from "./routers/find-my-way.js";
-import { ProstoRouterInterface } from "./routers/prosto-router.js";
-import { Rou3RouterInterface } from "./routers/rou3-router.js";
-import { HonoRouterInterface } from "./routers/hono-router.js";
-import { routes as baseRoutes } from "./routes.js";
-import { tests as baseTests } from "./tests.js";
-import { generateRoutes } from "./generate-routes.js";
-import { generateShortRoutes, generateShortTests } from "./generate-short-routes.js";
-import { generateMixedRoutes, generateMixedTests } from "./generate-mixed-routes.js";
-import { now } from "./utils.js";
-import { writeResultFiles, generateLineChart } from "bench-utils";
-
-const operations = 500000
-
-const routerClasses = [
-  ExpressInterface,
-  FindMyWayInterface,
-  ProstoRouterInterface,
-  Rou3RouterInterface,
-  HonoRouterInterface,
-]
+// Router scaling benchmark: lookup throughput vs registered route count (22 → 200), 3 route shapes.
+// Usage: node src/index-scale.js [--quick] [--rounds n] [--warmup ms] [--samples n] [--sample-ms ms] [--only a,b]
+import { VARIANTS } from './workloads.js'
+import { parseRouterArgs, selectRouters, preflightAndPlan, runJobs, reportContext } from './runner.js'
+import { writeResultFiles, generateLineChart, environmentMarkdown, fmtInt } from 'bench-utils'
 
 const routeCounts = [22, 50, 100, 200]
-const tries = 5
 
-// Hono chart config — shared across all variants
+// Hono's SmartRouter switches from RegExpRouter to TrieRouter when the route set
+// cannot be compiled into one regex — drawn as one continued series.
 const honoChartConfig = {
   colors: {
     'Hono (RegExpRouter)': '#bb8fce',
@@ -35,223 +18,87 @@ const honoChartConfig = {
   },
 }
 
-main()
+const pkgDir = new URL('..', import.meta.url).pathname
+const opts = parseRouterArgs()
+const routerKeys = selectRouters(opts)
 
-function main() {
-  console.log('\n' + '█'.repeat(60))
-  console.log('  VARIANT 1: Short routes (2-5 segments)')
-  console.log('█'.repeat(60))
-  const shortResults = runVariant('short')
-
-  console.log('\n\n' + '█'.repeat(60))
-  console.log('  VARIANT 2: Long routes (deep enterprise API)')
-  console.log('█'.repeat(60))
-  const longResults = runVariant('long')
-
-  console.log('\n\n' + '█'.repeat(60))
-  console.log('  VARIANT 3: Mixed routes (short + long)')
-  console.log('█'.repeat(60))
-  const mixedResults = runVariant('mixed')
-
-  // Write combined results
-  writeAllResults(shortResults, longResults, mixedResults)
+const jobs = []
+for (const variant of Object.keys(VARIANTS)) {
+  for (const count of routeCounts) jobs.push({ id: `${variant}:${count}`, variant, count, perTest: false })
 }
 
-function runVariant(variant) {
-  // Same workload as basic bench "All together" test — stays constant for long routes
-  const longWorkload = baseTests.find(t => t.name === 'All together')
+preflightAndPlan(routerKeys, jobs, opts)
+const agg = await runJobs(routerKeys, jobs, opts)
 
-  const results = {}
-
-  for (const count of routeCounts) {
-    let routes, workloadUrls
-
-    if (variant === 'short') {
-      routes = generateShortRoutes(count)
-      workloadUrls = generateShortTests(routes)
-    } else if (variant === 'mixed') {
-      routes = generateMixedRoutes(count)
-      workloadUrls = generateMixedTests(routes)
-    } else {
-      routes = count <= baseRoutes.length
-        ? baseRoutes
-        : generateRoutes(count, baseRoutes)
-      workloadUrls = longWorkload.urls
-    }
-
-    console.log(`\n${'='.repeat(60)}`)
-    console.log(`  ${routes.length} routes registered`)
-    console.log(`${'='.repeat(60)}`)
-
-    for (const RouterClass of routerClasses) {
-      const ri = new RouterClass()
-      ri.init()
-      ri.registerRoutes(routes)
-      const name = ri.getName()
-
-      if (!results[name]) results[name] = {}
-
-      const urls = workloadUrls
-      const values = []
-      for (let t = 0; t < tries; t++) {
-        const ops = Math.floor(operations / urls.length)
-        let sink  // prevent dead-code elimination
-        const start = now()
-        for (let o = 0; o < ops; o++) {
-          for (let k = 0; k < urls.length; k++) {
-            sink = ri.lookup(...urls[k])
-          }
-        }
-        void sink
-        values.push(Math.round((ops * urls.length) / (now() - start)))
-      }
-
-      const avg = Math.round(values.reduce((a, b) => a + b, 0) / values.length)
-      results[name][routes.length] = avg
-      console.log(`  ${name.padEnd(22)} ${String(avg).padStart(7)} op/ms`)
-    }
+// results[variant][routerName][routeCount] = op/ms ; spread[variant][routerName][routeCount] = [min, max]
+const results = {}
+const spread = {}
+for (const job of jobs) {
+  for (const [, r] of Object.entries(agg[job.id])) {
+    const t = r.tests['All together']
+    ;((results[job.variant] ??= {})[r.name] ??= {})[r.routeCount] = Math.round(t.median)
+    ;((spread[job.variant] ??= {})[r.name] ??= {})[r.routeCount] = [Math.round(t.roundMin), Math.round(t.roundMax)]
   }
-
-  // Summary table
-  const names = Object.keys(results)
-  const actualCounts = [...new Set(names.flatMap(n => Object.keys(results[n]).map(Number)))].sort((a, b) => a - b)
-
-  console.log(`\n\n## Scaling Results — ${variant} routes (op/ms)\n`)
-  const tableData = {}
-  for (const name of names) {
-    tableData[name] = {}
-    for (const c of actualCounts) {
-      tableData[name][`${c} routes`] = results[name][c] ?? '-'
-    }
-  }
-  console.table(tableData)
-
-  // ASCII chart
-  console.log(`\n## Performance vs Route Count — ${variant}\n`)
-  drawChart(results)
-
-  return results
 }
 
-function writeAllResults(shortResults, longResults, mixedResults) {
-  const pkgDir = new URL('..', import.meta.url).pathname
+for (const variant of Object.keys(VARIANTS)) {
+  console.log(`\n## Scaling — ${VARIANTS[variant].label} (op/ms)\n`)
+  const counts = countsOf(results[variant])
+  console.table(Object.fromEntries(Object.entries(results[variant]).map(([n, v]) => [n, Object.fromEntries(counts.map((c) => [`${c} routes`, v[c] ?? '-']))])))
+  drawChart(results[variant])
+}
 
-  // Build SVG charts
-  function makeSvg(results, title) {
-    const names = Object.keys(results)
-    const counts = [...new Set(names.flatMap(n => Object.keys(results[n]).map(Number)))].sort((a, b) => a - b)
-    return generateLineChart(results, counts, {
-      title,
-      xLabel: 'Routes registered',
-      yLabel: 'op/ms',
-      ...honoChartConfig,
-    })
-  }
+writeAll()
 
-  const shortSvg = makeSvg(shortResults, 'Short Routes (2–5 segments) — op/ms vs Route Count')
-  const longSvg = makeSvg(longResults, 'Long Routes (deep enterprise API) — op/ms vs Route Count')
-  const mixedSvg = makeSvg(mixedResults, 'Mixed Routes (short + long) — op/ms vs Route Count')
+function countsOf(res) {
+  return [...new Set(Object.values(res).flatMap((v) => Object.keys(v).map(Number)))].sort((a, b) => a - b)
+}
 
-  // Build table for a variant
-  function makeTable(results) {
-    const names = Object.keys(results)
-    const counts = [...new Set(names.flatMap(n => Object.keys(results[n]).map(Number)))].sort((a, b) => a - b)
-    let t = `| Router | ${counts.map(c => c + ' routes').join(' | ')} | degradation |\n`
-    t += `|--------|${counts.map(() => '---------').join('|')}|-------------|\n`
+function writeAll() {
+  const { env, versions, settings, jsonSettings } = reportContext(opts, { 'Route counts': routeCounts.join(', ') })
+
+  function makeTable(res) {
+    const names = Object.keys(res)
+    const counts = countsOf(res)
+    let t = `| Router | ${counts.map((c) => c + ' routes').join(' | ')} | first → last |\n`
+    t += `|--------|${counts.map(() => '---:').join('|')}|---:|\n`
     for (const name of names) {
-      const vals = counts.map(c => results[name][c])
+      const vals = counts.map((c) => res[name][c])
       const present = vals.filter(Boolean)
       const ratio = present.length >= 2 ? (present[0] / present[present.length - 1]).toFixed(1) + 'x' : '-'
-      t += `| ${name} | ${vals.map(v => v ?? '-').join(' | ')} | ${ratio} |\n`
+      t += `| ${name} | ${vals.map((v) => (v == null ? '-' : fmtInt(v))).join(' | ')} | ${ratio} |\n`
     }
     return t
   }
 
-  // Build observations for a variant
-  function makeObservations(results) {
-    const names = Object.keys(results)
-    const counts = [...new Set(names.flatMap(n => Object.keys(results[n]).map(Number)))].sort((a, b) => a - b)
-    let obs = ''
-    for (const name of names) {
-      const vals = counts.map(c => results[name][c]).filter(Boolean)
-      if (vals.length >= 2) {
-        const ratio = (vals[0] / vals[vals.length - 1]).toFixed(1)
-        const trend = ratio > 1.5 ? 'degrades' : ratio > 1.1 ? 'slight decline' : 'stable'
-        obs += `- **${name}**: ${vals[0]} → ${vals[vals.length - 1]} op/ms (${ratio}x, ${trend})\n`
-      }
-    }
-    return obs
-  }
-
-  // Combined markdown
   let md = `# Router Scaling Benchmark\n\n`
-  md += `Measures how router lookup performance changes as the number of registered routes grows.\n`
-  md += `Three route-shape variants are tested to reveal different scaling characteristics.\n\n`
-  md += `- **${operations.toLocaleString()}** operations per test, **${tries}** runs averaged\n`
-  md += `- Route counts: ${routeCounts.join(', ')}\n`
-  md += `- Generated: ${new Date().toISOString()}\n\n`
-  md += `---\n\n`
+  if (opts.quick) md += `> **QUICK MODE — smoke test only, numbers are not meaningful.**\n\n`
+  md += `Lookup throughput (route match + param extraction, op/ms) as the number of registered routes grows. `
+  md += `All routers are verified to return identical matches/params before measuring. Generated ${env.date}.\n\n---\n\n`
 
-  md += `## Short Routes (2–5 segments)\n\n`
-  md += `Shallow paths like \`/users/:id\`, \`/posts/:id/comments\`, \`/orders/:id/items\`.\n`
-  md += `Many distinct top-level prefixes, few path segments per route.\n\n`
-  md += `![Short routes](results/results-scale-short-chart.svg)\n\n`
-  md += makeTable(shortResults)
-  md += `\n`
-  md += makeObservations(shortResults)
-  md += `\n---\n\n`
-
-  md += `## Long Routes (deep enterprise API)\n\n`
-  md += `Deep paths like \`/api/v1/organizations/:orgId/workspaces/:wsId/projects/:projectId\`.\n`
-  md += `Shared \`/api/v1/\` prefix, many segments per route (5–10), realistic enterprise SaaS API.\n\n`
-  md += `![Long routes](results/results-scale-long-chart.svg)\n\n`
-  md += makeTable(longResults)
-  md += `\n`
-  md += makeObservations(longResults)
-  md += `\n---\n\n`
-
-  md += `## Mixed Routes (short + long)\n\n`
-  md += `Half short (2–5 segments) + half long (deep enterprise API) routes.\n`
-  md += `Exercises routers with both shallow many-prefix and deep shared-prefix routes in the same tree.\n\n`
-  md += `![Mixed routes](results/results-scale-mixed-chart.svg)\n\n`
-  md += makeTable(mixedResults)
-  md += `\n`
-  md += makeObservations(mixedResults)
-  md += `\n---\n\n`
-
-  md += `## Key Takeaways\n\n`
-  md += `- **Short routes** have higher absolute throughput (shorter strings, fewer segments to match) `
-  md += `but all routers degrade more steeply because the route set has many distinct prefixes competing in each bucket.\n`
-  md += `- **Long routes** have lower absolute throughput but trie-based routers (Rou3, FindMyWay) `
-  md += `stay nearly flat — the shared prefix structure plays to their strength.\n`
-  md += `- **Mixed routes** sit between the two — routers must handle both patterns efficiently.\n`
-  md += `- **Regex-alternation routers** (ProstoRouter, Hono RegExpRouter) degrade as route count grows `
-  md += `because V8 tests regex alternatives sequentially — O(n) per bucket.\n`
-  md += `- **Rou3** shows the best scaling profile: near-constant performance regardless of route count.\n`
-  md += `- **FindMyWay** is also stable but at a lower absolute level due to its more complex trie implementation.\n`
-
-  // Combined JSON
-  const jsonData = {
-    timestamp: new Date().toISOString(),
-    operations,
-    tries,
-    routeCounts,
-    variants: {
-      short: shortResults,
-      long: longResults,
-      mixed: mixedResults,
-    },
+  const svgCharts = {}
+  for (const variant of Object.keys(VARIANTS)) {
+    const v = VARIANTS[variant]
+    const file = `results-scale-${variant}-chart.svg`
+    svgCharts[file] = generateLineChart(results[variant], countsOf(results[variant]), {
+      title: `${v.label} — op/ms vs Route Count`,
+      xLabel: 'Routes registered',
+      yLabel: 'op/ms',
+      ...honoChartConfig,
+    })
+    md += `## ${v.label}\n\n${v.description}\n\n![${v.label}](results/${file})\n\n`
+    md += makeTable(results[variant]) + `\n---\n\n`
   }
+  md += environmentMarkdown(env, versions, settings)
 
-  writeResultFiles(pkgDir, jsonData, md, {
-    prefix: 'scale',
-    resultsDir: 'results',
-    svgCharts: {
-      'results-scale-short-chart.svg': shortSvg,
-      'results-scale-long-chart.svg': longSvg,
-      'results-scale-mixed-chart.svg': mixedSvg,
-    },
-  })
+  writeResultFiles(pkgDir, {
+    quick: opts.quick || !!opts.only,
+    environment: env,
+    versions,
+    settings: { ...jsonSettings, routeCounts },
+    variants: results,
+    roundSpread: spread,
+  }, md, { prefix: 'scale', resultsDir: 'results', svgCharts })
 }
 
 function drawChart(results) {

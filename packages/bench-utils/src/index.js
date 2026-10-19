@@ -1,3 +1,8 @@
 export { generateLineChart } from './svg-line-chart.js'
 export { generateBarChart } from './svg-bar-chart.js'
 export { writeResultFiles } from './write-results.js'
+export { describe, weightedHarmonicMean, weightedArithmeticMean, rotate, fmtInt, fmtPct } from './stats.js'
+export { collectEnvironment, resolveVersions, environmentMarkdown } from './env.js'
+export { parseFlags, parseOnly } from './args.js'
+export { parseHttpBenchArgs, preflight, runHttpSuite } from './http-bench.js'
+export * from './saas-api.js'
