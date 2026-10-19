@@ -1,0 +1,18 @@
+{
+  "name": "validator-benchmark",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "compile": "asc -f js",
+    "start": "pnpm compile && node ./src/index.js",
+    "quick": "pnpm compile && node ./src/index.js --quick",
+    "preflight": "pnpm compile && node ./src/preflight.js"
+  },
+  "dependencies": {
+    "@atscript/core": "0.1.108",
+    "@atscript/typescript": "0.1.108",
+    "bench-utils": "workspace:*",
+    "zod": "4.6.7"
+  }
+}

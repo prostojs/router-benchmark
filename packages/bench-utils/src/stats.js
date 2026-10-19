@@ -18,6 +18,14 @@ export function describe(values) {
   }
 }
 
+/** Linear-interpolated quantile `q` (0..1) of an ascending-sorted array. */
+export function quantile(sorted, q) {
+  const pos = (sorted.length - 1) * q
+  const lo = Math.floor(pos)
+  const hi = Math.ceil(pos)
+  return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo)
+}
+
 /**
  * Weighted harmonic mean of throughputs.
  *

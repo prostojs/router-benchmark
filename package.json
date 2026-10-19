@@ -9,8 +9,9 @@
     "bench:wooks:db": "pnpm --filter wooks-benchmark start:db",
     "bench:moost": "pnpm --filter moost-benchmark start",
     "bench:moost:db": "pnpm --filter moost-benchmark start:db",
+    "bench:validator": "pnpm --filter validator-benchmark start",
     "bench:all": "pnpm bench:router && pnpm bench:router:scale && pnpm bench:wooks && pnpm bench:moost",
-    "smoke": "pnpm --filter router-benchmark start --quick && pnpm --filter router-benchmark scale --quick && pnpm --filter wooks-benchmark quick && pnpm --filter moost-benchmark quick"
+    "smoke": "pnpm --filter router-benchmark start --quick && pnpm --filter router-benchmark scale --quick && pnpm --filter wooks-benchmark quick && pnpm --filter moost-benchmark quick && pnpm --filter validator-benchmark quick"
   },
   "repository": {
     "type": "git",

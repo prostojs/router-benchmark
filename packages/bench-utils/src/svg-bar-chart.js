@@ -1,3 +1,5 @@
+import { esc } from './format.js'
+
 /**
  * Generate an SVG horizontal bar chart.
  *
@@ -83,8 +85,4 @@ export function generateBarChart(data, opts = {}) {
 function fmtK(val) {
   if (val >= 1000) return (val / 1000).toFixed(val % 1000 === 0 ? 0 : 1) + 'k'
   return String(Math.round(val))
-}
-
-function esc(str) {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }

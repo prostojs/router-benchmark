@@ -11,6 +11,7 @@ Benchmarks for the [Moost](https://moost.org/) stack — from the router at the 
 | [router-benchmark](packages/router-benchmark/) | URI route matching + param extraction | find-my-way (Fastify), rou3 (h3; plain and compiled), Hono SmartRouter, Express |
 | [wooks-benchmark](packages/wooks-benchmark/) | Full HTTP request handling | Fastify, Express, Hono, h3 |
 | [moost-benchmark](packages/moost-benchmark/) | Decorator-based framework overhead | NestJS (Express and Fastify platforms) |
+| [validator-benchmark](packages/validator-benchmark/) | Runtime data validation (atscript validator) | zod 4 (`safeParse()`, `z.compile()`) |
 
 ## Why These Routes?
 
@@ -110,6 +111,9 @@ pnpm bench:wooks:db    # with simulated Redis DB calls
 pnpm bench:moost
 pnpm bench:moost:db    # with simulated Redis DB calls
 
+# Validator benchmark (atscript vs zod, ~12 min)
+pnpm bench:validator
+
 # All benchmarks (router + scale + wooks + moost, ~90 min)
 pnpm bench:all
 
@@ -120,5 +124,7 @@ pnpm smoke
 Smoke (`--quick`) and partial (`--only`) results are written to a git-ignored `.quick/` directory inside each package, never over the published results.
 
 The moost benchmark compiles its TypeScript servers ahead of time (`tsc` → `dist/`); its `start`/`quick` scripts run that build first, so every server — TypeScript or plain JS — is started as plain `node`.
+
+The validator benchmark compiles its atscript model (`asc -f js` → `order.as.js`) in its `start`/`quick`/`preflight` scripts, before running.
 
 All benchmark dependencies are pinned to exact versions from the npm registry; the versions, Node.js version, CPU, OS and run settings are written into every results file. Each package README has a **Methodology** section.
