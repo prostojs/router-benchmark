@@ -28,7 +28,7 @@ export const BASE_ROUTE_COUNT = longRoutes.length // 22
  * @param {number} count  target route count
  * @param {boolean} perTest  long variant only: return every individual test (basic bench)
  *   instead of just the "All together" workload (scale bench)
- * @returns {{ routes: Array<{method,url}>, tests: Array<{name, urls: Array<[string,string]>}> }}
+ * @returns {{ routes: Array<{method,url}>, tests: Array<{name, urls: Array<[method: string, path: string, expectMatch: boolean]>}> }}
  */
 export function buildWorkload(variant, count, perTest = false) {
   if (variant === 'short') {
@@ -47,7 +47,3 @@ export function buildWorkload(variant, count, perTest = false) {
   throw new Error(`Unknown variant ${variant}`)
 }
 
-/** URLs that intentionally hit no route. */
-export function isExpected404(url) {
-  return /not\/exist|not\/found|nonexistent/.test(url)
-}

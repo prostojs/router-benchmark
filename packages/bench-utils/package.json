@@ -5,10 +5,16 @@
   "type": "module",
   "exports": {
     ".": "./src/index.js",
+    "./http-bench": "./src/http-bench.js",
     "./saas-api": "./src/saas-api.js",
-    "./server-entry": "./src/server-entry.js"
+    "./server-entry": "./src/server-entry.js",
+    "./simulate-db": {
+      "types": "./src/simulate-db.d.ts",
+      "default": "./src/simulate-db.js"
+    }
   },
   "dependencies": {
-    "autocannon": "8.0.0"
+    "autocannon": "8.0.0",
+    "ioredis": "6.0.0"
   }
 }

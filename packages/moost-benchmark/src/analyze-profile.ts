@@ -1,7 +1,7 @@
 /**
  * Analyze a V8 CPU profile and show top functions by self time.
  *
- * Usage: tsx ./src/analyze-profile.ts <path-to-cpuprofile>
+ * Usage: pnpm build && node ./dist/analyze-profile.js <path-to-cpuprofile>
  */
 import { readFileSync } from 'node:fs'
 
@@ -28,7 +28,7 @@ interface CPUProfile {
 
 const file = process.argv[2]
 if (!file) {
-  console.error('Usage: tsx analyze-profile.ts <path-to-cpuprofile>')
+  console.error('Usage: node dist/analyze-profile.js <path-to-cpuprofile>')
   process.exit(1)
 }
 

@@ -63,3 +63,22 @@ export function fmtInt(n) {
 export function fmtPct(x, digits = 1) {
   return x == null ? '-' : `${(x * 100).toFixed(digits)}%`
 }
+
+/**
+ * Sort summary rows (valid first, then by `value` descending) and give each one its
+ * `relative` label: 'fastest', 'N.NNx slower' or 'INVALID'. Computed once per row and
+ * reused by every table and chart.
+ *
+ * @template {{ value: number | null, valid?: boolean }} T
+ * @param {T[]} rows
+ * @returns {Array<T & { relative: string }>}
+ */
+export function rankRelative(rows) {
+  const isValid = (r) => r.valid !== false
+  rows.sort((a, b) => (isValid(b) - isValid(a)) || ((b.value ?? 0) - (a.value ?? 0)))
+  const best = rows.find(isValid)
+  for (const r of rows) {
+    r.relative = !isValid(r) ? 'INVALID' : r === best ? 'fastest' : `${(best.value / r.value).toFixed(2)}x slower`
+  }
+  return rows
+}

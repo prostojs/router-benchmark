@@ -299,7 +299,7 @@ export function generateShortRoutes(target) {
   return routes.slice(0, target)
 }
 
-// Generate test URLs for a short-route set
+// Generate test URLs for a short-route set: [method, path, expectMatch]
 export function generateShortTests(routes) {
   const statics = routes.filter(r => !r.url.includes(':') && !r.url.includes('*'))
   const param1 = routes.filter(r => (r.url.match(/:/g) || []).length === 1)
@@ -323,21 +323,21 @@ export function generateShortTests(routes) {
 
   // Statics
   for (const r of spread(statics, 4)) {
-    urls.push([r.method, r.url])
+    urls.push([r.method, r.url, true])
   }
 
   // 1-param routes
   for (const r of spread(param1, 6)) {
-    urls.push([r.method, fillParams(r.url)])
+    urls.push([r.method, fillParams(r.url), true])
   }
 
   // 2-param routes
   for (const r of spread(param2, 3)) {
-    urls.push([r.method, fillParams(r.url)])
+    urls.push([r.method, fillParams(r.url), true])
   }
 
   // 404
-  urls.push(['GET', '/not/found'])
+  urls.push(['GET', '/not/found', false])
 
   return urls
 }

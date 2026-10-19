@@ -1,12 +1,12 @@
 import express from 'express'
 import cookieParser from 'cookie-parser'
-import { AUTH_TOKEN, SESSION_COOKIE, isValidBody } from '../routes.js'
-import { createDb } from '../simulate-db.js'
+import { createDb } from 'bench-utils/simulate-db'
+import { BEARER, SESSION_COOKIE, isValidBody } from '../routes.js'
 
 // Idiomatic Express: route-level middleware chains. Auth middleware is placed
 // before the JSON body parser so unauthorized requests are rejected unparsed.
 function headerAuth(req, res, next) {
-  if (req.headers.authorization !== `Bearer ${AUTH_TOKEN}`) return res.status(401).send('Unauthorized')
+  if (req.headers.authorization !== BEARER) return res.status(401).send('Unauthorized')
   next()
 }
 
@@ -34,10 +34,9 @@ export async function createServer({ simulateDb } = {}) {
 
   app.get('/health', (req, res) => { res.send('ok') })
 
-  app.post('/auth/login', json, validBody, async (req, res) => {
-    if (db) await db.set('session')
+  app.post('/auth/login', json, validBody, (req, res) => {
     res.cookie('session', SESSION_COOKIE, { path: '/', httpOnly: true })
-    res.status(201).send('token')
+    return db ? db.set('session').then(() => res.status(201).send('token')) : res.status(201).send('token')
   })
 
   // Express 5 requires named wildcards
@@ -53,93 +52,76 @@ export async function createServer({ simulateDb } = {}) {
 
   // --- Header-auth guarded routes ---
 
-  app.get('/api/v1/users', headerAuth, async (req, res) => {
-    if (db) await db.get('users')
-    res.send('users')
+  app.get('/api/v1/users', headerAuth, (req, res) => {
+    return db ? db.get('users').then(() => res.send('users')) : res.send('users')
   })
 
-  app.get('/api/v1/users/:userId', headerAuth, async (req, res) => {
-    if (db) await db.get('user')
-    res.send(req.params.userId)
+  app.get('/api/v1/users/:userId', headerAuth, (req, res) => {
+    return db ? db.get('user').then(() => res.send(req.params.userId)) : res.send(req.params.userId)
   })
 
-  app.get('/api/v1/users/:userId/profile', headerAuth, async (req, res) => {
-    if (db) await db.get('profile')
-    res.send(req.params.userId)
+  app.get('/api/v1/users/:userId/profile', headerAuth, (req, res) => {
+    return db ? db.get('profile').then(() => res.send(req.params.userId)) : res.send(req.params.userId)
   })
 
-  app.get('/api/v1/projects', headerAuth, async (req, res) => {
-    if (db) await db.get('projects')
-    res.send('projects')
+  app.get('/api/v1/projects', headerAuth, (req, res) => {
+    return db ? db.get('projects').then(() => res.send('projects')) : res.send('projects')
   })
 
-  app.post('/api/v1/projects', headerAuth, json, validBody, async (req, res) => {
-    if (db) await db.set('project')
-    res.status(201).send('created')
+  app.post('/api/v1/projects', headerAuth, json, validBody, (req, res) => {
+    return db ? db.set('project').then(() => res.status(201).send('created')) : res.status(201).send('created')
   })
 
-  app.get('/api/v1/projects/:projectId', headerAuth, async (req, res) => {
-    if (db) await db.get('project')
-    res.send(req.params.projectId)
+  app.get('/api/v1/projects/:projectId', headerAuth, (req, res) => {
+    return db ? db.get('project').then(() => res.send(req.params.projectId)) : res.send(req.params.projectId)
   })
 
-  app.delete('/api/v1/projects/:projectId', headerAuth, async (req, res) => {
-    if (db) await db.del('project')
-    res.send(req.params.projectId)
+  app.delete('/api/v1/projects/:projectId', headerAuth, (req, res) => {
+    return db ? db.del('project').then(() => res.send(req.params.projectId)) : res.send(req.params.projectId)
   })
 
-  app.get('/api/v1/organizations/settings/billing/invoices', headerAuth, async (req, res) => {
-    if (db) await db.get('invoices')
+  app.get('/api/v1/organizations/settings/billing/invoices', headerAuth, (req, res) => {
     res.set('Cache-Control', 'private, no-cache')
-    res.send('invoices')
+    return db ? db.get('invoices').then(() => res.send('invoices')) : res.send('invoices')
   })
 
   // --- Cookie-auth guarded routes ---
 
-  app.get('/api/v1/projects/:projectId/members', cookieAuth, async (req, res) => {
-    if (db) await db.get('members')
-    res.send(req.params.projectId)
+  app.get('/api/v1/projects/:projectId/members', cookieAuth, (req, res) => {
+    return db ? db.get('members').then(() => res.send(req.params.projectId)) : res.send(req.params.projectId)
   })
 
-  app.get('/api/v1/projects/:projectId/tasks', cookieAuth, async (req, res) => {
-    if (db) await db.get('tasks')
-    res.send(req.params.projectId)
+  app.get('/api/v1/projects/:projectId/tasks', cookieAuth, (req, res) => {
+    return db ? db.get('tasks').then(() => res.send(req.params.projectId)) : res.send(req.params.projectId)
   })
 
-  app.get('/api/v1/projects/:projectId/tasks/:taskId', cookieAuth, async (req, res) => {
-    if (db) await db.get('task')
-    res.send(req.params.taskId)
+  app.get('/api/v1/projects/:projectId/tasks/:taskId', cookieAuth, (req, res) => {
+    return db ? db.get('task').then(() => res.send(req.params.taskId)) : res.send(req.params.taskId)
   })
 
-  app.put('/api/v1/projects/:projectId/tasks/:taskId', cookieAuth, json, validBody, async (req, res) => {
-    if (db) await db.set('task')
-    res.status(201).send(req.params.taskId)
+  app.put('/api/v1/projects/:projectId/tasks/:taskId', cookieAuth, json, validBody, (req, res) => {
+    return db ? db.set('task').then(() => res.status(201).send(req.params.taskId)) : res.status(201).send(req.params.taskId)
   })
 
-  app.delete('/api/v1/projects/:projectId/tasks/:taskId', cookieAuth, async (req, res) => {
-    if (db) await db.del('task')
-    res.send(req.params.taskId)
+  app.delete('/api/v1/projects/:projectId/tasks/:taskId', cookieAuth, (req, res) => {
+    return db ? db.del('task').then(() => res.send(req.params.taskId)) : res.send(req.params.taskId)
   })
 
-  app.get('/api/v1/projects/:projectId/tasks/:taskId/comments', cookieAuth, async (req, res) => {
-    if (db) await db.get('comments')
-    res.send(req.params.taskId)
+  app.get('/api/v1/projects/:projectId/tasks/:taskId/comments', cookieAuth, (req, res) => {
+    return db ? db.get('comments').then(() => res.send(req.params.taskId)) : res.send(req.params.taskId)
   })
 
-  app.post('/api/v1/projects/:projectId/tasks/:taskId/comments', cookieAuth, json, validBody, async (req, res) => {
-    if (db) await db.set('comment')
-    res.status(201).send(req.params.taskId)
+  app.post('/api/v1/projects/:projectId/tasks/:taskId/comments', cookieAuth, json, validBody, (req, res) => {
+    return db ? db.set('comment').then(() => res.status(201).send(req.params.taskId)) : res.status(201).send(req.params.taskId)
   })
 
-  app.get('/api/v1/orgs/:orgId/teams/:teamId/projects/:projectId/tasks/:taskId', cookieAuth, async (req, res) => {
-    if (db) await db.get('task')
-    res.send(req.params.taskId)
+  app.get('/api/v1/orgs/:orgId/teams/:teamId/projects/:projectId/tasks/:taskId', cookieAuth, (req, res) => {
+    return db ? db.get('task').then(() => res.send(req.params.taskId)) : res.send(req.params.taskId)
   })
 
-  app.get('/api/v1/organizations/settings/billing/payment-methods', cookieAuth, async (req, res) => {
-    if (db) await db.get('methods')
+  app.get('/api/v1/organizations/settings/billing/payment-methods', cookieAuth, (req, res) => {
     res.set('Cache-Control', 'private, no-cache')
-    res.send('methods')
+    return db ? db.get('methods').then(() => res.send('methods')) : res.send('methods')
   })
 
   // No stack traces / HTML error pages in production; plain status responses.
@@ -150,5 +132,5 @@ export async function createServer({ simulateDb } = {}) {
   const server = await new Promise((resolve) => {
     const s = app.listen(0, '127.0.0.1', () => resolve(s))
   })
-  return { port: server.address().port }
+  return { server }
 }

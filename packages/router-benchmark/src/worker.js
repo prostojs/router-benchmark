@@ -6,11 +6,11 @@
  *   config: { router, variant, count, perTest, warmupMs, samples, sampleMs }
  * Prints one line `RESULT:<json>` on stdout.
  */
-import { routers } from './routers/index.js'
-import { buildWorkload, isExpected404 } from './workloads.js'
+import { routerLoaders } from './routers/index.js'
+import { buildWorkload } from './workloads.js'
 
 const cfg = JSON.parse(process.argv[2])
-const Router = routers[cfg.router]
+const Router = await routerLoaders[cfg.router]() // only the measured router is loaded
 const ri = new Router()
 ri.init()
 const { routes, tests } = buildWorkload(cfg.variant, cfg.count, cfg.perTest)
@@ -36,12 +36,12 @@ function runBatch(methods, paths, iterations) {
   return hits
 }
 
-const out = { router: cfg.router, name: null, routeCount: routes.length, tests: {} }
+const out = { name: ri.getName(), backend: ri.getBackend?.(), routeCount: routes.length, tests: {} }
 
 for (const test of tests) {
   const methods = test.urls.map((u) => u[0])
   const paths = test.urls.map((u) => u[1])
-  const hitsPerIteration = test.urls.filter((u) => !isExpected404(u[1])).length
+  const hitsPerIteration = test.urls.filter((u) => u[2]).length // u = [method, path, expectMatch]
 
   // Warmup (time-based) — also calibrates the batch size so one sample lasts ~sampleMs
   let iterations = 1
@@ -75,9 +75,8 @@ for (const test of tests) {
     console.error(`${cfg.router} / ${test.name}: ${hits} hits, expected ${expectedHits}`)
     process.exit(1)
   }
-  out.tests[test.name] = { samples, opsPerSample: iterations * methods.length }
+  out.tests[test.name] = { samples }
 }
 
-out.name = ri.getName()
 out.sinkType = typeof sink // keeps the sink observable
 process.stdout.write('RESULT:' + JSON.stringify(out) + '\n')

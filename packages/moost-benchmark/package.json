@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node --import tsx ./src/index.ts",
-    "start:db": "node --import tsx ./src/index.ts --db",
-    "quick": "node --import tsx ./src/index.ts --quick"
+    "build": "rm -rf dist && tsc -p .",
+    "start": "pnpm build && node ./dist/index.js",
+    "start:db": "pnpm build && node ./dist/index.js --db",
+    "quick": "pnpm build && node ./dist/index.js --quick"
   },
   "dependencies": {
     "@fastify/cookie": "11.1.3",
@@ -20,11 +21,9 @@
     "@wooksjs/event-http": "0.7.30",
     "bench-utils": "workspace:*",
     "cookie-parser": "1.4.7",
-    "ioredis": "6.0.0",
     "moost": "0.6.52",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2",
-    "tsx": "4.23.15",
     "wooks": "0.7.30"
   },
   "devDependencies": {

@@ -4,6 +4,8 @@
  * test cases with the exact responses every server must produce.
  */
 export const AUTH_TOKEN = 'benchmark-token'
+/** Expected `Authorization` header value — built once, compared as a constant by every server. */
+export const BEARER = `Bearer ${AUTH_TOKEN}`
 export const SESSION_COOKIE = 'benchmark-session'
 
 /** Minimal body validation every server performs on parsed JSON bodies. */
@@ -56,7 +58,7 @@ export const largeBody = JSON.stringify({
 export const smallBody = JSON.stringify({ text: 'Great work!' })
 
 const json = { 'content-type': 'application/json' }
-const bearer = { authorization: `Bearer ${AUTH_TOKEN}` }
+const bearer = { authorization: BEARER }
 const cookie = { cookie: cookieJar }
 
 const CC_IMMUTABLE = 'public, max-age=31536000, immutable'

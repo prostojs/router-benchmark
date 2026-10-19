@@ -15,5 +15,5 @@ export async function createServer({ simulateDb = false } = {}) {
 
   const server = createHttpServer(httpAdapter.getServerCb())
   await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
-  return { port: (server.address() as { port: number }).port }
+  return { server }
 }

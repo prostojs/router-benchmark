@@ -1,7 +1,7 @@
 /**
  * Profile the Moost server handling requests using the Node.js inspector API.
  *
- * Usage: NODE_ENV=production node --import tsx ./src/profile.ts ["test name"] [duration_seconds]
+ * Usage: pnpm build && NODE_ENV=production node ./dist/profile.js ["test name"] [duration_seconds]
  * (developer tool — profiles server and load generator in one process; not used for results)
  */
 import { Session } from 'node:inspector/promises'
@@ -15,14 +15,15 @@ const testName = process.argv[2] || 'Short static'
 const duration = parseFloat(process.argv[3]) || 5
 
 async function main() {
-  const addr = await createServer()
+  const { server } = await createServer()
+  const port = (server.address() as { port: number }).port
   const test = (tests as Array<{ name: string; path: string; method: string; headers: Record<string, string>; body?: string }>).find((t) => t.name === testName)
   if (!test) {
     console.error(`Test "${testName}" not found`)
     process.exit(1)
   }
 
-  console.log(`Profiling "${test.name}" for ${duration}s on port ${addr.port}`)
+  console.log(`Profiling "${test.name}" for ${duration}s on port ${port}`)
 
   // Start CPU profiler
   const session = new Session()
@@ -31,7 +32,7 @@ async function main() {
   await session.post('Profiler.start')
 
   const result = await autocannon({
-    url: `http://127.0.0.1:${addr.port}${test.path}`,
+    url: `http://127.0.0.1:${port}${test.path}`,
     method: test.method as 'GET',
     headers: test.headers,
     body: test.body,

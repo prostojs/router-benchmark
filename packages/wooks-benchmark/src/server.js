@@ -2,7 +2,7 @@
  * Server process entry — starts ONE framework server and reports its port.
  *
  * Usage: node src/server.js <framework> [--db]
- * Prints `LISTENING:<port>` on stdout once ready. Started by the orchestrator
+ * Reports its port over the IPC channel (see bench-utils/server-entry). Started by the orchestrator
  * (src/index.js) with NODE_ENV=production; killed with SIGTERM.
  */
 import { startServerEntry } from 'bench-utils/server-entry'

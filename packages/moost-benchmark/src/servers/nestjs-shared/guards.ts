@@ -1,11 +1,11 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common'
-import { AUTH_TOKEN, SESSION_COOKIE } from '../../routes.js'
+import { BEARER, SESSION_COOKIE } from '../../routes.js'
 
 @Injectable()
 export class HeaderAuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
-    if (request.headers.authorization !== `Bearer ${AUTH_TOKEN}`) {
+    if (request.headers.authorization !== BEARER) {
       throw new UnauthorizedException()
     }
     return true

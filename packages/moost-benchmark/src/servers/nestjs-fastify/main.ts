@@ -12,5 +12,5 @@ export async function createServer({ simulateDb = false } = {}) {
   // @fastify/cookie resolves a newer fastify for its types than the copy NestJS bundles
   await app.register(cookie as never)
   await app.listen(0, '127.0.0.1')
-  return { port: (app.getHttpServer().address() as { port: number }).port }
+  return { server: app.getHttpServer() }
 }

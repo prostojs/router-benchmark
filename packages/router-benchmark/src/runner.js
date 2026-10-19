@@ -1,59 +1,56 @@
 // Shared orchestration for the router benchmarks: CLI options, pre-flight, worker
 // spawning, rotation of router order between rounds, aggregation, report context.
 import { spawn } from 'node:child_process'
-import { describe, rotate, parseFlags, parseOnly, collectEnvironment, resolveVersions } from 'bench-utils'
-import { routers } from './routers/index.js'
-import { buildWorkload } from './workloads.js'
+import { describe, rotate, parseBenchOptions, quickNotes, collectEnvironment, resolveVersions } from 'bench-utils'
+import { routerLoaders } from './routers/index.js'
 import { checkEquivalence } from './preflight.js'
-
-const DEFAULTS = { rounds: 5, warmupMs: 500, samples: 10, sampleMs: 100 }
-const QUICK = { rounds: 1, warmupMs: 50, samples: 3, sampleMs: 20 }
 
 const ROUTER_PACKAGES = ['@prostojs/router', 'find-my-way', 'rou3', 'hono', 'express']
 
 /**
- * Flags: --rounds n  --warmup ms  --samples n  --sample-ms ms  --only a,b  --quick
- * (env: BENCH_ROUNDS, BENCH_WARMUP_MS, BENCH_SAMPLES, BENCH_SAMPLE_MS)
+ * Flags (env var in brackets):
+ *   --rounds n [BENCH_ROUNDS]  --warmup ms [BENCH_WARMUP_MS]  --samples n [BENCH_SAMPLES]
+ *   --sample-ms ms [BENCH_SAMPLE_MS]  --only a,b  --quick
  */
-export function parseRouterArgs(argv = process.argv.slice(2)) {
-  const { flags } = parseFlags(argv, ['quick'])
-  const base = flags.quick ? { ...DEFAULTS, ...QUICK } : DEFAULTS
-  const num = (flag, env, key) => {
-    const n = Number(flags[flag] ?? process.env[env])
-    return Number.isFinite(n) && n > 0 ? n : base[key]
-  }
-  return {
-    quick: !!flags.quick,
-    rounds: Math.round(num('rounds', 'BENCH_ROUNDS', 'rounds')),
-    warmupMs: num('warmup', 'BENCH_WARMUP_MS', 'warmupMs'),
-    samples: Math.round(num('samples', 'BENCH_SAMPLES', 'samples')),
-    sampleMs: num('sample-ms', 'BENCH_SAMPLE_MS', 'sampleMs'),
-    only: parseOnly(flags),
-  }
+const OPTION_SPEC = {
+  numbers: {
+    rounds: { env: 'BENCH_ROUNDS', default: 5, quick: 1, min: 1, int: true },
+    warmupMs: { flag: 'warmup', env: 'BENCH_WARMUP_MS', default: 500, quick: 50, min: 1 },
+    samples: { env: 'BENCH_SAMPLES', default: 10, quick: 3, min: 1, int: true },
+    sampleMs: { flag: 'sample-ms', env: 'BENCH_SAMPLE_MS', default: 100, quick: 20, min: 1 },
+  },
+}
+
+export function parseRouterOptions(argv = process.argv.slice(2)) {
+  return parseBenchOptions(argv, OPTION_SPEC)
 }
 
 /** Router keys selected by `--only` (all by default). */
 export function selectRouters(opts) {
-  return Object.keys(routers).filter((k) => !opts.only || opts.only.includes(k))
+  const unknown = (opts.only ?? []).filter((k) => !(k in routerLoaders))
+  if (unknown.length) throw new Error(`Unknown --only key(s): ${unknown.join(', ')} (expected: ${Object.keys(routerLoaders).join(', ')})`)
+  return Object.keys(routerLoaders).filter((k) => !opts.only || opts.only.includes(k))
 }
 
 /**
  * Pre-flight equivalence check over every job (aborts on any disagreement), then
  * prints the run plan with a time estimate.
  */
-export function preflightAndPlan(routerKeys, jobs, opts) {
-  const problems = jobs.flatMap((j) => checkEquivalence(routerKeys, j.variant, j.count, j.perTest))
+export async function preflightAndPlan(routerKeys, jobs, opts) {
+  const routers = Object.fromEntries(await Promise.all(routerKeys.map(async (k) => [k, await routerLoaders[k]()])))
+  const checks = jobs.map((j) => checkEquivalence(routers, j.variant, j.count, j.perTest))
+  const problems = checks.flatMap((c) => c.problems)
   if (problems.length) {
     console.error('PRE-FLIGHT EQUIVALENCE CHECK FAILED:\n  - ' + problems.join('\n  - '))
     process.exit(1)
   }
   console.log(`Pre-flight OK: ${routerKeys.length} routers agree on every lookup for all ${jobs.length} workloads.`)
 
-  const testsPerRouter = jobs.reduce((a, j) => a + buildWorkload(j.variant, j.count, j.perTest).tests.length, 0)
-  const perTestSec = (opts.warmupMs + opts.samples * opts.sampleMs * 1.1) / 1000
-  const perRoundSec = routerKeys.length * (testsPerRouter * perTestSec + jobs.length * 0.3) // + ~0.3s per worker spawn
-  const estMin = Math.ceil((perRoundSec * opts.rounds) / 60)
-  console.log(`${opts.rounds} round(s), warmup ${opts.warmupMs}ms, ${opts.samples}×${opts.sampleMs}ms samples — estimated ~${estMin} min${opts.quick ? '  [QUICK MODE — numbers are not meaningful]' : ''}\n`)
+  // measuring time only (warmup + samples); worker start-up comes on top
+  const testsPerRouter = checks.reduce((a, c) => a + c.testCount, 0)
+  const measureMs = routerKeys.length * testsPerRouter * (opts.warmupMs + opts.samples * opts.sampleMs) * opts.rounds
+  console.log(`${opts.rounds} round(s), warmup ${opts.warmupMs}ms, ${opts.samples}×${opts.sampleMs}ms samples — ` +
+    `estimated > ${Math.ceil(measureMs / 60000)} min${quickNotes(opts).consoleSuffix}\n`)
 }
 
 export const NODE_FLAGS = ['--expose-gc']
@@ -78,7 +75,7 @@ export function runWorker(cfg) {
 /**
  * Run `jobs` (each { variant, count, perTest }) for every router, `opts.rounds` times.
  * Router order is rotated every round. Returns
- *   agg[jobId][routerKey] = { name, routeCount, tests: { testName: stats } }
+ *   agg[jobId][routerKey] = { name, backend?, routeCount, tests: { testName: stats } }
  */
 export async function runJobs(routerKeys, jobs, opts) {
   const raw = {}
@@ -87,7 +84,7 @@ export async function runJobs(routerKeys, jobs, opts) {
     for (const job of jobs) {
       for (const key of order) {
         const res = await runWorker({ router: key, ...job, warmupMs: opts.warmupMs, samples: opts.samples, sampleMs: opts.sampleMs })
-        const slot = ((raw[job.id] ??= {})[key] ??= { name: res.name, routeCount: res.routeCount, rounds: [] })
+        const slot = ((raw[job.id] ??= {})[key] ??= { name: res.name, backend: res.backend, routeCount: res.routeCount, rounds: [] })
         slot.rounds.push(res.tests)
         process.stdout.write(`\r  round ${r + 1}/${opts.rounds}  ${job.id.padEnd(10)} ${key.padEnd(14)}`)
       }
@@ -112,7 +109,7 @@ export async function runJobs(routerKeys, jobs, opts) {
           samples: all.n,
         }
       }
-      agg[jobId][key] = { name: slot.name, routeCount: slot.routeCount, tests }
+      agg[jobId][key] = { name: slot.name, backend: slot.backend, routeCount: slot.routeCount, tests }
     }
   }
   return agg
@@ -129,8 +126,8 @@ export function reportContext(opts, extraSettings = {}) {
     'Samples': `${opts.samples} per test per round, ~${opts.sampleMs} ms each (process.hrtime.bigint)`,
     'Reported value': 'median of per-round medians, op/ms (lookups per millisecond)',
     'Node flags': NODE_FLAGS.join(' ') + ' (gc() before sampling)',
+    ...quickNotes(opts).settings,
   }
-  if (opts.quick) settings['QUICK MODE'] = 'smoke test only — numbers are NOT meaningful'
   const jsonSettings = { rounds: opts.rounds, warmupMs: opts.warmupMs, samples: opts.samples, sampleMs: opts.sampleMs, unit: 'op/ms' }
   return { env, versions, settings, jsonSettings }
 }

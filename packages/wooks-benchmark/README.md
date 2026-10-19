@@ -99,15 +99,17 @@ The more real server-side processing you add — database queries, cache lookups
 
 ## Methodology
 
-- Every framework server runs in its **own child process** (`NODE_ENV=production`, logging disabled, bound to 127.0.0.1), started fresh for each round and killed afterwards — one server at a time.
+- Every framework server runs in its **own child process** — plain `node <entry>` with identical flags for all frameworks (`NODE_ENV=production`, logging disabled, bound to 127.0.0.1) — started fresh for each round and killed afterwards — one server at a time.
+- Handlers are synchronous in pure mode (no per-request Promise/microtask that is not the framework's own cost); only `--db` mode returns a promise for the Redis round-trip. Handlers that read the body themselves (Wooks, h3) stay `async`.
 - The load generator ([autocannon](https://github.com/mcollina/autocannon), 100 connections, pipelining 10) runs in the orchestrator process, which does nothing else during a measurement.
 - **Pre-flight equivalence check** on every server start: each test (plus two invalid-body checks) is sent once and status, body and relevant headers are compared with the expected values; any mismatch aborts the run.
 - Per test: **2 s warmup** (discarded) + **5 s measured**; **3 rounds** with the framework order rotated; the per-test value is the **median** over rounds (min–max and CV are reported).
+- **Drain between runs:** autocannon stops by destroying its sockets, possibly mid-request. After every run the orchestrator asks the server process (over its IPC channel, never during a measurement) to report once all client connections are closed; if any are still open after 5 s the run aborts.
 - Any measured run with more than 0.1% unexpected status codes / socket errors is marked **INVALID** and flagged in the results.
 - The headline number is the **traffic-mix throughput**: the weighted *harmonic* mean of the per-test medians using the traffic weights in the [root README](../../README.md#traffic-distribution) — i.e. the req/s of a server receiving that request mix. (A weighted arithmetic mean of rates would over-weight cheap requests; it is still shown for reference.)
 - Results files record Node.js version, CPU, OS, the exact package versions and all run settings.
 
-All settings are configurable: `--warmup <s> --duration <s> --rounds <n> --connections <n> --pipelining <n> --workers <n> --only wooks,fastify --quick` (or `BENCH_*` env vars). `--quick` is a smoke test (1 s per test, 1 round) — its numbers are not meaningful.
+All settings are configurable: `--warmup <s> --duration <s> --rounds <n> --connections <n> --pipelining <n> --workers <n> --only wooks,fastify --quick` (or `BENCH_*` env vars; invalid values and unknown options are rejected). `--quick` is a smoke test (1 s per test, 1 round) — its numbers are not meaningful; smoke and `--only` runs are written to the git-ignored `.quick/` directory.
 
 ## Running
 

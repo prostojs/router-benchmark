@@ -20,8 +20,11 @@
   "license": "MIT",
   "pnpm": {
     "onlyBuiltDependencies": [
-      "@nestjs/core",
-      "esbuild"
-    ]
+      "@nestjs/core"
+    ],
+    "overrides": {
+      "express": "5.3.0",
+      "fastify": "5.12.7"
+    }
   }
 }

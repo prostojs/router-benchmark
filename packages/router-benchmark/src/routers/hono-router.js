@@ -35,6 +35,10 @@ export class HonoRouterInterface {
         return params
     }
     getName() {
-        return `Hono (${this.router.activeRouter.name})`
+        return 'Hono'
+    }
+    /** SmartRouter's pick for the registered route set: RegExpRouter, or TrieRouter when the set cannot be compiled into one regex. */
+    getBackend() {
+        return this.router.activeRouter.name
     }
 }

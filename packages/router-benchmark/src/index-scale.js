@@ -1,25 +1,13 @@
 // Router scaling benchmark: lookup throughput vs registered route count (22 → 200), 3 route shapes.
 // Usage: node src/index-scale.js [--quick] [--rounds n] [--warmup ms] [--samples n] [--sample-ms ms] [--only a,b]
 import { VARIANTS } from './workloads.js'
-import { parseRouterArgs, selectRouters, preflightAndPlan, runJobs, reportContext } from './runner.js'
-import { writeResultFiles, generateLineChart, environmentMarkdown, fmtInt } from 'bench-utils'
+import { parseRouterOptions, selectRouters, preflightAndPlan, runJobs, reportContext } from './runner.js'
+import { writeResultFiles, generateLineChart, environmentMarkdown, mdTable, quickNotes, fmtInt } from 'bench-utils'
 
 const routeCounts = [22, 50, 100, 200]
 
-// Hono's SmartRouter switches from RegExpRouter to TrieRouter when the route set
-// cannot be compiled into one regex — drawn as one continued series.
-const honoChartConfig = {
-  colors: {
-    'Hono (RegExpRouter)': '#bb8fce',
-    'Hono (TrieRouter)': '#7d3c98',
-  },
-  series: {
-    'Hono (TrieRouter)': { continuesFrom: 'Hono (RegExpRouter)' },
-  },
-}
-
 const pkgDir = new URL('..', import.meta.url).pathname
-const opts = parseRouterArgs()
+const opts = parseRouterOptions()
 const routerKeys = selectRouters(opts)
 
 const jobs = []
@@ -27,95 +15,91 @@ for (const variant of Object.keys(VARIANTS)) {
   for (const count of routeCounts) jobs.push({ id: `${variant}:${count}`, variant, count, perTest: false })
 }
 
-preflightAndPlan(routerKeys, jobs, opts)
+await preflightAndPlan(routerKeys, jobs, opts)
 const agg = await runJobs(routerKeys, jobs, opts)
 
-// results[variant][routerName][routeCount] = op/ms ; spread[variant][routerName][routeCount] = [min, max]
-const results = {}
-const spread = {}
+// series[variant][routerKey] = { name, points: { [routeCount]: { median, min, max, backend? } } }
+// Keyed by router key: a router whose implementation changes with the route count (Hono's
+// SmartRouter falls back from RegExpRouter to TrieRouter) stays one series, with the active
+// backend recorded per point.
+const series = {}
 for (const job of jobs) {
-  for (const [, r] of Object.entries(agg[job.id])) {
+  for (const [key, r] of Object.entries(agg[job.id])) {
     const t = r.tests['All together']
-    ;((results[job.variant] ??= {})[r.name] ??= {})[r.routeCount] = Math.round(t.median)
-    ;((spread[job.variant] ??= {})[r.name] ??= {})[r.routeCount] = [Math.round(t.roundMin), Math.round(t.roundMax)]
+    const s = ((series[job.variant] ??= {})[key] ??= { name: r.name, points: {} })
+    s.points[r.routeCount] = { median: Math.round(t.median), min: Math.round(t.roundMin), max: Math.round(t.roundMax), backend: r.backend }
   }
 }
 
+/** Sorted x values (route counts) of one series, or of all series of a variant. */
+const xOf = (...seriesList) => [...new Set(seriesList.flatMap((s) => Object.keys(s.points).map(Number)))].sort((a, b) => a - b)
+const cellText = (p) => (p == null ? '-' : p.backend ? `${fmtInt(p.median)} (${p.backend})` : fmtInt(p.median))
+
 for (const variant of Object.keys(VARIANTS)) {
   console.log(`\n## Scaling — ${VARIANTS[variant].label} (op/ms)\n`)
-  const counts = countsOf(results[variant])
-  console.table(Object.fromEntries(Object.entries(results[variant]).map(([n, v]) => [n, Object.fromEntries(counts.map((c) => [`${c} routes`, v[c] ?? '-']))])))
-  drawChart(results[variant])
+  const all = Object.values(series[variant])
+  const counts = xOf(...all)
+  console.table(Object.fromEntries(all.map((s) => [s.name, Object.fromEntries(counts.map((c) => [`${c} routes`, cellText(s.points[c])]))])))
+  drawChart(all, counts)
 }
 
 writeAll()
 
-function countsOf(res) {
-  return [...new Set(Object.values(res).flatMap((v) => Object.keys(v).map(Number)))].sort((a, b) => a - b)
-}
-
 function writeAll() {
-  const { env, versions, settings, jsonSettings } = reportContext(opts, { 'Route counts': routeCounts.join(', ') })
+  const { env, versions, settings, jsonSettings } = reportContext(opts, { 'Route counts (target; tables show the actual count per shape)': routeCounts.join(', ') })
 
-  function makeTable(res) {
-    const names = Object.keys(res)
-    const counts = countsOf(res)
-    let t = `| Router | ${counts.map((c) => c + ' routes').join(' | ')} | first → last |\n`
-    t += `|--------|${counts.map(() => '---:').join('|')}|---:|\n`
-    for (const name of names) {
-      const vals = counts.map((c) => res[name][c])
-      const present = vals.filter(Boolean)
-      const ratio = present.length >= 2 ? (present[0] / present[present.length - 1]).toFixed(1) + 'x' : '-'
-      t += `| ${name} | ${vals.map((v) => (v == null ? '-' : fmtInt(v))).join(' | ')} | ${ratio} |\n`
-    }
-    return t
+  function makeTable(all, counts) {
+    return mdTable(
+      ['Router', ...counts.map((c) => c + ' routes'), 'first → last'],
+      all.map((s) => {
+        const present = xOf(s).map((c) => s.points[c].median)
+        const ratio = present.length >= 2 ? (present[0] / present[present.length - 1]).toFixed(1) + 'x' : '-'
+        return [s.name, ...counts.map((c) => cellText(s.points[c])), ratio]
+      }),
+      'l' + 'r'.repeat(counts.length + 1),
+    )
   }
 
-  let md = `# Router Scaling Benchmark\n\n`
-  if (opts.quick) md += `> **QUICK MODE — smoke test only, numbers are not meaningful.**\n\n`
+  let md = `# Router Scaling Benchmark\n\n` + quickNotes(opts).md
   md += `Lookup throughput (route match + param extraction, op/ms) as the number of registered routes grows. `
   md += `All routers are verified to return identical matches/params before measuring. Generated ${env.date}.\n\n---\n\n`
 
   const svgCharts = {}
   for (const variant of Object.keys(VARIANTS)) {
     const v = VARIANTS[variant]
+    const all = Object.values(series[variant])
+    const counts = xOf(...all)
     const file = `results-scale-${variant}-chart.svg`
-    svgCharts[file] = generateLineChart(results[variant], countsOf(results[variant]), {
-      title: `${v.label} — op/ms vs Route Count`,
-      xLabel: 'Routes registered',
-      yLabel: 'op/ms',
-      ...honoChartConfig,
-    })
+    svgCharts[file] = generateLineChart(
+      all.map((s) => ({ name: s.name, points: Object.fromEntries(Object.entries(s.points).map(([c, p]) => [c, { value: p.median, label: p.backend }])) })),
+      counts,
+      { title: `${v.label} — op/ms vs Route Count`, xLabel: 'Routes registered', yLabel: 'op/ms' },
+    )
     md += `## ${v.label}\n\n${v.description}\n\n![${v.label}](results/${file})\n\n`
-    md += makeTable(results[variant]) + `\n---\n\n`
+    md += makeTable(all, counts) + `\n---\n\n`
   }
   md += environmentMarkdown(env, versions, settings)
 
   writeResultFiles(pkgDir, {
-    quick: opts.quick || !!opts.only,
+    quick: opts.quick,
+    only: opts.only,
     environment: env,
     versions,
     settings: { ...jsonSettings, routeCounts },
-    variants: results,
-    roundSpread: spread,
-  }, md, { prefix: 'scale', resultsDir: 'results', svgCharts })
+    variants: series,
+  }, md, { prefix: 'scale', resultsDir: 'results', svgCharts, scratch: opts.scratch })
 }
 
-function drawChart(results) {
+/** Console line chart; `all` = series of one variant, `allCounts` = their sorted x values. */
+function drawChart(all, allCounts) {
   const chartWidth = 60
   const chartHeight = 18
-  const names = Object.keys(results)
   const symbols = ['●', '■', '▲', '◆', '○', '◇', '▼', '★']
   const colors = ['\x1b[31m', '\x1b[34m', '\x1b[32m', '\x1b[33m', '\x1b[35m', '\x1b[36m', '\x1b[91m', '\x1b[94m']
   const reset = '\x1b[0m'
 
-  // Collect all data points
-  const allCounts = [...new Set(
-    names.flatMap(n => Object.keys(results[n]).map(Number))
-  )].sort((a, b) => a - b)
-
-  const allValues = names.flatMap(n => Object.values(results[n]))
-  const maxVal = Math.max(...allValues)
+  const maxVal = Math.max(...all.flatMap((s) => Object.values(s.points).map((p) => p.median)))
+  const xCol = (c) => Math.round(((c - allCounts[0]) / (allCounts[allCounts.length - 1] - allCounts[0])) * (chartWidth - 1))
 
   // Y axis labels
   const yStep = maxVal / (chartHeight - 1)
@@ -126,13 +110,13 @@ function drawChart(results) {
   )
 
   // Plot each router
-  for (let ri = 0; ri < names.length; ri++) {
-    const data = results[names[ri]]
-    const counts = Object.keys(data).map(Number).sort((a, b) => a - b)
+  for (let ri = 0; ri < all.length; ri++) {
+    const data = all[ri].points
+    const counts = xOf(all[ri])
 
     for (let i = 0; i < counts.length; i++) {
-      const x = Math.round(((counts[i] - allCounts[0]) / (allCounts[allCounts.length - 1] - allCounts[0])) * (chartWidth - 1))
-      const y = Math.round((data[counts[i]] / maxVal) * (chartHeight - 1))
+      const x = xCol(counts[i])
+      const y = Math.round((data[counts[i]].median / maxVal) * (chartHeight - 1))
       const row = chartHeight - 1 - y
       if (row >= 0 && row < chartHeight && x >= 0 && x < chartWidth) {
         grid[row][x] = symbols[ri % symbols.length]
@@ -140,8 +124,8 @@ function drawChart(results) {
 
       // Draw lines between points
       if (i > 0) {
-        const prevX = Math.round(((counts[i - 1] - allCounts[0]) / (allCounts[allCounts.length - 1] - allCounts[0])) * (chartWidth - 1))
-        const prevY = Math.round((data[counts[i - 1]] / maxVal) * (chartHeight - 1))
+        const prevX = xCol(counts[i - 1])
+        const prevY = Math.round((data[counts[i - 1]].median / maxVal) * (chartHeight - 1))
         const steps = Math.max(Math.abs(x - prevX), 1)
         for (let s = 1; s < steps; s++) {
           const ix = Math.round(prevX + (x - prevX) * (s / steps))
@@ -181,7 +165,7 @@ function drawChart(results) {
   const xLabels = allCounts.map(c => String(c))
   let xLine = ' '.repeat(yLabelWidth + 2)
   for (let i = 0; i < allCounts.length; i++) {
-    const x = Math.round(((allCounts[i] - allCounts[0]) / (allCounts[allCounts.length - 1] - allCounts[0])) * (chartWidth - 1))
+    const x = xCol(allCounts[i])
     while (xLine.length < yLabelWidth + 2 + x) xLine += ' '
     xLine += xLabels[i]
   }
@@ -189,8 +173,8 @@ function drawChart(results) {
 
   // Legend
   console.log('')
-  for (let i = 0; i < names.length; i++) {
-    console.log(`  ${colors[i]}${symbols[i]}${reset} ${names[i]}`)
+  for (let i = 0; i < all.length; i++) {
+    console.log(`  ${colors[i]}${symbols[i]}${reset} ${all[i].name}`)
   }
   console.log('')
 }

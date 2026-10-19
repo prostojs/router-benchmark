@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common'
 import { SESSION_COOKIE, isValidBody } from '../../routes.js'
 import { HeaderAuthGuard, CookieAuthGuard } from './guards.js'
-import { createDb, type Db } from '../../simulate-db.js'
+import { createDb, type Db } from 'bench-utils/simulate-db'
 
 let db: Db | null = null
 export function enableDbSimulation() {
@@ -36,7 +36,7 @@ export class PublicController {
 
   @Post('auth/login')
   @Header('Set-Cookie', `session=${SESSION_COOKIE}; Path=/; HttpOnly`)
-  async login(@Body() body: unknown) { assertValidBody(body); if (db) await db.set('session'); return 'token' }
+  login(@Body() body: unknown) { assertValidBody(body); return db ? db.set('session').then(() => 'token') : 'token' }
 
   @Get('static/*')
   @Header('Cache-Control', 'public, max-age=31536000, immutable')
@@ -53,29 +53,29 @@ export class PublicController {
 @UseGuards(HeaderAuthGuard)
 export class HeaderAuthController {
   @Get('users')
-  async getUsers() { if (db) await db.get('users'); return 'users' }
+  getUsers() { return db ? db.get('users').then(() => 'users') : 'users' }
 
   @Get('users/:userId')
-  async getUser(@Param('userId') userId: string) { if (db) await db.get('user'); return userId }
+  getUser(@Param('userId') userId: string) { return db ? db.get('user').then(() => userId) : userId }
 
   @Get('users/:userId/profile')
-  async getUserProfile(@Param('userId') userId: string) { if (db) await db.get('profile'); return userId }
+  getUserProfile(@Param('userId') userId: string) { return db ? db.get('profile').then(() => userId) : userId }
 
   @Get('projects')
-  async getProjects() { if (db) await db.get('projects'); return 'projects' }
+  getProjects() { return db ? db.get('projects').then(() => 'projects') : 'projects' }
 
   @Post('projects')
-  async createProject(@Body() body: unknown) { assertValidBody(body); if (db) await db.set('project'); return 'created' }
+  createProject(@Body() body: unknown) { assertValidBody(body); return db ? db.set('project').then(() => 'created') : 'created' }
 
   @Get('projects/:projectId')
-  async getProject(@Param('projectId') projectId: string) { if (db) await db.get('project'); return projectId }
+  getProject(@Param('projectId') projectId: string) { return db ? db.get('project').then(() => projectId) : projectId }
 
   @Delete('projects/:projectId')
-  async deleteProject(@Param('projectId') projectId: string) { if (db) await db.del('project'); return projectId }
+  deleteProject(@Param('projectId') projectId: string) { return db ? db.del('project').then(() => projectId) : projectId }
 
   @Get('organizations/settings/billing/invoices')
   @Header('Cache-Control', 'private, no-cache')
-  async getInvoices() { if (db) await db.get('invoices'); return 'invoices' }
+  getInvoices() { return db ? db.get('invoices').then(() => 'invoices') : 'invoices' }
 }
 
 // --- Cookie-auth guarded routes ---
@@ -84,31 +84,31 @@ export class HeaderAuthController {
 @UseGuards(CookieAuthGuard)
 export class CookieAuthController {
   @Get('projects/:projectId/members')
-  async getMembers(@Param('projectId') projectId: string) { if (db) await db.get('members'); return projectId }
+  getMembers(@Param('projectId') projectId: string) { return db ? db.get('members').then(() => projectId) : projectId }
 
   @Get('projects/:projectId/tasks')
-  async getTasks(@Param('projectId') projectId: string) { if (db) await db.get('tasks'); return projectId }
+  getTasks(@Param('projectId') projectId: string) { return db ? db.get('tasks').then(() => projectId) : projectId }
 
   @Get('projects/:projectId/tasks/:taskId')
-  async getTask(@Param('taskId') taskId: string) { if (db) await db.get('task'); return taskId }
+  getTask(@Param('taskId') taskId: string) { return db ? db.get('task').then(() => taskId) : taskId }
 
   @Put('projects/:projectId/tasks/:taskId')
   @HttpCode(201)
-  async updateTask(@Param('taskId') taskId: string, @Body() body: unknown) { assertValidBody(body); if (db) await db.set('task'); return taskId }
+  updateTask(@Param('taskId') taskId: string, @Body() body: unknown) { assertValidBody(body); return db ? db.set('task').then(() => taskId) : taskId }
 
   @Delete('projects/:projectId/tasks/:taskId')
-  async deleteTask(@Param('taskId') taskId: string) { if (db) await db.del('task'); return taskId }
+  deleteTask(@Param('taskId') taskId: string) { return db ? db.del('task').then(() => taskId) : taskId }
 
   @Get('projects/:projectId/tasks/:taskId/comments')
-  async getComments(@Param('taskId') taskId: string) { if (db) await db.get('comments'); return taskId }
+  getComments(@Param('taskId') taskId: string) { return db ? db.get('comments').then(() => taskId) : taskId }
 
   @Post('projects/:projectId/tasks/:taskId/comments')
-  async addComment(@Param('taskId') taskId: string, @Body() body: unknown) { assertValidBody(body); if (db) await db.set('comment'); return taskId }
+  addComment(@Param('taskId') taskId: string, @Body() body: unknown) { assertValidBody(body); return db ? db.set('comment').then(() => taskId) : taskId }
 
   @Get('orgs/:orgId/teams/:teamId/projects/:projectId/tasks/:taskId')
-  async getDeepTask(@Param('taskId') taskId: string) { if (db) await db.get('task'); return taskId }
+  getDeepTask(@Param('taskId') taskId: string) { return db ? db.get('task').then(() => taskId) : taskId }
 
   @Get('organizations/settings/billing/payment-methods')
   @Header('Cache-Control', 'private, no-cache')
-  async getPaymentMethods() { if (db) await db.get('methods'); return 'methods' }
+  getPaymentMethods() { return db ? db.get('methods').then(() => 'methods') : 'methods' }
 }

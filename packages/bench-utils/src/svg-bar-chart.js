@@ -1,24 +1,21 @@
 /**
  * Generate an SVG horizontal bar chart.
  *
- * @param {Array<{name: string, value: number, errorRate?: number}>} data  sorted descending by value
+ * @param {Array<{name: string, value: number, range?: [number, number], note?: string, invalid?: boolean}>} data
+ *   bars in display order; `range` = min–max whisker, `note` = small caption under the value
+ *   (e.g. "fastest" / "1.25x slower"), `invalid` = bar drawn grey with a red caption
  * @param {object} [opts]
  * @param {string} [opts.title]
  * @param {string} [opts.unit]  label for value axis (e.g. "op/ms")
  * @param {Record<string,string>} [opts.colors]  name -> hex color
- * @param {string} [opts.highlightName]  name to visually highlight
  * @param {string} [opts.subtitle]  small second line under the title (e.g. run settings)
  * @returns {string} SVG markup
- *
- * Each datum may also carry `range: [min, max]` (drawn as a thin spread whisker)
- * and `invalid: true` (bar is drawn grey and labelled INVALID).
  */
 export function generateBarChart(data, opts = {}) {
   const {
     title = 'Benchmark Results',
     unit = 'op/ms',
     colors: colorMap = {},
-    highlightName = '',
     subtitle = '',
   } = opts
 
@@ -49,18 +46,17 @@ export function generateBarChart(data, opts = {}) {
 
   // Bars
   for (let i = 0; i < data.length; i++) {
-    const { name, value, errorRate, range, invalid } = data[i]
+    const { name, value, range, invalid, note } = data[i]
     const c = invalid ? '#777' : color(name, i)
     const y = margin.top + i * (barH + barGap)
     const barW = Math.max(2, (value / maxVal) * plotW)
-    const isHighlight = name === highlightName
     const labelX = margin.left + Math.max(barW, range ? (range[1] / maxVal) * plotW : 0) + 8
 
     // Label
-    svg += `<text x="${margin.left - 12}" y="${y + barH / 2 + 5}" text-anchor="end" fill="${isHighlight ? '#fff' : '#bbb'}" font-size="13" font-weight="${isHighlight ? '700' : '400'}">${esc(name)}</text>\n`
+    svg += `<text x="${margin.left - 12}" y="${y + barH / 2 + 5}" text-anchor="end" fill="#bbb" font-size="13">${esc(name)}</text>\n`
 
     // Bar
-    svg += `<rect x="${margin.left}" y="${y}" width="${barW.toFixed(1)}" height="${barH}" fill="${c}" rx="4" opacity="${isHighlight ? '1' : '0.85'}"/>\n`
+    svg += `<rect x="${margin.left}" y="${y}" width="${barW.toFixed(1)}" height="${barH}" fill="${c}" rx="4" opacity="0.85"/>\n`
 
     // Spread whisker (min..max across rounds)
     if (range && range[1] > range[0]) {
@@ -72,26 +68,11 @@ export function generateBarChart(data, opts = {}) {
       svg += `<line x1="${x2.toFixed(1)}" y1="${ym - 5}" x2="${x2.toFixed(1)}" y2="${ym + 5}" stroke="#222" stroke-width="1.5"/>\n`
     }
 
-    // Error overlay — red stripe on the right portion of the bar
-    if (errorRate > 0.001) {
-      const errW = Math.max(2, barW * errorRate)
-      svg += `<rect x="${(margin.left + barW - errW).toFixed(1)}" y="${y}" width="${errW.toFixed(1)}" height="${barH}" fill="#e74c3c" rx="4" opacity="0.9"/>\n`
-    }
-
     // Value label
     svg += `<text x="${labelX}" y="${y + barH / 2 + 5}" fill="#ccc" font-size="12" font-weight="600">${fmtK(value)} ${esc(unit)}</text>\n`
 
-    // Speed ratio (relative to fastest) + error annotation
-    if (invalid) {
-      svg += `<text x="${labelX}" y="${y + barH / 2 + 18}" fill="#e74c3c" font-size="10">INVALID (unexpected responses)</text>\n`
-    } else if (i > 0) {
-      const ratio = (data[0].value / value).toFixed(1)
-      svg += `<text x="${labelX}" y="${y + barH / 2 + 18}" fill="#777" font-size="10">${ratio}x slower</text>\n`
-    } else {
-      svg += `<text x="${labelX}" y="${y + barH / 2 + 18}" fill="#6a6" font-size="10">fastest</text>\n`
-    }
-    if (errorRate > 0.001) {
-      svg += `<text x="${labelX}" y="${y + barH / 2 + 29}" fill="#e74c3c" font-size="9">${(errorRate * 100).toFixed(1)}% errors</text>\n`
+    if (note) {
+      svg += `<text x="${labelX}" y="${y + barH / 2 + 18}" fill="${invalid ? '#e74c3c' : '#777'}" font-size="10">${esc(note)}</text>\n`
     }
   }
 

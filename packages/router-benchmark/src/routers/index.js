@@ -1,16 +1,14 @@
-import { ExpressInterface } from './express.js'
-import { FindMyWayInterface } from './find-my-way.js'
-import { HonoRouterInterface } from './hono-router.js'
-import { ProstoRouterInterface } from './prosto-router.js'
-import { Rou3RouterInterface } from './rou3-router.js'
-import { Rou3CompiledRouterInterface } from './rou3-compiled-router.js'
-
-/** key -> router adapter class. Every adapter's lookup() returns a params object or null. */
-export const routers = {
-    prosto: ProstoRouterInterface,
-    'find-my-way': FindMyWayInterface,
-    rou3: Rou3RouterInterface,
-    'rou3-compiled': Rou3CompiledRouterInterface,
-    hono: HonoRouterInterface,
-    express: ExpressInterface,
+/**
+ * key -> loader of the router adapter class. Every adapter's lookup() returns a params
+ * object or null; getName() returns the display name and, optionally, getBackend() the
+ * implementation it picked for the registered route set.
+ * Loaded lazily so a measuring worker process only ever loads the one router it measures.
+ */
+export const routerLoaders = {
+  prosto: async () => (await import('./prosto-router.js')).ProstoRouterInterface,
+  'find-my-way': async () => (await import('./find-my-way.js')).FindMyWayInterface,
+  rou3: async () => (await import('./rou3-router.js')).Rou3RouterInterface,
+  'rou3-compiled': async () => (await import('./rou3-compiled-router.js')).Rou3CompiledRouterInterface,
+  hono: async () => (await import('./hono-router.js')).HonoRouterInterface,
+  express: async () => (await import('./express.js')).ExpressInterface,
 }

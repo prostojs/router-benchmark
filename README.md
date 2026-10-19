@@ -117,6 +117,8 @@ pnpm bench:all
 pnpm smoke
 ```
 
-Smoke (`--quick`) results are written to a git-ignored `.quick/` directory inside each package, never over the published results.
+Smoke (`--quick`) and partial (`--only`) results are written to a git-ignored `.quick/` directory inside each package, never over the published results.
+
+The moost benchmark compiles its TypeScript servers ahead of time (`tsc` → `dist/`); its `start`/`quick` scripts run that build first, so every server — TypeScript or plain JS — is started as plain `node`.
 
 All benchmark dependencies are pinned to exact versions from the npm registry; the versions, Node.js version, CPU, OS and run settings are written into every results file. Each package README has a **Methodology** section.

@@ -1,6 +1,7 @@
 import os from 'node:os'
 import { existsSync, readFileSync, realpathSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
+import { mdTable } from './md-table.js'
 
 /**
  * Find `<name>/package.json` the way Node resolves packages: walk up from
@@ -17,6 +18,10 @@ function findPackageJson(fromDir, name) {
   }
 }
 
+function versionOf(pj) {
+  return pj ? JSON.parse(readFileSync(pj, 'utf8')).version : 'not installed'
+}
+
 /**
  * Resolve installed versions.
  *
@@ -30,11 +35,9 @@ export function resolveVersions(pkgDir, names) {
     if (Array.isArray(entry)) {
       const [parent, child] = entry
       const parentPj = findPackageJson(pkgDir, parent)
-      const childPj = parentPj && findPackageJson(dirname(parentPj), child)
-      out[`${child} (via ${parent})`] = childPj ? JSON.parse(readFileSync(childPj, 'utf8')).version : 'not installed'
+      out[`${child} (via ${parent})`] = versionOf(parentPj && findPackageJson(dirname(parentPj), child))
     } else {
-      const pj = findPackageJson(pkgDir, entry)
-      out[entry] = pj ? JSON.parse(readFileSync(pj, 'utf8')).version : 'not installed'
+      out[entry] = versionOf(findPackageJson(pkgDir, entry))
     }
   }
   return out
@@ -57,16 +60,13 @@ export function collectEnvironment() {
 
 /** Markdown block describing environment + versions + settings. */
 export function environmentMarkdown(env, versions, settings) {
-  let md = `## Environment\n\n`
-  md += `| | |\n|---|---|\n`
-  md += `| Date | ${env.date} |\n`
-  md += `| Node.js | ${env.node} (V8 ${env.v8}) |\n`
-  md += `| OS | ${env.os} |\n`
-  md += `| CPU | ${env.cpu} (${env.cpuCount} logical cores) |\n`
-  md += `| Memory | ${env.memoryGB} GB |\n`
-  md += `\n### Settings\n\n| Setting | Value |\n|---|---|\n`
-  for (const [k, v] of Object.entries(settings)) md += `| ${k} | ${v} |\n`
-  md += `\n### Package versions\n\n| Package | Version |\n|---|---|\n`
-  for (const [k, v] of Object.entries(versions)) md += `| ${k} | ${v} |\n`
-  return md + '\n'
+  return `## Environment\n\n` + mdTable(['', ''], [
+    ['Date', env.date],
+    ['Node.js', `${env.node} (V8 ${env.v8})`],
+    ['OS', env.os],
+    ['CPU', `${env.cpu} (${env.cpuCount} logical cores)`],
+    ['Memory', `${env.memoryGB} GB`],
+  ]) +
+    `\n### Settings\n\n` + mdTable(['Setting', 'Value'], Object.entries(settings)) +
+    `\n### Package versions\n\n` + mdTable(['Package', 'Version'], Object.entries(versions)) + '\n'
 }

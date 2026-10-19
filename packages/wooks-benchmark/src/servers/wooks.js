@@ -1,13 +1,13 @@
 import { createHttpApp, useRouteParams, useHeaders, useResponse, useCookies, HttpError } from '@wooksjs/event-http'
 import { useBody } from '@wooksjs/http-body'
 import { createServer as createHttpServer } from 'node:http'
-import { AUTH_TOKEN, SESSION_COOKIE, isValidBody } from '../routes.js'
-import { createDb } from '../simulate-db.js'
+import { createDb } from 'bench-utils/simulate-db'
+import { BEARER, SESSION_COOKIE, isValidBody } from '../routes.js'
 
 // Idiomatic Wooks: auth and body parsing are composables called from the handler,
 // so auth runs before the body is read.
 function requireHeaderAuth() {
-  if (useHeaders().authorization !== `Bearer ${AUTH_TOKEN}`) {
+  if (useHeaders().authorization !== BEARER) {
     throw new HttpError(401, 'Unauthorized')
   }
 }
@@ -53,28 +53,26 @@ export async function createServer({ simulateDb } = {}) {
 
   // --- Header-auth guarded routes ---
 
-  app.get('/api/v1/users', async () => {
+  app.get('/api/v1/users', () => {
     requireHeaderAuth()
-    if (db) await db.get('users')
-    return 'users'
+    return db ? db.get('users').then(() => 'users') : 'users'
   })
 
-  app.get('/api/v1/users/:userId', async () => {
+  app.get('/api/v1/users/:userId', () => {
     requireHeaderAuth()
-    if (db) await db.get('user')
-    return useRouteParams().get('userId')
+    const userId = useRouteParams().get('userId')
+    return db ? db.get('user').then(() => userId) : userId
   })
 
-  app.get('/api/v1/users/:userId/profile', async () => {
+  app.get('/api/v1/users/:userId/profile', () => {
     requireHeaderAuth()
-    if (db) await db.get('profile')
-    return useRouteParams().get('userId')
+    const userId = useRouteParams().get('userId')
+    return db ? db.get('profile').then(() => userId) : userId
   })
 
-  app.get('/api/v1/projects', async () => {
+  app.get('/api/v1/projects', () => {
     requireHeaderAuth()
-    if (db) await db.get('projects')
-    return 'projects'
+    return db ? db.get('projects').then(() => 'projects') : 'projects'
   })
 
   app.post('/api/v1/projects', async () => {
@@ -84,43 +82,42 @@ export async function createServer({ simulateDb } = {}) {
     return 'created'
   })
 
-  app.get('/api/v1/projects/:projectId', async () => {
+  app.get('/api/v1/projects/:projectId', () => {
     requireHeaderAuth()
-    if (db) await db.get('project')
-    return useRouteParams().get('projectId')
+    const projectId = useRouteParams().get('projectId')
+    return db ? db.get('project').then(() => projectId) : projectId
   })
 
-  app.delete('/api/v1/projects/:projectId', async () => {
+  app.delete('/api/v1/projects/:projectId', () => {
     requireHeaderAuth()
-    if (db) await db.del('project')
-    return useRouteParams().get('projectId')
+    const projectId = useRouteParams().get('projectId')
+    return db ? db.del('project').then(() => projectId) : projectId
   })
 
-  app.get('/api/v1/organizations/settings/billing/invoices', async () => {
+  app.get('/api/v1/organizations/settings/billing/invoices', () => {
     requireHeaderAuth()
-    if (db) await db.get('invoices')
     useResponse().setHeader('Cache-Control', 'private, no-cache')
-    return 'invoices'
+    return db ? db.get('invoices').then(() => 'invoices') : 'invoices'
   })
 
   // --- Cookie-auth guarded routes ---
 
-  app.get('/api/v1/projects/:projectId/members', async () => {
+  app.get('/api/v1/projects/:projectId/members', () => {
     requireCookieAuth()
-    if (db) await db.get('members')
-    return useRouteParams().get('projectId')
+    const projectId = useRouteParams().get('projectId')
+    return db ? db.get('members').then(() => projectId) : projectId
   })
 
-  app.get('/api/v1/projects/:projectId/tasks', async () => {
+  app.get('/api/v1/projects/:projectId/tasks', () => {
     requireCookieAuth()
-    if (db) await db.get('tasks')
-    return useRouteParams().get('projectId')
+    const projectId = useRouteParams().get('projectId')
+    return db ? db.get('tasks').then(() => projectId) : projectId
   })
 
-  app.get('/api/v1/projects/:projectId/tasks/:taskId', async () => {
+  app.get('/api/v1/projects/:projectId/tasks/:taskId', () => {
     requireCookieAuth()
-    if (db) await db.get('task')
-    return useRouteParams().get('taskId')
+    const taskId = useRouteParams().get('taskId')
+    return db ? db.get('task').then(() => taskId) : taskId
   })
 
   app.put('/api/v1/projects/:projectId/tasks/:taskId', async () => {
@@ -130,16 +127,16 @@ export async function createServer({ simulateDb } = {}) {
     return useRouteParams().get('taskId')
   })
 
-  app.delete('/api/v1/projects/:projectId/tasks/:taskId', async () => {
+  app.delete('/api/v1/projects/:projectId/tasks/:taskId', () => {
     requireCookieAuth()
-    if (db) await db.del('task')
-    return useRouteParams().get('taskId')
+    const taskId = useRouteParams().get('taskId')
+    return db ? db.del('task').then(() => taskId) : taskId
   })
 
-  app.get('/api/v1/projects/:projectId/tasks/:taskId/comments', async () => {
+  app.get('/api/v1/projects/:projectId/tasks/:taskId/comments', () => {
     requireCookieAuth()
-    if (db) await db.get('comments')
-    return useRouteParams().get('taskId')
+    const taskId = useRouteParams().get('taskId')
+    return db ? db.get('comments').then(() => taskId) : taskId
   })
 
   app.post('/api/v1/projects/:projectId/tasks/:taskId/comments', async () => {
@@ -149,20 +146,19 @@ export async function createServer({ simulateDb } = {}) {
     return useRouteParams().get('taskId')
   })
 
-  app.get('/api/v1/orgs/:orgId/teams/:teamId/projects/:projectId/tasks/:taskId', async () => {
+  app.get('/api/v1/orgs/:orgId/teams/:teamId/projects/:projectId/tasks/:taskId', () => {
     requireCookieAuth()
-    if (db) await db.get('task')
-    return useRouteParams().get('taskId')
+    const taskId = useRouteParams().get('taskId')
+    return db ? db.get('task').then(() => taskId) : taskId
   })
 
-  app.get('/api/v1/organizations/settings/billing/payment-methods', async () => {
+  app.get('/api/v1/organizations/settings/billing/payment-methods', () => {
     requireCookieAuth()
-    if (db) await db.get('methods')
     useResponse().setHeader('Cache-Control', 'private, no-cache')
-    return 'methods'
+    return db ? db.get('methods').then(() => 'methods') : 'methods'
   })
 
   const server = createHttpServer(app.getServerCb())
   await new Promise((r) => server.listen(0, '127.0.0.1', r))
-  return { port: server.address().port }
+  return { server }
 }

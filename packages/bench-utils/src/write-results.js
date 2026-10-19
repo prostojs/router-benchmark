@@ -11,12 +11,12 @@ import { resolve } from 'node:path'
  * @param {string} [opts.prefix]  file prefix (e.g. "scale" -> results-scale.json, RESULTS-SCALE.md)
  * @param {string} [opts.resultsDir]  subdirectory for JSON + SVG (e.g. "results"); markdown stays at pkgDir
  * @param {Record<string,string>} [opts.svgCharts]  filename -> SVG content (e.g. { 'results-chart.svg': svgString })
+ * @param {boolean} [opts.scratch]  smoke (--quick) or partial (--only) run: written into the git-ignored
+ *   `.quick/` directory (same layout) so it never overwrites the published results
  */
 export function writeResultFiles(pkgDir, jsonData, markdown, opts = {}) {
-  const { prefix = '', resultsDir = '', svgCharts = {} } = opts
-  // Smoke (--quick) and partial (--only) runs must never overwrite the published results: write them
-  // into a git-ignored `.quick/` directory with the same layout instead.
-  if (jsonData?.quick) pkgDir = resolve(pkgDir, '.quick')
+  const { prefix = '', resultsDir = '', svgCharts = {}, scratch = false } = opts
+  if (scratch) pkgDir = resolve(pkgDir, '.quick')
   mkdirSync(pkgDir, { recursive: true })
 
   const artifactDir = resultsDir ? resolve(pkgDir, resultsDir) : pkgDir

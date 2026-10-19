@@ -78,21 +78,26 @@ The more real server-side processing you add — database queries, cache lookups
 
 Same harness and workload as the [wooks benchmark](../wooks-benchmark/README.md#methodology) (shared code in `packages/bench-utils`):
 
-- Every framework server runs in its **own child process** under the same Node flags (`node --import tsx`, `NODE_ENV=production`, logging disabled) — this also keeps Moost's and NestJS' `reflect-metadata` usage apart. The load generator (autocannon, 100 connections, pipelining 10) runs in the orchestrator process.
+- The TypeScript servers are **compiled ahead of time** (`pnpm build` = `tsc` from TypeScript 7 with `experimentalDecorators` + `emitDecoratorMetadata`) into a git-ignored `dist/`; every `start`/`quick` script builds first. No loader runs at benchmark time.
+- Every framework server runs in its **own child process** as plain `node <entry>` with identical flags for all servers, baselines included (`NODE_ENV=production`, logging disabled) — this also keeps Moost's and NestJS' `reflect-metadata` usage apart. The load generator (autocannon, 100 connections, pipelining 10) runs in the orchestrator process.
+- Handlers are synchronous in pure mode; only `--db` mode returns a promise for the Redis round-trip.
+- **Drain between runs:** after every run the orchestrator waits until the server process reports all client connections closed (abort after 5 s), instead of a fixed sleep.
 - **Pre-flight equivalence check** on every server start (status, body, headers, invalid-body → 400).
 - Per test: 2 s warmup + 5 s measured; 3 rounds with rotated framework order; median per test; runs with > 0.1% unexpected responses are flagged INVALID.
 - Headline = weighted harmonic mean of per-test medians (traffic-mix throughput).
 - Auth: Moost uses `defineAuthGuard` interceptors (run before argument resolution, so `@Body()` is never parsed for unauthorized requests); NestJS uses `@UseGuards` guards. NestJS registers its JSON body parser globally (platform default), so on both NestJS platforms the body is parsed *before* guards run — that is NestJS' idiomatic behaviour and is intentionally not worked around.
+- One version of each HTTP engine: the root `pnpm.overrides` pins `express` and `fastify`, so NestJS' platform adapters run on exactly the same Express/Fastify versions as the no-DI baselines (NestJS otherwise bundles its own, slightly older copies).
 - Body validation: the same minimal "body must be a JSON object" check in every handler (`BadRequestException` / `HttpError(400)`); no class-validator / schema library on either side.
 
 `--warmup <s> --duration <s> --rounds <n> --only moost,nestjs-fastify --quick` (or `BENCH_*` env vars) are supported; `pnpm quick` is a smoke test whose numbers are not meaningful.
 
-`--baselines` additionally measures the underlying HTTP frameworks without DI (Wooks, Fastify, Express — the servers from `wooks-benchmark`, run under the same loader) in the same run, so the DI-layer overhead table above can be computed from one consistent measurement (~50 min instead of ~25).
+`--baselines` (or naming a baseline key in `--only`) additionally measures the underlying HTTP frameworks without DI (Wooks, Fastify, Express — the servers from `wooks-benchmark`, started the same way) in the same run, so the DI-layer overhead table above can be computed from one consistent measurement (~50 min instead of ~25).
 
 ## Running
 
 ```bash
 pnpm install
+pnpm --filter moost-benchmark build   # compile src/ → dist/ (the start/quick scripts do this automatically)
 pnpm bench:moost        # pure framework overhead (~25 min)
 pnpm bench:moost:db     # with simulated Redis DB calls (requires Redis on 127.0.0.1:6379; ~25 min)
 pnpm --filter moost-benchmark quick   # smoke test (~2 min, numbers not meaningful)

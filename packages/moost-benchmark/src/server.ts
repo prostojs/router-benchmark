@@ -1,9 +1,9 @@
 /**
  * Server process entry — starts ONE framework server and reports its port.
  *
- * Usage: node --import tsx src/server.ts <framework> [--db]
- * Prints `LISTENING:<port>` on stdout once ready. Started by the orchestrator
- * (src/index.ts) with NODE_ENV=production; killed with SIGTERM.
+ * Usage: node dist/server.js <framework> [--db]  (compiled with `pnpm build`)
+ * Reports its port over the IPC channel (see bench-utils/server-entry). Started by the orchestrator
+ * (dist/index.js) with NODE_ENV=production; killed with SIGTERM.
  * Each framework runs in its own process (also avoids reflect-metadata clashes).
  */
 // @ts-ignore — plain JS module without type declarations

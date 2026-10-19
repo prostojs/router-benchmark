@@ -12,5 +12,5 @@ export async function createServer({ simulateDb = false } = {}) {
   app.disable('x-powered-by')
   app.use(cookieParser())
   await app.listen(0, '127.0.0.1')
-  return { port: (app.getHttpServer().address() as { port: number }).port }
+  return { server: app.getHttpServer() }
 }

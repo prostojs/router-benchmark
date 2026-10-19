@@ -8,29 +8,27 @@
  *     does nothing else while a measurement is in progress.
  *
  * Per round and framework:
- *   1. spawn server, wait for `LISTENING:<port>` on its stdout
+ *   1. spawn `node <entry> <key>`, wait for its `listening` IPC message (see server-entry.js)
  *   2. pre-flight equivalence check: every test is sent once and status, body and
  *      relevant headers are compared with the expected values — any mismatch aborts
- *   3. for every test: warmup run (discarded) + measured run
+ *   3. for every test: warmup run (discarded) + measured run; after each run, wait until
+ *      the server reports all client connections closed (drain)
  *   4. kill server
  * Framework order is rotated between rounds. Per-test result = median over rounds.
  */
 import { spawn } from 'node:child_process'
-import net from 'node:net'
 import autocannon from 'autocannon'
-import { describe, weightedHarmonicMean, weightedArithmeticMean, rotate, fmtInt, fmtPct } from './stats.js'
+import { describe, weightedHarmonicMean, weightedArithmeticMean, rotate, rankRelative, fmtInt, fmtPct } from './stats.js'
 import { collectEnvironment, resolveVersions, environmentMarkdown } from './env.js'
 import { generateBarChart } from './svg-bar-chart.js'
 import { writeResultFiles } from './write-results.js'
-import { parseFlags, parseOnly } from './args.js'
+import { parseBenchOptions, quickNotes } from './args.js'
+import { mdTable } from './md-table.js'
+import { checkRedis, REDIS_HOST, REDIS_PORT } from './simulate-db.js'
 
 const MAX_ERROR_RATE = 0.001 // a measured run with >0.1% unexpected responses/errors is INVALID
-
-const DEFAULTS = { warmup: 2, duration: 5, rounds: 3, connections: 100, pipelining: 10, workers: 0 }
-const QUICK = { warmup: 1, duration: 1, rounds: 1 }
-// autocannon only checks its stop condition on its 1s sampling tick, so runs shorter
-// than 1s are not honoured (a "0.5s" run really lasts ~1s and is a single sample).
-const MIN_DURATION = 1
+const DRAIN_TIMEOUT_MS = 5000 // server sockets still open this long after a run → abort
+const HARNESS_PACKAGES = ['autocannon', 'ioredis']
 
 /**
  * CLI flags (env var in brackets):
@@ -43,49 +41,20 @@ const MIN_DURATION = 1
  *   --only <a,b>        run only these framework keys
  *   --quick             smoke mode: 1s warmup, 1s measure, 1 round (results are NOT meaningful)
  *   --db                simulated DB (Redis on 127.0.0.1:6379, `bench:` keys only)
- *   --baselines         also run the suite's optional baseline frameworks (cfg.baselines)
- *   <number>            legacy positional: measured seconds per test
+ *   --baselines         also run the frameworks marked `optional`
  */
-export function parseHttpBenchArgs(argv = process.argv.slice(2)) {
-  const { flags, positional } = parseFlags(argv, ['quick', 'db', 'baselines'])
-  const quick = !!flags.quick
-  const base = quick ? { ...DEFAULTS, ...QUICK } : DEFAULTS
-  const num = (name, envName) => {
-    const raw = flags[name] ?? process.env[envName]
-    const n = raw == null ? NaN : Number(raw)
-    return Number.isFinite(n) ? n : base[name]
-  }
-  const opts = {
-    quick,
-    db: !!flags.db,
-    baselines: !!flags.baselines,
-    warmup: num('warmup', 'BENCH_WARMUP'),
-    duration: num('duration', 'BENCH_DURATION'),
-    rounds: Math.max(1, Math.round(num('rounds', 'BENCH_ROUNDS'))),
-    connections: num('connections', 'BENCH_CONNECTIONS'),
-    pipelining: num('pipelining', 'BENCH_PIPELINING'),
-    workers: num('workers', 'BENCH_WORKERS'),
-    only: parseOnly(flags),
-  }
-  const legacyDuration = positional.map(Number).find((n) => Number.isFinite(n) && n > 0)
-  if (legacyDuration && flags.duration == null) opts.duration = legacyDuration
-  opts.duration = Math.max(MIN_DURATION, opts.duration)
-  if (opts.warmup > 0) opts.warmup = Math.max(MIN_DURATION, opts.warmup)
-  return opts
-}
-
-async function checkRedis() {
-  await new Promise((resolve, reject) => {
-    const sock = net.connect(6379, '127.0.0.1')
-    const timer = setTimeout(() => { sock.destroy(); reject(new Error('Redis PING timed out')) }, 2000)
-    sock.on('connect', () => sock.write('PING\r\n'))
-    sock.on('data', (d) => {
-      clearTimeout(timer)
-      sock.end()
-      d.toString().startsWith('+PONG') ? resolve() : reject(new Error(`Unexpected Redis reply: ${d}`))
-    })
-    sock.on('error', (e) => { clearTimeout(timer); reject(e) })
-  })
+// autocannon only checks its stop condition on its 1s sampling tick, so runs shorter
+// than 1s are not honoured (a "0.5s" run really lasts ~1s and is a single sample) → min 1.
+const OPTION_SPEC = {
+  booleans: ['db', 'baselines'],
+  numbers: {
+    warmup: { env: 'BENCH_WARMUP', default: 2, quick: 1, min: 1, allowZero: true },
+    duration: { env: 'BENCH_DURATION', default: 5, quick: 1, min: 1 },
+    rounds: { env: 'BENCH_ROUNDS', default: 3, quick: 1, min: 1, int: true },
+    connections: { env: 'BENCH_CONNECTIONS', default: 100, min: 1, int: true },
+    pipelining: { env: 'BENCH_PIPELINING', default: 10, min: 1, int: true },
+    workers: { env: 'BENCH_WORKERS', default: 0, min: 1, int: true, allowZero: true },
+  },
 }
 
 let currentChild = null
@@ -94,29 +63,25 @@ for (const sig of ['SIGINT', 'SIGTERM']) {
   process.on(sig, () => { if (currentChild) currentChild.kill('SIGKILL'); process.exit(130) })
 }
 
-function startServer(spec, label) {
+/** Every server runs as `node <entry> <key> [--db]` — same binary and flags for all frameworks. */
+function startServer(fw, db) {
   return new Promise((resolve, reject) => {
-    const child = spawn(spec.command, spec.args, {
-      cwd: spec.cwd,
+    const child = spawn(process.execPath, [fw.serverSpec.entry, fw.key, ...(db ? ['--db'] : [])], {
+      cwd: fw.serverSpec.cwd,
       env: { ...process.env, NODE_ENV: 'production' },
-      stdio: ['ignore', 'pipe', 'inherit'],
+      stdio: ['ignore', 'inherit', 'inherit', 'ipc'],
     })
     currentChild = child
-    let buf = ''
-    const timer = setTimeout(() => { child.kill('SIGKILL'); reject(new Error(`${label}: server did not start within 60s`)) }, 60000)
-    child.stdout.on('data', (chunk) => {
-      buf += chunk.toString()
-      const m = buf.match(/LISTENING:(\d+)/)
-      if (m) {
-        clearTimeout(timer)
-        child.stdout.removeAllListeners('data')
-        child.stdout.resume()
-        resolve({ child, port: Number(m[1]) })
-      }
+    const timer = setTimeout(() => { child.kill('SIGKILL'); reject(new Error(`${fw.name}: server did not start within 60s`)) }, 60000)
+    child.on('message', function onListening(msg) {
+      if (msg?.type !== 'listening') return
+      clearTimeout(timer)
+      child.off('message', onListening)
+      resolve({ child, port: msg.port })
     })
     child.on('exit', (code) => {
       clearTimeout(timer)
-      reject(new Error(`${label}: server exited early with code ${code}`))
+      reject(new Error(`${fw.name}: server exited early with code ${code}`))
     })
   })
 }
@@ -132,13 +97,35 @@ async function stopServer(child) {
   currentChild = null
 }
 
+/**
+ * autocannon stops by destroying its sockets, possibly mid-request (e.g. halfway through
+ * a 25 KB body). Ask the server process to report once all client connections are closed,
+ * so the next run never starts while the server is still busy with the previous one.
+ * Only called between runs — never while autocannon is measuring.
+ */
+function drain(child, label) {
+  return new Promise((resolve, reject) => {
+    const onExit = (code) => reject(new Error(`${label}: server exited with code ${code} while draining`))
+    child.once('exit', onExit)
+    child.on('message', function onDrained(msg) {
+      if (msg?.type !== 'drained') return
+      child.off('message', onDrained)
+      child.off('exit', onExit)
+      if (msg.open === 0) resolve()
+      else reject(new Error(`${label}: ${msg.open} connection(s) still open ${DRAIN_TIMEOUT_MS} ms after the run — aborting`))
+    })
+    child.send({ type: 'drain', timeoutMs: DRAIN_TIMEOUT_MS })
+  })
+}
+
 /** Send every test once and compare with the expected response. Returns a list of problems. */
-export async function preflight(baseUrl, tests) {
+async function preflight(baseUrl, tests) {
   const problems = []
   for (const t of tests) {
     let res, body
     try {
-      res = await fetch(baseUrl + t.path, { method: t.method, headers: t.headers, body: t.body })
+      // `connection: close` so the pre-flight leaves no idle keep-alive socket behind (see drain)
+      res = await fetch(baseUrl + t.path, { method: t.method, headers: { ...t.headers, connection: 'close' }, body: t.body })
       body = await res.text()
     } catch (e) {
       problems.push(`${t.name}: request failed (${e.message})`)
@@ -158,20 +145,8 @@ export async function preflight(baseUrl, tests) {
         if (!cookies.some((c) => re.test(c))) problems.push(`${t.name}: no Set-Cookie matching ${re} (got ${JSON.stringify(cookies)})`)
       }
     }
-    if (t.forbidSetCookie && res.headers.getSetCookie().length) problems.push(`${t.name}: unexpected Set-Cookie ${JSON.stringify(res.headers.getSetCookie())}`)
   }
   return problems
-}
-
-/**
- * autocannon stops by destroying its sockets, possibly mid-request (e.g. halfway
- * through a 25 KB body). Give the server time to drain those before the next run,
- * otherwise the next run's connects can fail while the server is still busy.
- */
-async function settle(baseUrl) {
-  await new Promise((r) => setTimeout(r, 300))
-  try { await (await fetch(baseUrl + '/health')).text() } catch {}
-  await new Promise((r) => setTimeout(r, 50))
 }
 
 async function cannon(baseUrl, test, opts, duration) {
@@ -189,12 +164,12 @@ async function cannon(baseUrl, test, opts, duration) {
 }
 
 function evaluate(test, result) {
-  const expected = new Set([String(test.expect ?? 200)])
+  const expected = String(test.expect ?? 200)
   let responses = 0
   let unexpected = 0
   for (const [code, { count }] of Object.entries(result.statusCodeStats ?? {})) {
     responses += count
-    if (!expected.has(code)) unexpected += count
+    if (code !== expected) unexpected += count
   }
   const failures = unexpected + (result.errors || 0) + (result.timeouts || 0)
   const errorRate = responses + failures > 0 ? failures / Math.max(1, responses) : 1
@@ -212,36 +187,55 @@ function evaluate(test, result) {
 }
 
 /**
+ * Merge per-framework version maps. A package listed by several frameworks is recorded
+ * once; if two frameworks resolve different copies, the later one is keyed `pkg (Framework)`.
+ */
+function mergeVersions(target, versions, owner) {
+  for (const [pkg, v] of Object.entries(versions)) {
+    if (!(pkg in target)) target[pkg] = v
+    else if (target[pkg] !== v) target[`${pkg} (${owner})`] = v
+  }
+  return target
+}
+
+/**
  * Run the whole suite and write results.
  *
  * @param {object} cfg
  * @param {string} cfg.pkgDir
  * @param {string} cfg.title                 markdown/chart title
- * @param {Array<{name:string,key:string,color?:string,serverSpec?:Function}>} cfg.frameworks
- * @param {Array<object>} [cfg.baselines]   extra frameworks run only with --baselines
- * @param {{pkgDir: string, packages: Array<string|[string,string]>}} [cfg.baselineVersions]  where the baseline servers resolve their deps from
+ * @param {Array<{
+ *   name: string, key: string, color?: string,
+ *   serverSpec: { entry: string, cwd: string },
+ *   versions?: Array<string | [string, string]>,
+ *   optional?: boolean,
+ * }>} cfg.frameworks
+ *   `serverSpec.entry` is started as `node <entry> <key> [--db]` in `serverSpec.cwd`;
+ *   `versions` are resolved from `serverSpec.cwd` (where the server resolves its deps);
+ *   `optional` frameworks run only with `--baselines` or when named in `--only`
  * @param {Array<object>} cfg.tests          test cases (see saas-api.js)
  * @param {Array<object>} [cfg.extraChecks]  pre-flight-only checks (not measured)
- * @param {(key:string, db:boolean) => {command:string,args:string[],cwd:string}} cfg.serverSpec
- * @param {Array<string|[string,string]>} cfg.versionPackages
  * @param {string} [cfg.notes]               extra markdown appended to methodology
  */
 export async function runHttpSuite(cfg) {
-  const opts = parseHttpBenchArgs()
-  const all = opts.baselines ? [...cfg.frameworks, ...(cfg.baselines ?? [])] : cfg.frameworks
-  const frameworks = opts.only ? all.filter((f) => opts.only.includes(f.key)) : all
+  const opts = parseBenchOptions(process.argv.slice(2), OPTION_SPEC)
+  const unknown = (opts.only ?? []).filter((k) => !cfg.frameworks.some((f) => f.key === k))
+  if (unknown.length) throw new Error(`Unknown --only key(s): ${unknown.join(', ')} (expected: ${cfg.frameworks.map((f) => f.key).join(', ')})`)
+  // `--only` selects by key, optional (baseline) entries included; otherwise optional ones need `--baselines`
+  const frameworks = cfg.frameworks.filter((f) => (opts.only ? opts.only.includes(f.key) : opts.baselines || !f.optional))
   const tests = cfg.tests
-  const perServer = tests.length * (opts.warmup + opts.duration + (opts.warmup > 0 ? 1.4 : 0.7)) + 3
-  const estimate = Math.ceil((perServer * frameworks.length * opts.rounds) / 60)
+  const quick = quickNotes(opts)
+  // load-generation time only; server start-up, pre-flight and drain waits come on top
+  const estimate = Math.ceil((tests.length * (opts.warmup + opts.duration) * frameworks.length * opts.rounds) / 60)
 
   console.log(`${cfg.title}${opts.db ? ' (simulated DB)' : ''}`)
   console.log(`warmup ${opts.warmup}s + measure ${opts.duration}s per test, ${opts.rounds} round(s), ` +
     `${opts.connections} connections, pipelining ${opts.pipelining}, ${tests.length} tests, ${frameworks.length} frameworks`)
-  console.log(`estimated duration: ~${estimate} min${opts.quick ? '  [QUICK MODE — numbers are not meaningful]' : ''}\n`)
+  console.log(`estimated duration: > ${estimate} min${quick.consoleSuffix}\n`)
 
   if (opts.db) {
     try { await checkRedis() } catch (e) {
-      console.error(`--db requires Redis on 127.0.0.1:6379: ${e.message}`)
+      console.error(`--db requires Redis on ${REDIS_HOST}:${REDIS_PORT}: ${e.message}`)
       process.exit(1)
     }
   }
@@ -253,7 +247,7 @@ export async function runHttpSuite(cfg) {
     const order = rotate(frameworks, r)
     console.log(`Round ${r + 1}/${opts.rounds}: ${order.map((f) => f.name).join(' -> ')}`)
     for (const fw of order) {
-      const { child, port } = await startServer((fw.serverSpec ?? cfg.serverSpec)(fw.key, opts.db), fw.name)
+      const { child, port } = await startServer(fw, opts.db)
       const baseUrl = `http://127.0.0.1:${port}`
       try {
         const problems = await preflight(baseUrl, [...tests, ...(cfg.extraChecks ?? [])])
@@ -262,14 +256,15 @@ export async function runHttpSuite(cfg) {
           await stopServer(child)
           process.exit(1)
         }
+        await drain(child, fw.name)
         process.stdout.write(`  ${fw.name.padEnd(20)} `)
         for (const test of tests) {
           if (opts.warmup > 0) {
             await cannon(baseUrl, test, opts, opts.warmup)
-            await settle(baseUrl)
+            await drain(child, `${fw.name} / ${test.name} (warmup)`)
           }
           const ev = evaluate(test, await cannon(baseUrl, test, opts, opts.duration))
-          await settle(baseUrl)
+          await drain(child, `${fw.name} / ${test.name}`)
           raw[fw.name][test.name].push(ev)
           process.stdout.write(ev.valid ? '.' : 'x')
         }
@@ -304,7 +299,7 @@ export async function runHttpSuite(cfg) {
     }
   }
 
-  const summary = frameworks.map((fw) => {
+  const summary = rankRelative(frameworks.map((fw) => {
     const cells = tests.map((t) => ({ weight: t.weight, value: perTest[t.name].frameworks[fw.name].medianRps }))
     const perRound = []
     for (let r = 0; r < opts.rounds; r++) {
@@ -314,9 +309,7 @@ export async function runHttpSuite(cfg) {
     const invalidTests = tests.filter((t) => !perTest[t.name].frameworks[fw.name].valid).map((t) => t.name)
     return {
       name: fw.name,
-      key: fw.key,
-      color: fw.color,
-      mixRps: weightedHarmonicMean(cells),
+      value: weightedHarmonicMean(cells), // traffic-mix req/s (headline)
       weightedArithmeticRps: weightedArithmeticMean(cells),
       roundMin: rd.min,
       roundMax: rd.max,
@@ -324,26 +317,23 @@ export async function runHttpSuite(cfg) {
       valid: invalidTests.length === 0,
       invalidTests,
     }
-  }).sort((a, b) => (b.valid - a.valid) || (b.mixRps - a.mixRps))
+  }))
 
   const env = collectEnvironment()
-  const versions = resolveVersions(cfg.pkgDir, cfg.versionPackages)
-  if (opts.baselines && cfg.baselineVersions) {
-    for (const [name, v] of Object.entries(resolveVersions(cfg.baselineVersions.pkgDir, cfg.baselineVersions.packages))) {
-      versions[`${name} (baselines)`] = v
-    }
-  }
+  const versions = resolveVersions(new URL('..', import.meta.url).pathname, HARNESS_PACKAGES)
+  for (const fw of frameworks) mergeVersions(versions, resolveVersions(fw.serverSpec.cwd, fw.versions ?? []), fw.name)
   const settings = {
     'Mode': opts.db ? 'simulated DB (one Redis round-trip per authenticated request)' : 'pure framework overhead',
     'Warmup per test': `${opts.warmup}s (discarded)`,
     'Measured per test': `${opts.duration}s`,
     'Rounds': `${opts.rounds} (fresh server process per round, framework order rotated; per-test value = median)`,
     'Load generator': `autocannon, ${opts.connections} connections, pipelining ${opts.pipelining}${opts.workers ? `, ${opts.workers} workers` : ''}, in orchestrator process`,
-    'Server process': 'one child process per framework, NODE_ENV=production, logging disabled, 127.0.0.1',
+    'Server process': `one child process per framework (\`node <entry>\`, no loaders), NODE_ENV=production, logging disabled, 127.0.0.1`,
+    'Between runs': `wait until the server reports all client connections closed (abort after ${DRAIN_TIMEOUT_MS / 1000}s)`,
     'Headline metric': 'weighted harmonic mean of per-test median req/s (traffic-mix throughput)',
     'Validity': `pre-flight equivalence check per server start; a measured run with > ${MAX_ERROR_RATE * 100}% unexpected status/socket errors is INVALID`,
+    ...quick.settings,
   }
-  if (opts.quick) settings['QUICK MODE'] = 'smoke test only — numbers are NOT meaningful'
 
   printConsole(summary, perTest, tests, frameworks)
 
@@ -352,7 +342,13 @@ export async function runHttpSuite(cfg) {
   const dbLabel = opts.db ? ' (with simulated DB)' : ''
   const chartFile = `results${dbSuffix}-chart.svg`
   const svg = generateBarChart(
-    summary.map((s) => ({ name: s.name, value: s.mixRps ?? 0, range: [s.roundMin, s.roundMax], invalid: !s.valid })),
+    summary.map((s) => ({
+      name: s.name,
+      value: s.value ?? 0,
+      range: [s.roundMin, s.roundMax],
+      invalid: !s.valid,
+      note: s.valid ? s.relative : 'INVALID (unexpected responses)',
+    })),
     {
       title: `${cfg.title}${dbLabel} — traffic-mix req/s`,
       subtitle: `${env.node} · ${env.cpu} · ${opts.rounds}×(${opts.warmup}s+${opts.duration}s)/test · c${opts.connections} p${opts.pipelining} · whiskers = min–max across rounds`,
@@ -361,38 +357,30 @@ export async function runHttpSuite(cfg) {
     },
   )
 
-  let md = `# ${cfg.title} Results${dbLabel}\n\n`
-  if (opts.quick) md += `> **QUICK MODE — smoke test only, numbers are not meaningful.**\n\n`
+  const names = frameworks.map((f) => f.name)
+  let md = `# ${cfg.title} Results${dbLabel}\n\n` + quick.md
   md += `Full HTTP request handling benchmark using [autocannon](https://github.com/mcollina/autocannon). Generated ${env.date}.\n\n`
   md += `## Summary\n\n![Summary](results/${chartFile})\n\n`
-  md += `| Framework | traffic-mix req/s | spread across rounds | relative | weighted arithmetic avg | status |\n`
-  md += `|-----------|------------------:|---------------------:|---------:|------------------------:|--------|\n`
-  const best = summary.find((s) => s.valid) ?? summary[0]
-  for (const s of summary) {
-    const rel = s === best ? 'fastest' : s.valid ? `${(best.mixRps / s.mixRps).toFixed(2)}x slower` : '-'
-    const status = s.valid ? 'ok' : `INVALID (${s.invalidTests.join(', ')})`
-    md += `| ${s.name} | ${fmtInt(s.mixRps)} | ${fmtInt(s.roundMin)} – ${fmtInt(s.roundMax)} | ${rel} | ${fmtInt(s.weightedArithmeticRps)} | ${status} |\n`
-  }
+  md += mdTable(
+    ['Framework', 'traffic-mix req/s', 'spread across rounds', 'relative', 'weighted arithmetic avg', 'status'],
+    summary.map((s) => [
+      s.name, fmtInt(s.value), `${fmtInt(s.roundMin)} – ${fmtInt(s.roundMax)}`, s.relative, fmtInt(s.weightedArithmeticRps),
+      s.valid ? 'ok' : `INVALID (${s.invalidTests.join(', ')})`,
+    ]),
+    'lrrrrl',
+  )
   md += `\n"traffic-mix req/s" = weighted harmonic mean of the per-test medians, using the traffic weights below `
   md += `(the throughput of a server receiving that request mix). "weighted arithmetic avg" is shown for comparison only.\n\n`
 
   md += `## Per-Test Results (median req/s over rounds, ±CV)\n\n`
-  md += `| Test | weight | ${frameworks.map((f) => f.name).join(' | ')} |\n`
-  md += `|------|-------:|${frameworks.map(() => '---:').join('|')}|\n`
-  for (const t of tests) {
-    const cells = frameworks.map((f) => {
-      const c = perTest[t.name].frameworks[f.name]
-      let s = `${fmtInt(c.medianRps)}${opts.rounds > 1 ? ` ±${fmtPct(c.cv, 0)}` : ''}`
-      if (!c.valid) s += ` (INVALID, ${fmtPct(c.errorRate)} err)`
-      return s
-    })
-    md += `| ${t.name} | ${t.weight} | ${cells.join(' | ')} |\n`
-  }
+  md += mdTable(['Test', 'weight', ...names], tests.map((t) => [t.name, t.weight, ...frameworks.map((f) => {
+    const c = perTest[t.name].frameworks[f.name]
+    let s = `${fmtInt(c.medianRps)}${opts.rounds > 1 ? ` ±${fmtPct(c.cv, 0)}` : ''}`
+    if (!c.valid) s += ` (INVALID, ${fmtPct(c.errorRate)} err)`
+    return s
+  })]), 'lr' + 'r'.repeat(names.length))
   md += `\n## Latency p99 (ms, median over rounds)\n\n`
-  md += `| Test | ${frameworks.map((f) => f.name).join(' | ')} |\n|------|${frameworks.map(() => '---:').join('|')}|\n`
-  for (const t of tests) {
-    md += `| ${t.name} | ${frameworks.map((f) => perTest[t.name].frameworks[f.name].latencyP99ms ?? '-').join(' | ')} |\n`
-  }
+  md += mdTable(['Test', ...names], tests.map((t) => [t.name, ...frameworks.map((f) => perTest[t.name].frameworks[f.name].latencyP99ms ?? '-')]), 'l' + 'r'.repeat(names.length))
   md += `\n`
   if (cfg.notes) md += cfg.notes + '\n\n'
   md += environmentMarkdown(env, versions, settings)
@@ -400,8 +388,8 @@ export async function runHttpSuite(cfg) {
   const json = {
     title: cfg.title,
     mode: opts.db ? 'db' : 'pure',
-    // partial (--only) runs are not publishable either → written to .quick/ like smoke runs
-    quick: opts.quick || !!opts.only,
+    quick: opts.quick,
+    only: opts.only,
     environment: env,
     versions,
     settings: {
@@ -412,14 +400,16 @@ export async function runHttpSuite(cfg) {
       pipelining: opts.pipelining,
       workers: opts.workers,
       maxErrorRate: MAX_ERROR_RATE,
+      drainTimeoutMs: DRAIN_TIMEOUT_MS,
       headlineMetric: 'weightedHarmonicMeanOfMedianRps',
     },
     summary: Object.fromEntries(summary.map((s) => [s.name, {
-      mixRps: s.mixRps && Math.round(s.mixRps),
+      mixRps: s.value && Math.round(s.value),
       weightedArithmeticRps: s.weightedArithmeticRps && Math.round(s.weightedArithmeticRps),
       roundMinRps: s.roundMin && Math.round(s.roundMin),
       roundMaxRps: s.roundMax && Math.round(s.roundMax),
       roundCv: s.roundCv,
+      relative: s.relative,
       valid: s.valid,
       invalidTests: s.invalidTests,
     }])),
@@ -430,6 +420,7 @@ export async function runHttpSuite(cfg) {
     prefix: opts.db ? 'db' : '',
     resultsDir: 'results',
     svgCharts: { [chartFile]: svg },
+    scratch: opts.scratch,
   })
 
   if (summary.some((s) => !s.valid)) {
@@ -449,15 +440,10 @@ function printConsole(summary, perTest, tests, frameworks) {
   }
   console.log('\n## Per-test median req/s\n')
   console.table(table)
-  const best = summary.find((s) => s.valid) ?? summary[0]
-  const st = {}
-  for (const s of summary) {
-    st[s.name] = {
-      'mix req/s': fmtInt(s.mixRps),
-      'rounds min–max': `${fmtInt(s.roundMin)} – ${fmtInt(s.roundMax)}`,
-      relative: s === best ? 'fastest' : s.valid ? `${(best.mixRps / s.mixRps).toFixed(2)}x slower` : 'INVALID',
-    }
-  }
   console.log('\n## Summary (weighted harmonic mean)\n')
-  console.table(st)
+  console.table(Object.fromEntries(summary.map((s) => [s.name, {
+    'mix req/s': fmtInt(s.value),
+    'rounds min–max': `${fmtInt(s.roundMin)} – ${fmtInt(s.roundMax)}`,
+    relative: s.relative,
+  }])))
 }

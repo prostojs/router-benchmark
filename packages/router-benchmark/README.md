@@ -42,12 +42,14 @@ Each variant generates a workload that exercises statics, parametric routes with
 ## Methodology
 
 - **Equivalence pre-flight:** before measuring, every router is run on every workload URL in-process and must return the same match / no-match outcome and the same named params as all other routers (wildcard captures are exposed under router-specific keys and are not compared). Any disagreement aborts the run.
-- **Process isolation:** each router × workload × round runs in a **fresh Node.js process** (`node --expose-gc`, `NODE_ENV=production`), so JIT state, inline caches and heap are never shared between routers.
+- **Process isolation:** each router × workload × round runs in a **fresh Node.js process** (`node --expose-gc`, `NODE_ENV=production`) that loads only the router it measures, so JIT state, inline caches and heap are never shared between routers.
+- **Expected outcomes:** every workload URL carries an explicit `expectMatch` flag (set by the workload generators); the pre-flight checks each router against it, and each worker verifies its hit count against it.
 - **Warmup + calibration:** time-based warmup (500 ms per test) that also calibrates the batch size; `gc()` before sampling.
 - **Sampling:** 10 timed samples of ~100 ms per test (`process.hrtime.bigint()`), yielding to the event loop between samples (outside the timed region) so deferred work such as Express' `setImmediate` callbacks never leaks into another sample.
 - **No dead-code elimination:** every lookup result is consumed (hit counter, verified against the expected number of matches) and the returned params object is stored in a module-level sink, so params extraction cannot be optimized away.
 - **Rounds:** 5 rounds with router order rotated; reported value = median of per-round medians (op/ms), plus min–max round medians and the coefficient of variation of all samples.
-- Options: `--rounds n --warmup ms --samples n --sample-ms ms --only prosto,rou3 --quick` (or `BENCH_ROUNDS`, `BENCH_WARMUP_MS`, `BENCH_SAMPLES`, `BENCH_SAMPLE_MS`). `--quick` is a smoke test; its numbers are not meaningful.
+- Options: `--rounds n --warmup ms --samples n --sample-ms ms --only prosto,rou3 --quick` (or `BENCH_ROUNDS`, `BENCH_WARMUP_MS`, `BENCH_SAMPLES`, `BENCH_SAMPLE_MS`). `--quick` is a smoke test; its numbers are not meaningful. Smoke and `--only` runs are written to the git-ignored `.quick/` directory.
+- **Scaling series** are keyed by router; when a router switches implementation with the route count (Hono's SmartRouter: RegExpRouter → TrieRouter), it stays one series and the active backend is labelled per point.
 
 ## Two benchmarks
 

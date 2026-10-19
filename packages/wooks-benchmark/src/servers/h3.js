@@ -1,11 +1,11 @@
 import { H3, HTTPError, serve, getCookie, setCookie, getRouterParam, readBody } from 'h3'
-import { AUTH_TOKEN, SESSION_COOKIE, isValidBody } from '../routes.js'
-import { createDb } from '../simulate-db.js'
+import { createDb } from 'bench-utils/simulate-db'
+import { BEARER, SESSION_COOKIE, isValidBody } from '../routes.js'
 
 // Idiomatic h3 v2: route middleware for auth (runs before the handler reads the
 // body), web-standard request/response, served through h3's own `serve()` (srvx).
 function headerAuth(event) {
-  if (event.req.headers.get('authorization') !== `Bearer ${AUTH_TOKEN}`) {
+  if (event.req.headers.get('authorization') !== BEARER) {
     throw new HTTPError({ status: 401, message: 'Unauthorized' })
   }
 }
@@ -55,24 +55,22 @@ export async function createServer({ simulateDb } = {}) {
 
   // --- Header-auth guarded routes ---
 
-  app.get('/api/v1/users', async () => {
-    if (db) await db.get('users')
-    return 'users'
+  app.get('/api/v1/users', () => {
+    return db ? db.get('users').then(() => 'users') : 'users'
   }, headerGuard)
 
-  app.get('/api/v1/users/:userId', async (event) => {
-    if (db) await db.get('user')
-    return getRouterParam(event, 'userId')
+  app.get('/api/v1/users/:userId', (event) => {
+    const userId = getRouterParam(event, 'userId')
+    return db ? db.get('user').then(() => userId) : userId
   }, headerGuard)
 
-  app.get('/api/v1/users/:userId/profile', async (event) => {
-    if (db) await db.get('profile')
-    return getRouterParam(event, 'userId')
+  app.get('/api/v1/users/:userId/profile', (event) => {
+    const userId = getRouterParam(event, 'userId')
+    return db ? db.get('profile').then(() => userId) : userId
   }, headerGuard)
 
-  app.get('/api/v1/projects', async () => {
-    if (db) await db.get('projects')
-    return 'projects'
+  app.get('/api/v1/projects', () => {
+    return db ? db.get('projects').then(() => 'projects') : 'projects'
   }, headerGuard)
 
   app.post('/api/v1/projects', async (event) => {
@@ -82,37 +80,36 @@ export async function createServer({ simulateDb } = {}) {
     return 'created'
   }, headerGuard)
 
-  app.get('/api/v1/projects/:projectId', async (event) => {
-    if (db) await db.get('project')
-    return getRouterParam(event, 'projectId')
+  app.get('/api/v1/projects/:projectId', (event) => {
+    const projectId = getRouterParam(event, 'projectId')
+    return db ? db.get('project').then(() => projectId) : projectId
   }, headerGuard)
 
-  app.delete('/api/v1/projects/:projectId', async (event) => {
-    if (db) await db.del('project')
-    return getRouterParam(event, 'projectId')
+  app.delete('/api/v1/projects/:projectId', (event) => {
+    const projectId = getRouterParam(event, 'projectId')
+    return db ? db.del('project').then(() => projectId) : projectId
   }, headerGuard)
 
-  app.get('/api/v1/organizations/settings/billing/invoices', async (event) => {
-    if (db) await db.get('invoices')
+  app.get('/api/v1/organizations/settings/billing/invoices', (event) => {
     event.res.headers.set('Cache-Control', 'private, no-cache')
-    return 'invoices'
+    return db ? db.get('invoices').then(() => 'invoices') : 'invoices'
   }, headerGuard)
 
   // --- Cookie-auth guarded routes ---
 
-  app.get('/api/v1/projects/:projectId/members', async (event) => {
-    if (db) await db.get('members')
-    return getRouterParam(event, 'projectId')
+  app.get('/api/v1/projects/:projectId/members', (event) => {
+    const projectId = getRouterParam(event, 'projectId')
+    return db ? db.get('members').then(() => projectId) : projectId
   }, cookieGuard)
 
-  app.get('/api/v1/projects/:projectId/tasks', async (event) => {
-    if (db) await db.get('tasks')
-    return getRouterParam(event, 'projectId')
+  app.get('/api/v1/projects/:projectId/tasks', (event) => {
+    const projectId = getRouterParam(event, 'projectId')
+    return db ? db.get('tasks').then(() => projectId) : projectId
   }, cookieGuard)
 
-  app.get('/api/v1/projects/:projectId/tasks/:taskId', async (event) => {
-    if (db) await db.get('task')
-    return getRouterParam(event, 'taskId')
+  app.get('/api/v1/projects/:projectId/tasks/:taskId', (event) => {
+    const taskId = getRouterParam(event, 'taskId')
+    return db ? db.get('task').then(() => taskId) : taskId
   }, cookieGuard)
 
   app.put('/api/v1/projects/:projectId/tasks/:taskId', async (event) => {
@@ -122,14 +119,14 @@ export async function createServer({ simulateDb } = {}) {
     return getRouterParam(event, 'taskId')
   }, cookieGuard)
 
-  app.delete('/api/v1/projects/:projectId/tasks/:taskId', async (event) => {
-    if (db) await db.del('task')
-    return getRouterParam(event, 'taskId')
+  app.delete('/api/v1/projects/:projectId/tasks/:taskId', (event) => {
+    const taskId = getRouterParam(event, 'taskId')
+    return db ? db.del('task').then(() => taskId) : taskId
   }, cookieGuard)
 
-  app.get('/api/v1/projects/:projectId/tasks/:taskId/comments', async (event) => {
-    if (db) await db.get('comments')
-    return getRouterParam(event, 'taskId')
+  app.get('/api/v1/projects/:projectId/tasks/:taskId/comments', (event) => {
+    const taskId = getRouterParam(event, 'taskId')
+    return db ? db.get('comments').then(() => taskId) : taskId
   }, cookieGuard)
 
   app.post('/api/v1/projects/:projectId/tasks/:taskId/comments', async (event) => {
@@ -139,18 +136,17 @@ export async function createServer({ simulateDb } = {}) {
     return getRouterParam(event, 'taskId')
   }, cookieGuard)
 
-  app.get('/api/v1/orgs/:orgId/teams/:teamId/projects/:projectId/tasks/:taskId', async (event) => {
-    if (db) await db.get('task')
-    return getRouterParam(event, 'taskId')
+  app.get('/api/v1/orgs/:orgId/teams/:teamId/projects/:projectId/tasks/:taskId', (event) => {
+    const taskId = getRouterParam(event, 'taskId')
+    return db ? db.get('task').then(() => taskId) : taskId
   }, cookieGuard)
 
-  app.get('/api/v1/organizations/settings/billing/payment-methods', async (event) => {
-    if (db) await db.get('methods')
+  app.get('/api/v1/organizations/settings/billing/payment-methods', (event) => {
     event.res.headers.set('Cache-Control', 'private, no-cache')
-    return 'methods'
+    return db ? db.get('methods').then(() => 'methods') : 'methods'
   }, cookieGuard)
 
   const server = serve(app, { port: 0, hostname: '127.0.0.1', silent: true, gracefulShutdown: false })
   await server.ready()
-  return { port: server.node.server.address().port }
+  return { server: server.node.server }
 }
