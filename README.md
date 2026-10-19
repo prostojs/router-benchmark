@@ -11,7 +11,7 @@ Benchmarks for the [Moost](https://moost.org/) stack — from the router at the 
 | [router-benchmark](packages/router-benchmark/) | URI route matching + param extraction | find-my-way (Fastify), rou3 (h3; plain and compiled), Hono SmartRouter, Express |
 | [wooks-benchmark](packages/wooks-benchmark/) | Full HTTP request handling | Fastify, Express, Hono, h3 |
 | [moost-benchmark](packages/moost-benchmark/) | Decorator-based framework overhead | NestJS (Express and Fastify platforms) |
-| [validator-benchmark](packages/validator-benchmark/) | Runtime data validation (atscript validator) | zod 4 (`safeParse()`, `z.compile()`) |
+| [validator-benchmark](packages/validator-benchmark/) | Runtime data validation (atscript validator) | zod 4 (`safeParse()`, `z.compile()`), valibot, yup, joi, ajv, ArkType, class-validator, TypeBox (`Compile()`, `Value`) |
 
 ## Why These Routes?
 

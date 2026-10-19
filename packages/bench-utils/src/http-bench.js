@@ -419,7 +419,7 @@ export async function runHttpSuite(cfg) {
   writeResultFiles(cfg.pkgDir, json, md, {
     prefix: opts.db ? 'db' : '',
     resultsDir: 'results',
-    svgCharts: { [chartFile]: svg },
+    files: { [chartFile]: svg },
     scratch: opts.scratch,
   })
 

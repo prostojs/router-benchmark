@@ -1,4 +1,5 @@
 import * as z from 'zod'
+import { P } from './patterns.js'
 
 /**
  * Zod 4 schemas equivalent to src/model/order.as.
@@ -21,20 +22,20 @@ export function buildZodSchemas(mode) {
   const ZAddress = obj({
     street: z.string().min(1),
     city: z.string().min(1),
-    state: z.string().regex(/^[A-Z]{2}$/),
-    zip: z.string().regex(/^\d{5}(-\d{4})?$/),
+    state: z.string().regex(P.state),
+    zip: z.string().regex(P.zip),
     country: z.string().nullish(),
   })
 
   const ZPaymentCard = obj({
-    number: z.string().regex(/^\d{13,19}$/),
-    expiry: z.string().regex(/^\d{2}\/\d{2}$/),
-    cvv: z.string().regex(/^\d{3,4}$/),
+    number: z.string().regex(P.cardNumber),
+    expiry: z.string().regex(P.expiry),
+    cvv: z.string().regex(P.cvv),
     holderName: z.string().min(1),
   })
 
   const ZPaymentPaypal = obj({
-    email: z.string().regex(/^[^@]+@[^@]+\.[^@]+$/),
+    email: z.string().regex(P.email),
   })
 
   const ZPayment = z.union([ZPaymentCard, ZPaymentPaypal])
@@ -57,17 +58,17 @@ export function buildZodSchemas(mode) {
   const ZCustomer = obj({
     firstName: z.string().min(1).max(128),
     lastName: z.string().min(1).max(128),
-    email: z.string().regex(/^[^@]+@[^@]+\.[^@]+$/),
+    email: z.string().regex(P.email),
     phone: z
       .string()
-      .regex(/^\+?[1-9]\d{6,14}$/)
+      .regex(P.phone)
       .nullish(),
     shippingAddress: ZAddress,
     billingAddress: ZAddress.nullish(),
   })
 
   const ZOrder = obj({
-    orderId: z.string().regex(/^ORD-\d{8,12}$/),
+    orderId: z.string().regex(P.orderId),
     customer: ZCustomer,
     items: z.array(ZOrderItem).min(1).max(100),
     payment: ZPayment,

@@ -1,10 +1,12 @@
-# Validator Benchmark: atscript vs zod
+# Validator Benchmark: atscript vs popular validators
 
 Measures how fast one realistic data model validates with an
-[atscript](https://atscript.dev) runtime validator (`@atscript/typescript`) and with
-equivalent [zod 4](https://zod.dev) schemas, across three unknown-property policies.
+[atscript](https://atscript.dev) runtime validator (`@atscript/typescript`) and with the
+equivalent schema in popular JavaScript validation libraries, across three unknown-property
+policies.
 
-Results: [RESULTS.md](RESULTS.md) · raw data: [results/results.json](results/results.json)
+Results: [RESULTS.md](RESULTS.md) · raw data: [results/results.json](results/results.json) ·
+chart data: [results/summary.json](results/summary.json)
 
 ## The model
 
@@ -15,23 +17,43 @@ length limits, regex patterns, integer and numeric range checks, array length li
 optional properties and a union. `pnpm compile` turns it into `src/model/order.as.js`
 with the atscript CLI (`asc`).
 
-[`src/zod-schemas.js`](src/zod-schemas.js) is the same model in zod 4.
+The same model in every other library lives in [`src/schemas/`](src/schemas/) (one file per
+library; all regexes come from [`src/schemas/patterns.js`](src/schemas/patterns.js)). Each
+engine's runner is in [`src/engines/`](src/engines/).
 
 ## Engines
 
-| Engine | Call | What it returns |
+| Engine | Call | Setup |
 |---|---|---|
-| atscript `validate()` | `new Validator(Order, opts)` once, then `validator.validate(input, true)` | `true`/`false`; errors (path + message) in `validator.errors`. Validates the input in place; never copies. |
-| zod `safeParse()` | `schema.safeParse(input)` | `{ success, data }` where `data` is a **new** object, or `{ success: false, error }` |
-| zod `z.compile()` + `safeParse()` | `z.compile(schema).safeParse(input)` | same as above; uses zod's ahead-of-time compiled fast path |
-| zod `z.compile()` + `validate()` | `z.compile(schema).validate(input)` | `true`/`false` only: no output object, no error details |
+| atscript `validate()` | `new Validator(Order, opts)` once, then `validator.validate(input, true)` | `unknownProps` per mode; `errorLimit: Infinity` / `1` |
+| zod `safeParse()` | `schema.safeParse(input)` | object JIT on (default) |
+| zod `z.compile()` + `safeParse()` | `z.compile(schema, { strict: true }).safeParse(input)` | ahead-of-time compiled |
+| zod `z.compile()` + `validate()` | `z.compile(schema).validate(input)` | boolean only |
+| valibot `safeParse()` | `v.safeParser(schema, { abortEarly })(input)` | `abortEarly: true` only for first-error |
+| yup `validateSync()` | `schema.validateSync(input, { abortEarly, stripUnknown })` | `abortEarly: false` for all errors; leaves `.strict()` (no coercion) |
+| joi `validate()` | `schema.prefs(options).validate(input)` | `abortEarly: false` for all errors, `convert: false`; options bound once with `prefs()` |
+| ajv compiled `validate()` | `new Ajv(opts).compile(jsonSchema)(input)` | `allErrors: true` for all errors (default `false` for first-error), `unicodeRegExp: false` |
+| ArkType `T(input)` | `T(input)` → data or `ArkErrors` | JIT (default) |
+| ArkType `T.allows()` | `T.allows(input)` | boolean only, JIT (default) |
+| class-validator `validateSync()` | `validateSync(plainToInstance(Order, input), options)` | decorated classes (class-transformer, reflect-metadata); `whitelist` / `forbidNonWhitelisted` per mode |
+| TypeBox `Compile()` + `Check()` | `C.Check(input)`, `C.Errors(input)` when invalid; first-error: `C.Parse(input)` | `Compile(type)` (JIT); `Settings.Set({ maxErrors: Infinity })` |
+| TypeBox `Value.Check()` | `Value.Check(T, input)`, `Value.Errors(T, input)` when invalid; first-error: `Value.Parse(T, input)` | dynamic (no compile) |
 
-All schemas and validators are built once, outside the timed region. zod's object JIT is
-on by default in Node (`z.config().jitless` is unset, `new Function` is allowed), so the
-plain `safeParse()` row already uses it. `z.compile(schema, { strict: true })` is used so
-that a schema the compiler cannot handle fails loudly instead of silently falling back
-(every schema here compiles). atscript has no ahead-of-time compile mode yet; one is
-planned, so the `z.compile()` rows compare against atscript's regular validator.
+The exact package versions of a run are listed at the top of [RESULTS.md](RESULTS.md) (all
+pinned in `package.json`).
+
+All schemas and validators are built once, outside the timed region, with each library's
+documented public API and no custom tuning. Where a library has both an interpreted and a
+compiled (JIT) mode, both are separate rows (zod, TypeBox); ajv and ArkType always compile.
+TypeBox moved from `@sinclair/typebox` (0.34.x, which keeps the `TypeCompiler` API) to the
+`typebox` package (1.x, `Compile()` from `typebox/compile`); the benchmark uses `typebox`.
+
+zod's object JIT is on by default in Node (`z.config().jitless` is unset, `new Function` is
+allowed), so the plain `safeParse()` row already uses it. `z.compile(schema, { strict: true })`
+fails loudly instead of silently falling back if a schema can't be compiled (every schema here
+compiles). atscript has no ahead-of-time compile mode yet; one is planned, so the compiled rows
+(zod `z.compile()`, ajv, ArkType, TypeBox `Compile()`) compare against atscript's regular
+validator.
 
 ## Scenarios
 
@@ -45,94 +67,150 @@ planned, so the `z.compile()` rows compare against atscript's regular validator.
 | `invalid-order-first-error` | Order | same input; stop at the first error |
 | `union-card` / `union-paypal` / `union-invalid` | Payment | just the union: branch 1 matches / branch 2 matches / neither matches |
 
-Each scenario runs in three modes:
+Each scenario runs in three unknown-property modes:
 
-| Mode | zod | atscript |
-|---|---|---|
-| strip | `z.object()` | `unknownProps: 'strip'` |
-| passthrough | `z.looseObject()` | `unknownProps: 'ignore'` |
-| strict | `z.strictObject()` | `unknownProps: 'error'` |
+| Library | strip | passthrough | strict |
+|---|---|---|---|
+| atscript | `unknownProps: 'strip'` | `unknownProps: 'ignore'` | `unknownProps: 'error'` |
+| zod | `z.object()` | `z.looseObject()` | `z.strictObject()` |
+| valibot | `v.object()` | `v.looseObject()` | `v.strictObject()` |
+| yup | `stripUnknown: true` | default | `.exact()` on every object |
+| joi | `stripUnknown: true` | `allowUnknown: true` | default |
+| ajv | not run (see below) | open objects | `additionalProperties: false` |
+| ArkType | not run (see below) | `'+': 'ignore'` (default) | `'+': 'reject'` |
+| class-validator | `whitelist: true` | default | `whitelist: true, forbidNonWhitelisted: true` |
+| TypeBox | open objects, `Clean()` after a successful `Check()` | open objects (default) | `additionalProperties: false` |
+
+The policy applies to every nested object, including the union branches.
+
+### Cells that are not run
+
+The generated "Not run" table in [RESULTS.md](RESULTS.md#not-run) lists every skipped cell and
+its reason (no stop-at-first-error option, boolean-only engines on all-errors scenarios, TypeBox
+strip on invalid input, which runs exactly the passthrough code because `Clean()` follows only a
+successful `Check()`). Two need a longer explanation:
+
+- **ajv, strip mode.** With `allErrors: true`, `removeAdditional` deletes keys while ajv tries
+  the `anyOf` branches: the card branch strips the PayPal `email` before the PayPal branch sees
+  it, so a valid PayPal payment fails (a documented ajv caveat). With ajv's default
+  `allErrors: false` the card branch stops at its first missing required key before removing
+  anything, but the valid and all-errors strip cells need `allErrors: true`, and running only the
+  first-error strip cell would depend on that check order and leave the strip mode inconsistent,
+  so the whole strip mode is skipped. There is no other ajv option that strips.
+- **ArkType, strip mode.** ArkType refuses to build a union of two objects that both delete
+  undeclared keys (`'+': 'delete'`): "an unordered union of a type including a morph and a type
+  with overlapping input is indeterminate".
 
 ## Semantic equivalence
 
-Both sides must accept and reject exactly the same inputs:
+Every engine must accept and reject exactly the same inputs as the atscript model:
 
 | atscript (`order.as`) | zod 4 | Notes |
 |---|---|---|
 | `prop: string` / `number` / `T[]` / object | `z.string()` / `z.number()` / `z.array()` / object | Required: a missing key, `undefined` or `null` is rejected by both |
 | `prop?: T` | `.nullish()` | An atscript optional property accepts `undefined` **and `null`**, so `.optional()` would not be equivalent |
-| `@expect.minLength n` / `maxLength n` (string) | `.min(n)` / `.max(n)` | Both count UTF-16 code units (`.length`). Whitespace-only strings pass both (no `@meta.required`) |
+| `@expect.minLength n` / `maxLength n` (string) | `.min(n)` / `.max(n)` | atscript counts UTF-16 code units, zod counts code points (see below). Whitespace-only strings pass both (no `@meta.required`) |
 | `@expect.minLength` / `maxLength` (array) | `z.array(...).min()` / `.max()` | |
 | `@expect.pattern "..."` | `.regex(/.../)` with the same pattern and no flags | `z.email()` is not used: its built-in regex is stricter than the model's pattern |
 | `@expect.int` | `.int()` | zod also requires a safe integer; the model caps the value at 10000, so the accepted sets match |
 | `@expect.min` / `@expect.max` | `.min()` / `.max()` | Inclusive on both sides |
 | `number` | `z.number()` | Both reject `NaN` and `±Infinity` |
 | `A \| B` | `z.union([A, B])` | Both try the branches in declared order; the first match wins |
-| unknown-props mode | `z.object` / `z.looseObject` / `z.strictObject` | Mapping in the table above. It applies to every nested object, including union branches |
-| `partial: false` (default) | n/a | No partial validation on either side |
+| `partial: false` (default) | n/a | No partial validation |
 | `errorLimit: Infinity` / `1` | full `safeParse` / `validate()` | See "Error reporting" below |
+
+What differs in the other libraries (each file in [`src/schemas/`](src/schemas/) documents its mapping):
+
+- **valibot** ([valibot.js](src/schemas/valibot.js)): same shape as zod; `v.number()` accepts ±Infinity, so every number also gets `v.finite()`.
+- **yup** ([yup.js](src/schemas/yup.js)): leaves are `.strict()` (no coercion), required is `.defined()`, numbers get a `finite` test, and the union is a first-match `yup.lazy()` over the card and PayPal schemas.
+- **joi** ([joi.js](src/schemas/joi.js)): optional is `.allow(null)`, strings without a minimum get `.allow('')`, numbers without a bound inside the safe-integer range get `.unsafe()` (joi otherwise rejects values beyond ±`Number.MAX_SAFE_INTEGER`, the model doesn't), and `convert: false` turns off coercion.
+- **ajv** ([json-schema.js](src/schemas/json-schema.js)): plain JSON Schema; optional is "not in `required`" plus ajv's `nullable: true`; the union is `anyOf`.
+- **ArkType** ([arktype.js](src/schemas/arktype.js)): optional keys are `T | null | undefined`; required unbounded numbers get a ±`Number.MAX_VALUE` range (finite), optional ones `.narrow(Number.isFinite)`, because ArkType 2.2.8 drops the NaN check of `number` inside a union discriminated by `typeof` (`type('number | null')(NaN)` passes); the union is unordered, which gives the same result here because neither branch transforms.
+- **class-validator** ([class-validator.js](src/schemas/class-validator.js)): plain-JS classes decorated the way TypeScript's legacy decorator output does; the union is a `@Transform()` that instantiates the card class if it validates, else the PayPal class; non-object roots are rejected before `plainToInstance` (`validateSync(null)` throws).
+- **TypeBox** ([typebox.js](src/schemas/typebox.js)): optional is `Type.Optional(Type.Union([T, Type.Null()]))`; the engine raises `maxErrors` (default 8) to `Infinity` so the all-errors scenarios get the full report.
+
+**String length.** With 100 emoji (200 UTF-16 code units) against a maximum of 128, zod, ajv,
+class-validator and TypeBox count code points and accept, while atscript, valibot, yup, joi and
+ArkType count UTF-16 code units and reject. Every fixture is ASCII, so this never changes a
+result or a timing here.
 
 **Pre-flight (`src/preflight.js`) runs before every benchmark and aborts on any
 disagreement.** It checks:
 1. every benchmark job against its expected valid/invalid outcome;
-2. 53 edge cases (boundaries of each limit, `null` / `undefined` for optional and required
-   props, NaN / Infinity, wrong types, union edge cases, unknown props at several depths,
-   non-object roots) × 3 modes × 4 engines, where every engine must agree with the
-   expected result;
-3. **the same work on invalid input.** In every scenario that collects all errors
+2. 57 edge cases (boundaries of each limit, `null` / `undefined` for optional and required
+   props, NaN / Infinity (also on nullable numbers), numbers beyond the safe-integer range, wrong types, union edge cases, unknown props at several depths,
+   non-object roots) × 3 modes × every engine that runs in that mode, where every engine must
+   agree with the expected result;
+3. **unknown-property output**: in strip mode the value each library hands back has no
+   unknown keys, in passthrough it keeps them, in strict the input is rejected. Whether each
+   library changed its input is recorded (`preflight.unknownPropsOutput`);
+4. **the same work on invalid input.** In every scenario that collects all errors
    (`invalid-order-all-errors`, `union-invalid`, and `unknown-props-order` in strict mode),
-   both libraries run with their default error reporting and must catch the same
-   violations: the same paths outside the union, and the union's own path on both sides.
-   The raw error counts are recorded in `results.json` (`preflight.errorReports`);
-4. **first-error rows stop at the first error.** atscript with `errorLimit: 1` reports
-   exactly 1 error. With reads on the root object traced through a Proxy, both atscript and
-   zod `validate()` read only `orderId`, the first declared property, which is the one
-   that fails;
-5. the unknown-property output behavior described below.
+   every engine with an error report runs with its library's default error reporting and must
+   catch the same violations as atscript. Errors are **compared, never reshaped**: paths
+   inside the payment union collapse to the union's own path (a failed union counts as one
+   violation, whatever way the library reports it); TypeBox's engine leaves out the wrapper
+   errors of its `T | null` unions (the `anyOf` error and the failed `null` branch) when it
+   lists paths. The raw error counts are recorded in `results.json`
+   (`preflight.errorReports`);
+5. **first-error rows stop at the first error.** Every engine with error details reports
+   exactly 1 error. Boolean-only engines must return before reading every root property
+   (traced through a Proxy). The root properties each engine read are recorded in
+   `preflight.firstError`.
 
 Run it alone with `pnpm preflight`.
 
 ## Fairness notes
 
-- **Copy vs in place.** zod `safeParse` always returns a new object tree (the parsed
-  output). atscript `validate()` returns a boolean and does not copy. The closest zod
-  equivalent that skips the copy is `validate()` on a compiled schema, so it is included
-  as its own row.
+- **Copy vs in place.** zod, valibot, joi (always, even when nothing changed) and
+  class-validator (an instance) return a new object; yup returns a new object only when casting
+  changed something. atscript, ajv and TypeBox validate in place and return a boolean.
+  Boolean-only rows (zod `validate()`, ArkType `allows()`) are included where a yes/no answer is
+  the job.
 - **What `strip` does.**
-  - zod: the output has no unknown keys; the input is left alone.
+  - zod, valibot, yup, joi: the output has no unknown keys; the input is left alone.
+  - class-validator: `whitelist` deletes undecorated keys from the new instance.
   - atscript: unknown keys are **deleted from the input in place**, but only on objects
-    that passed validation. On a failed validation some nested objects may already have
-    been stripped.
+    that passed validation.
+  - TypeBox: `Clean()` deletes them from the input in place after a successful `Check()`.
+    `Clean()` is not compiled: it re-checks union variants (including every `T | null`)
+    dynamically, which is why TypeBox strip rows are much slower than its other rows.
 
-  In `passthrough`, zod copies unknown keys into its output and atscript leaves the input
-  alone. Pre-flight checks these behaviors. Because atscript changes its input in `strip`
-  mode, `unknown-props-order` gives each call a freshly built input (prepared before
-  the timed region). All engines get these fresh inputs in all modes, so the cache
-  conditions are the same for everyone.
-- **Error reporting.** Both libraries run with their default, unmodified error reporting.
-  For invalid input they catch the same violations, which the pre-flight enforces. atscript
-  builds its errors eagerly. zod builds its `ZodError` lazily on the first read of
-  `result.error`, so the harness reads `result.error.issues` to make zod do the same work.
-  The two libraries report a failed union differently: atscript returns one error with
-  per-branch details, while zod returns the closest branch's issues. That is why the
-  invalid order gives 15 atscript errors and 18 zod issues for the same 15 violations.
+  Pre-flight checks these behaviors. Because some libraries change their input in `strip`
+  mode, `unknown-props-order` gives each call a freshly built input (prepared before the
+  timed region). All engines get these fresh inputs in all modes, so the cache conditions are
+  the same for everyone.
+- **Error reporting.** Every library runs with its default, unmodified error reporting, and
+  the runner reads the error list's length so lazily built reports (zod builds its `ZodError`
+  on the first read of `result.error`) are materialized. Libraries report a failed union
+  differently: atscript returns one error with per-branch details, zod and valibot the
+  closest branch's issues, ajv and TypeBox every branch's errors, yup and class-validator
+  (first-match unions built from the library's own tools) the last branch's errors. That is
+  why the raw counts differ for the same 15 violations of the invalid order.
+- **TypeBox all-errors is two passes.** TypeBox's documented flow is a boolean `Check()` and,
+  only when it fails, `Errors()`, which walks the value again to build the report.
+- **Emulated unions cost extra probes.** yup and class-validator have no union type, so the
+  payment union is built from their own tools. yup's `lazy()` resolver probes the card schema
+  with `isValidSync()` and is resolved more than once per validation, so the card branch is
+  validated up to 3× for a card payment. class-validator's `@Transform()` validates the card
+  instance to pick the branch, and `@ValidateNested()` validates the chosen instance again, so
+  the matched branch is validated 2×.
 - **First error only.** atscript supports this with `errorLimit: 1` and still returns that
-  one error with its path and message. zod has no public option to stop early with
-  `safeParse` (`abortEarly` is internal and used only by `validate()`). The
-  `invalid-order-first-error` scenario therefore compares atscript `errorLimit: 1` with
-  zod `validate()`, which gives a boolean with no error details. The two `safeParse`
-  engines skip this scenario.
-  The ratio on that row is very large because zod `validate()` returns a boolean after a
-  single regex check, while atscript builds an error object.
-- **Boolean-only engine.** zod `validate()` runs only where a yes/no answer is
-  comparable: valid inputs and the first-error scenario. It is not run where a full error
-  report is the job.
-- **Equal setup.** Both libraries come from npm at pinned versions. Neither gets custom
-  tuning beyond its documented public API.
+  one error with its path and message; valibot, yup, joi, ajv and TypeBox (`Parse()`) also
+  return one error with details. zod `validate()` and ArkType `allows()` return a boolean.
+  The ratio on that row can be very large because a boolean-only check returns after a
+  single regex test. Stopping early is not equally early everywhere: yup and joi copy / cast
+  the root object before validating, so they read every field even in first-error mode; ajv
+  checks all required keys of an object up front; TypeBox `Parse()` runs a full `Check()`
+  before it collects the one error.
+- **Boolean-only engines** run only where a yes/no answer is comparable: valid inputs and the
+  first-error scenario.
+- **Equal setup.** Every library comes from npm at a pinned version. None gets custom tuning
+  beyond its documented public API.
 
 ## Measurement method
 
-- **One child process per job** (`engine × mode × scenario`, 95 jobs). No two libraries,
+- **One child process per job** (`engine × mode × scenario`, 295 jobs). No two libraries,
   modes or scenarios share a V8 isolate, so JIT state, inline caches and heap state from
   one cannot affect another.
 - **Rounds.** The whole job list runs `--rounds` times (default 3): forward, then
@@ -163,7 +241,7 @@ From the workspace root (`pnpm install` first):
 
 ```bash
 pnpm bench:validator                              # full benchmark
-pnpm --filter validator-benchmark quick           # smoke test (~30 s), numbers not meaningful
+pnpm --filter validator-benchmark quick           # smoke test (~2 min), numbers not meaningful
 pnpm --filter validator-benchmark preflight       # equivalence checks only
 ```
 
@@ -171,8 +249,9 @@ Or inside this package:
 
 ```bash
 pnpm start          # compiles order.as, runs the pre-flight, then the full benchmark
-                    # → results/results.json, results/{strip,passthrough,strict}-chart.svg, RESULTS.md
-pnpm quick          # smoke test (~30 s)
+                    # → results/results.json, results/summary.json,
+                    #   results/{strip,passthrough,strict}-chart.svg, RESULTS.md
+pnpm quick          # smoke test (~2 min)
 pnpm preflight      # equivalence checks only
 ```
 
@@ -185,6 +264,6 @@ substrings, for example `--only strict/union`.
 Smoke (`--quick`) and partial (`--only`) runs write the same files into the git-ignored
 `.quick/` directory, never over the published results.
 
-A full run takes about 12 minutes (95 jobs × 3 rounds × about 2.5 s). Keep the machine
+A full run takes about 40 minutes (295 jobs × 3 rounds × about 2.5 s). Keep the machine
 otherwise idle: other CPU-heavy processes, such as concurrent benchmarks, distort the
 numbers.

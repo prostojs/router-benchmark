@@ -2,7 +2,7 @@ import { writeFileSync, mkdirSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 /**
- * Write benchmark result files (JSON, Markdown, optional SVG charts).
+ * Write benchmark result files (JSON, Markdown, and optional extra files such as SVG charts).
  *
  * @param {string} pkgDir  absolute path to the package root
  * @param {object} jsonData  data for the JSON file
@@ -10,12 +10,13 @@ import { resolve } from 'node:path'
  * @param {object} [opts]
  * @param {string} [opts.prefix]  file prefix (e.g. "scale" -> results-scale.json, RESULTS-SCALE.md)
  * @param {string} [opts.resultsDir]  subdirectory for JSON + SVG (e.g. "results"); markdown stays at pkgDir
- * @param {Record<string,string>} [opts.svgCharts]  filename -> SVG content (e.g. { 'results-chart.svg': svgString })
+ * @param {Record<string,string>} [opts.files]  filename -> text content (e.g. { 'results-chart.svg': svgString }),
+ *   written next to the JSON
  * @param {boolean} [opts.scratch]  smoke (--quick) or partial (--only) run: written into the git-ignored
  *   `.quick/` directory (same layout) so it never overwrites the published results
  */
 export function writeResultFiles(pkgDir, jsonData, markdown, opts = {}) {
-  const { prefix = '', resultsDir = '', svgCharts = {}, scratch = false } = opts
+  const { prefix = '', resultsDir = '', files = {}, scratch = false } = opts
   if (scratch) pkgDir = resolve(pkgDir, '.quick')
   mkdirSync(pkgDir, { recursive: true })
 
@@ -34,9 +35,9 @@ export function writeResultFiles(pkgDir, jsonData, markdown, opts = {}) {
   console.log(`  ${jsonPath}`)
   console.log(`  ${mdPath}`)
 
-  for (const [filename, svgContent] of Object.entries(svgCharts)) {
-    const svgPath = resolve(artifactDir, filename)
-    writeFileSync(svgPath, svgContent)
-    console.log(`  ${svgPath}`)
+  for (const [filename, content] of Object.entries(files)) {
+    const path = resolve(artifactDir, filename)
+    writeFileSync(path, content)
+    console.log(`  ${path}`)
   }
 }

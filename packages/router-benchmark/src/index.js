@@ -81,4 +81,4 @@ writeResultFiles(pkgDir, {
   versions,
   settings: jsonSettings,
   variants: jsonVariants,
-}, md, { resultsDir: 'results', svgCharts, scratch: opts.scratch })
+}, md, { resultsDir: 'results', files: svgCharts, scratch: opts.scratch })

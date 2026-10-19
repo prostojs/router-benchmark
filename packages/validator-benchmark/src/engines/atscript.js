@@ -4,7 +4,7 @@ import { Order, Payment } from '../model/order.as.js'
 import { MODES } from '../setup.js'
 
 /** The validator for a mode and scenario `s` (root type + error collection). */
-export function atscriptValidator(mode, s) {
+function atscriptValidator(mode, s) {
   return new Validator(s.target === 'order' ? Order : Payment, {
     unknownProps: MODES[mode].unknownProps,
     errorLimit: s.errors === 'first' ? 1 : Infinity,
@@ -18,9 +18,9 @@ export function createRunner(engine, mode, s) {
   return (input) => (v.validate(input, true) ? 1 : -v.errors.length)
 }
 
-/** Default error report (null when valid): raw error count and the error paths. */
-export function errorReport(engine, mode, s, input) {
+/** One validation with default reporting; atscript validates (and strips) the input in place. */
+export function inspect(engine, mode, s, input) {
   const v = atscriptValidator(mode, s)
-  if (v.validate(input, true)) return null
-  return { raw: v.errors.length, paths: v.errors.map((e) => e.path) }
+  if (v.validate(input, true)) return { valid: true, output: input }
+  return { valid: false, raw: v.errors.length, paths: v.errors.map((e) => e.path) }
 }

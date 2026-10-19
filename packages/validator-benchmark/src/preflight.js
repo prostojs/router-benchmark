@@ -1,9 +1,7 @@
-// Sanity pre-flight: proves the atscript model and the zod schemas accept/reject the same
-// inputs in every mode before anything is measured. Any disagreement aborts the run.
+// Sanity pre-flight: proves the atscript model and every other library's schema accept/reject
+// the same inputs in every mode before anything is measured. Any disagreement aborts the run.
 import { pathToFileURL } from 'node:url'
-import { MODES, SCENARIOS, ENGINES, listJobs, violations } from './setup.js'
-import * as atscriptEngine from './engines/atscript.js'
-import * as zodEngine from './engines/zod.js'
+import { MODES, SCENARIOS, ENGINES, listJobs, loadEngine, skipReason, violations } from './setup.js'
 import { makeValidOrder, makeInvalidOrder, makeUnknownPropsOrder } from './fixtures.js'
 
 const item = (i) => ({ sku: `S${i}`, name: `N${i}`, quantity: 1, unitPrice: 1 })
@@ -32,6 +30,10 @@ const EDGE_CASES = [
   ['min 0 inclusive', (o) => (o.subtotal = 0), true],
   ['min 0: -0.01', (o) => (o.subtotal = -0.01), false],
   ['unconstrained number negative', (o) => (o.items[0].discount = -5), true],
+  ['unconstrained number 1e20', (o) => (o.items[0].discount = 1e20), true],
+  ['min-only number 1e20', (o) => (o.subtotal = 1e20), true],
+  ['optional number = NaN', (o) => (o.items[0].discount = NaN), false],
+  ['optional nested number = NaN', (o) => (o.items[0].metadata.weight = NaN), false],
   ['optional number = string', (o) => (o.items[0].metadata.weight = '1'), false],
   ['array minLength: []', (o) => (o.items = []), false],
   ['array maxLength: 100', (o) => (o.items = Array.from({ length: 100 }, (_, i) => item(i))), true],
@@ -70,18 +72,37 @@ const ROOT_CASES = [
   ['root = string', () => 'x', false],
 ]
 
-const LIBS = { atscript: atscriptEngine, zod: zodEngine }
-const engineLib = (engine) => LIBS[ENGINES[engine].lib]
-const createRunner = (engine, mode, scenario) => engineLib(engine).createRunner(engine, mode, SCENARIOS[scenario])
+const LIBS = Object.fromEntries(await Promise.all(Object.keys(ENGINES).map(async (e) => [e, await loadEngine(e)])))
+const createRunner = (engine, mode, scenario) => LIBS[engine].createRunner(engine, mode, SCENARIOS[scenario])
+const runs = (engine, mode, scenario) => !skipReason(engine, scenario, mode)
+/** Engines that run in `mode` at all. */
+const enginesIn = (mode) => Object.keys(ENGINES).filter((e) => !ENGINES[e].unsupportedModes?.[mode])
+/** Engines that report errors (not boolean-only). */
+const reporting = (engine) => !ENGINES[engine].booleanOnly
+
+/** Undeclared keys of `makeUnknownPropsOrder()` (root, union branch, nested array item) still present in `o`. */
+const unknownKeys = (o) =>
+  [
+    ['trackingRef', o],
+    ['brand', o?.payment],
+    ['note', o?.items?.[0]?.metadata?.customFields?.[0]],
+  ].filter(([k, obj]) => obj && k in obj).length
+
+/** `{ raw: { engine: errors reported | null when it accepted } }` -> "atscript 15, zod 18, ..." */
+export const formatErrorCounts = (rep) =>
+  Object.entries(rep.raw)
+    .map(([engine, n]) => `${engine} ${n ?? 'accepted (unexpected)'}`)
+    .join(', ')
 
 /**
- * Error report of one validation with the library's default reporting (null when valid):
- * `raw` = number of errors/issues as reported; `violations` = which paths were caught.
+ * One validation with the library's default reporting: validity, the output the library
+ * hands back, and when invalid `raw` = number of errors/issues as reported and
+ * `violations` = which paths were caught.
  */
-function errorReport(engine, mode, scenario, input) {
+function inspect(engine, mode, scenario, input) {
   const s = SCENARIOS[scenario]
-  const rep = engineLib(engine).errorReport(engine, mode, s, input)
-  return rep && { raw: rep.raw, violations: violations(s.target, rep.paths) }
+  const r = LIBS[engine].inspect(engine, mode, s, input)
+  return r.valid ? r : { ...r, violations: violations(s.target, r.paths) }
 }
 
 const expectedOf = (exp, mode) => (typeof exp === 'function' ? exp(mode) : exp)
@@ -105,69 +126,84 @@ export function runPreflight() {
     ...ROOT_CASES,
   ]
   for (const mode of Object.keys(MODES)) {
-    const runners = Object.keys(ENGINES).map((e) => [e, createRunner(e, mode, 'valid-order')])
+    const runners = enginesIn(mode).map((e) => [e, createRunner(e, mode, 'valid-order')])
     for (const [label, make, exp] of cases) {
       const expected = expectedOf(exp, mode)
       for (const [engine, run] of runners) {
         checks++
-        const got = sign(run(make()))
+        let got
+        try {
+          got = sign(run(make()))
+        } catch (e) {
+          got = `threw ${e.message}`
+        }
         if (got !== expected) failures.push(`[${mode}] edge "${label}" / ${engine}: valid=${got}, expected ${expected}`)
       }
     }
   }
 
-  // 3) output semantics for unknown props (documented in README)
+  // 3) output semantics for unknown props (documented in README): strip -> the returned value
+  //    has no unknown keys; passthrough -> it keeps them; strict -> invalid. Also records whether
+  //    the library changed its input (those need fresh inputs, see SCENARIOS `fresh`).
   const output = {}
   for (const mode of Object.keys(MODES)) {
-    const asInput = makeUnknownPropsOrder()
-    const asOk = atscriptEngine.atscriptValidator(mode, SCENARIOS['unknown-props-order']).validate(asInput, true)
-    const zInput = makeUnknownPropsOrder()
-    const zr = zodEngine.zodSchema(mode, 'order', false).safeParse(zInput)
-    const has = (o) => !!o && 'trackingRef' in o && 'brand' in o.payment && 'note' in o.items[0].metadata.customFields[0]
-    output[mode] = {
-      atscript: { valid: asOk, inputKeepsUnknownProps: has(asInput), returnsCopy: false },
-      zod: { valid: zr.success, outputKeepsUnknownProps: zr.success ? has(zr.data) : null, inputKeepsUnknownProps: has(zInput), returnsCopy: zr.success ? zr.data !== zInput : null },
+    output[mode] = {}
+    for (const engine of enginesIn(mode).filter(reporting)) {
+      const input = makeUnknownPropsOrder()
+      const r = inspect(engine, mode, 'unknown-props-order', input)
+      const o = {
+        valid: r.valid,
+        outputKeepsUnknownProps: r.valid ? unknownKeys(r.output) === 3 : null,
+        returnsCopy: r.valid ? r.output !== input : null,
+        inputKeepsUnknownProps: unknownKeys(input) === 3,
+      }
+      output[mode][engine] = o
+      checks++
+      const ok =
+        mode === 'strict' ? !r.valid : mode === 'strip' ? r.valid && unknownKeys(r.output) === 0 : r.valid && o.outputKeepsUnknownProps
+      if (!ok) failures.push(`[${mode}] ${engine}: unknown-props output semantics wrong: ${JSON.stringify(o)}`)
     }
-    const exp = { strip: [true, false, false], passthrough: [true, true, true], strict: [false, true, null] }[mode]
-    checks++
-    if (asOk !== exp[0] || has(asInput) !== exp[1] || zr.success !== exp[0] || (zr.success && has(zr.data) !== exp[1]) || !has(zInput))
-      failures.push(`[${mode}] unknown-props output semantics differ: ${JSON.stringify(output[mode])}`)
   }
 
-  // 4) same work on invalid input: in every scenario that collects all errors, both libraries
-  //    (run with their default error reporting) must catch the same violations — the same
-  //    non-union paths, and the union path flagged on both sides (hard check).
+  // 4) same work on invalid input: in every scenario that collects all errors, every engine
+  //    that reports errors (run with its default error reporting) must catch the same
+  //    violations as atscript: the same non-union paths, and the union path flagged (hard check).
   const errorReports = {}
   for (const mode of Object.keys(MODES)) {
     errorReports[mode] = {}
     for (const [scenario, s] of Object.entries(SCENARIOS)) {
       if (s.valid(mode) || s.errors !== 'all') continue
-      const as = errorReport('atscript', mode, scenario, s.make())
-      const rep = { atscript: as.raw }
-      for (const engine of ['zod', 'zod-compiled']) {
-        const zr = errorReport(engine, mode, scenario, s.make())
-        rep[engine] = zr.raw
+      const as = inspect('atscript', mode, scenario, s.make())
+      const rep = { raw: {}, violatedPaths: as.violations }
+      for (const engine of Object.keys(ENGINES).filter((e) => reporting(e) && runs(e, mode, scenario))) {
+        const r = inspect(engine, mode, scenario, s.make())
+        rep.raw[engine] = r.valid ? null : r.raw
         checks++
-        if (JSON.stringify(zr.violations) !== JSON.stringify(as.violations))
-          failures.push(`[${mode}] ${scenario}: caught violations differ — atscript ${JSON.stringify(as.violations)} vs ${engine} ${JSON.stringify(zr.violations)}`)
+        if (r.valid || JSON.stringify(r.violations) !== JSON.stringify(as.violations))
+          failures.push(`[${mode}] ${scenario}: caught violations differ — atscript ${JSON.stringify(as.violations)} vs ${engine} ${JSON.stringify(r.violations)} (paths ${JSON.stringify(r.paths)})`)
       }
-      rep.violatedPaths = as.violations
       errorReports[mode][scenario] = rep
     }
   }
 
-  // 5) first-error rows must really stop at the first error: atscript errorLimit 1 reports exactly
-  //    one error, and both sides read no root property after the first failing one (orderId,
-  //    the first declared prop). Reads are traced with a Proxy over the root object.
+  // 5) first-error rows must really stop at the first error. Engines with error details must
+  //    report exactly one error. Boolean-only engines give no count, so their reads are traced
+  //    with a Proxy over the root object: they must return before reading every root property.
+  //    The traced reads are recorded for every engine (some libraries read every root property
+  //    even though they stop collecting at the first error).
   const firstError = {}
+  const rootProps = Object.keys(makeInvalidOrder())
   for (const mode of Object.keys(MODES)) {
-    const as1 = errorReport('atscript', mode, 'invalid-order-first-error', makeInvalidOrder())
-    checks++
-    if (as1.raw !== 1) failures.push(`[${mode}] atscript errorLimit 1 reported ${as1.raw} errors`)
-    const reads = {}
-    for (const engine of ['atscript', 'zod-compiled-validate']) {
+    firstError[mode] = { errors: {}, rootPropsRead: {} }
+    for (const engine of Object.keys(ENGINES).filter((e) => runs(e, mode, 'invalid-order-first-error'))) {
+      if (reporting(engine)) {
+        const r = inspect(engine, mode, 'invalid-order-first-error', makeInvalidOrder())
+        firstError[mode].errors[engine] = r.raw
+        checks++
+        if (r.valid || r.raw !== 1) failures.push(`[${mode}] ${engine} first-error reported ${r.raw} errors`)
+      }
       const run = createRunner(engine, mode, 'invalid-order-first-error')
-      run(makeInvalidOrder()) // warm (compiles zod's fast path) before tracing
+      run(makeInvalidOrder()) // warm (compiles lazy fast paths) before tracing
       const seen = new Set()
       const traced = new Proxy(makeInvalidOrder(), {
         get(t, k, r) {
@@ -176,18 +212,21 @@ export function runPreflight() {
         },
       })
       const r = run(traced)
-      reads[engine] = [...seen]
+      const reads = rootProps.filter((k) => seen.has(k))
+      firstError[mode].rootPropsRead[engine] = reads
       checks++
-      if (r > 0 || reads[engine].some((k) => k !== 'orderId'))
-        failures.push(`[${mode}] ${engine} first-error did not stop early: read ${JSON.stringify(reads[engine])}`)
+      if (r > 0) failures.push(`[${mode}] ${engine} first-error: traced input accepted`)
+      if (!reporting(engine) && reads.length === rootProps.length)
+        failures.push(`[${mode}] ${engine} first-error did not stop early: read ${JSON.stringify(reads)}`)
     }
-    firstError[mode] = { atscriptErrors: as1.raw, rootPropsRead: reads }
   }
 
   console.log(`Pre-flight: ${checks} checks, ${failures.length} failures`)
   for (const [mode, rep] of Object.entries(errorReports))
-    console.log(`  [${mode}] errors reported (atscript / zod / zod-compiled), same violated paths: ${Object.entries(rep).map(([k, r]) => `${k} ${r.atscript}/${r.zod}/${r['zod-compiled']}`).join(', ')}`)
-  console.log(`  first-error: ${JSON.stringify(firstError)}`)
+    for (const [scenario, r] of Object.entries(rep))
+      console.log(`  [${mode}] ${scenario}: errors reported, same violated paths: ${formatErrorCounts(r)}`)
+  for (const [mode, f] of Object.entries(firstError))
+    console.log(`  [${mode}] first-error: errors ${JSON.stringify(f.errors)}; root props read ${JSON.stringify(f.rootPropsRead)}`)
   if (failures.length) {
     for (const f of failures) console.log(`  FAIL ${f}`)
     throw new Error('Pre-flight failed: libraries disagree, refusing to benchmark')

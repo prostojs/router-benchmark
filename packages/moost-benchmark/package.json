@@ -11,20 +11,20 @@
   },
   "dependencies": {
     "@fastify/cookie": "11.1.3",
-    "@moostjs/event-http": "0.6.52",
+    "@moostjs/event-http": "0.6.53",
     "@nestjs/common": "12.1.3",
     "@nestjs/core": "12.1.3",
     "@nestjs/platform-express": "12.1.3",
     "@nestjs/platform-fastify": "12.1.3",
     "@prostojs/router": "0.3.6",
-    "@wooksjs/event-core": "0.7.30",
-    "@wooksjs/event-http": "0.7.30",
+    "@wooksjs/event-core": "0.7.31",
+    "@wooksjs/event-http": "0.7.31",
     "bench-utils": "workspace:*",
     "cookie-parser": "1.4.7",
-    "moost": "0.6.52",
+    "moost": "0.6.53",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2",
-    "wooks": "0.7.30"
+    "wooks": "0.7.31"
   },
   "devDependencies": {
     "@types/cookie-parser": "1.4.10",

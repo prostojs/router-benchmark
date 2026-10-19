@@ -10,9 +10,18 @@
     "preflight": "pnpm compile && node ./src/preflight.js"
   },
   "dependencies": {
-    "@atscript/core": "0.1.108",
-    "@atscript/typescript": "0.1.108",
+    "@atscript/core": "0.1.109",
+    "@atscript/typescript": "0.1.109",
+    "ajv": "8.20.0",
+    "arktype": "2.2.8",
     "bench-utils": "workspace:*",
+    "class-transformer": "0.5.1",
+    "class-validator": "0.15.1",
+    "joi": "18.3.0",
+    "reflect-metadata": "0.2.2",
+    "typebox": "1.4.2",
+    "valibot": "1.5.0",
+    "yup": "1.7.1",
     "zod": "4.6.7"
   }
 }

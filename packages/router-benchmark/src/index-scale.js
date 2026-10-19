@@ -87,7 +87,7 @@ function writeAll() {
     versions,
     settings: { ...jsonSettings, routeCounts },
     variants: series,
-  }, md, { prefix: 'scale', resultsDir: 'results', svgCharts, scratch: opts.scratch })
+  }, md, { prefix: 'scale', resultsDir: 'results', files: svgCharts, scratch: opts.scratch })
 }
 
 /** Console line chart; `all` = series of one variant, `allCounts` = their sorted x values. */

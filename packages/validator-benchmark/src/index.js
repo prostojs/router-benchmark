@@ -6,14 +6,14 @@ import {
   parseBenchOptions, quickNotes, writeResultFiles, generateGroupedBarChart,
   collectEnvironment, resolveVersions, describe, quantile, fmtCompact,
 } from 'bench-utils'
-import { MODES, SCENARIOS, ENGINES, atscriptOption, listJobs } from './setup.js'
+import { MODES, SCENARIOS, ENGINES, listJobs, listSkipped, pkgOf, pkgsOf } from './setup.js'
 import { runPreflight } from './preflight.js'
 import { renderMarkdown, groupResults } from './report.js'
 
 const pkgDir = new URL('..', import.meta.url).pathname
-const engineLabels = Object.fromEntries(Object.entries(ENGINES).map(([k, e]) => [k, e.label]))
-const engineColors = Object.fromEntries(Object.entries(ENGINES).map(([k, e]) => [k, e.color]))
-const PACKAGES = ['zod', '@atscript/typescript', '@atscript/core']
+const engineKeys = Object.keys(ENGINES)
+const engineMeta = (pick) => Object.fromEntries(engineKeys.map((k) => [k, pick(ENGINES[k], k)]))
+const PACKAGES = [...new Set(engineKeys.flatMap(pkgsOf))]
 const NODE_FLAGS = ['--expose-gc']
 
 /**
@@ -58,7 +58,7 @@ for (let r = 0; r < opts.rounds; r++) {
     acc.rounds.push(out.opsPerSec)
     acc.batches.push(out.batch)
     const m = describe(out.opsPerSec).median
-    process.stdout.write(`  [${String(i + 1).padStart(3)}/${order.length}] ${key(job).padEnd(72)} ${fmtCompact(m).padStart(8)} ops/s\n`)
+    process.stdout.write(`  [${String(i + 1).padStart(3)}/${order.length}] ${key(job).padEnd(64)} ${fmtCompact(m).padStart(8)} ops/s\n`)
   }
 }
 const elapsedSec = Math.round((Date.now() - t0) / 1000)
@@ -94,26 +94,27 @@ const report = {
   versions,
   settings: { rounds: opts.rounds, warmupMs: opts.warmupMs, samples: opts.samples, sampleMs: opts.sampleMs, nodeFlags: NODE_FLAGS, unit: 'ops/s' },
   modes: MODES,
-  engines: engineLabels,
+  engines: engineMeta((e) => e.label),
   scenarios: Object.fromEntries(Object.entries(SCENARIOS).map(([k, s]) => [k, { target: s.target, errors: s.errors, freshInputPerCall: !!s.fresh, valid: Object.fromEntries(Object.keys(MODES).map((m) => [m, s.valid(m)])) }])),
   preflight,
 }
 
 // Bars keep the fixed ENGINES order inside each group, so every engine sits in the same place.
-const engineOrder = Object.keys(ENGINES)
-const svgCharts = {}
+// With this many engines each bar carries its own label (no color legend to match against).
+const files = { 'summary.json': JSON.stringify(summarize(report, groups), null, 2) + '\n' }
 for (const { mode, scenarios } of groups) {
   const chartGroups = scenarios.map(({ scenario, rows }) => ({
     category: scenario,
     bars: rows
-      .toSorted((a, b) => engineOrder.indexOf(a.engine) - engineOrder.indexOf(b.engine))
+      .toSorted((a, b) => engineKeys.indexOf(a.engine) - engineKeys.indexOf(b.engine))
       .map((r) => ({ name: r.engine, value: r.value, low: r.p25, high: r.p75 })),
   }))
-  svgCharts[`${mode}-chart.svg`] = generateGroupedBarChart(chartGroups, {
+  files[`${mode}-chart.svg`] = generateGroupedBarChart(chartGroups, {
     title: `Validation throughput — unknown props: ${mode}`,
-    subtitle: `zod ${versions.zod} (${MODES[mode].zod}) vs @atscript/typescript ${versions['@atscript/typescript']} (${atscriptOption(mode)}) · Node ${environment.node} · ${environment.cpu}`,
-    colors: engineColors,
-    labels: engineLabels,
+    subtitle: `ops/s, higher is better · Node ${environment.node} · ${environment.cpu}`,
+    colors: engineMeta((e) => e.color),
+    labels: engineMeta((e) => e.label),
+    rowLabels: true,
   })
 }
 
@@ -121,13 +122,41 @@ for (const { mode, scenarios } of groups) {
 writeResultFiles(pkgDir, { ...report, results }, renderMarkdown(report, groups, opts), {
   scratch: opts.scratch,
   resultsDir: 'results',
-  svgCharts,
+  files,
 })
 
 // ─── helpers ───────────────────────────────────────────────────────────────
 
 function key(j) {
   return `${j.mode}/${j.scenario}/${j.engine}`
+}
+
+/**
+ * Compact, chart-ready summary (results/summary.json): engine metadata, then
+ * `results[mode][scenario][engine] = median ops/s`, plus the cells that were not run and why.
+ */
+function summarize(report, groups) {
+  const results = {}
+  for (const { mode, scenarios } of groups)
+    for (const { scenario, rows } of scenarios)
+      (results[mode] ??= {})[scenario] = Object.fromEntries(rows.map((r) => [r.engine, r.opsPerSec]))
+  return {
+    generated: report.environment.date,
+    quick: report.quick,
+    unit: 'ops/s (median)',
+    environment: { node: report.environment.node, cpu: report.environment.cpu, os: report.environment.os },
+    engines: engineMeta((e, k) => ({
+      label: e.label,
+      library: pkgOf(k),
+      version: report.versions[pkgOf(k)],
+      color: e.color,
+      booleanOnly: !!e.booleanOnly,
+    })),
+    modes: Object.keys(MODES),
+    scenarios: Object.fromEntries(Object.entries(report.scenarios).map(([k, s]) => [k, { target: s.target, errors: s.errors, valid: s.valid }])),
+    results,
+    skipped: listSkipped(),
+  }
 }
 
 /** Round r runs the jobs forward, then reversed, then in a seeded shuffle. */
@@ -154,7 +183,7 @@ function printSummary(groups) {
     for (const { scenario, rows } of scenarios) {
       console.log(`  ${scenario}`)
       for (const r of rows)
-        console.log(`    ${ENGINES[r.engine].label.padEnd(44)} ${fmtCompact(r.opsPerSec).padStart(8)} ops/s  [${fmtCompact(r.p25)}–${fmtCompact(r.p75)}]  ${String(r.nsPerOp).padStart(7)} ns/op  ${r.relative}`)
+        console.log(`    ${ENGINES[r.engine].label.padEnd(46)} ${fmtCompact(r.opsPerSec).padStart(8)} ops/s  [${fmtCompact(r.p25)}–${fmtCompact(r.p75)}]  ${String(r.nsPerOp).padStart(7)} ns/op  ${r.relative}`)
     }
   }
 }
