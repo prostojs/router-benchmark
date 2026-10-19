@@ -1,29 +1,47 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 380" font-family="system-ui,-apple-system,sans-serif" font-size="12">
 <rect width="700" height="380" fill="#2b2d30" rx="8"/>
 <text x="350" y="30" text-anchor="middle" font-size="15" font-weight="600" fill="#e0e0e0">DI Framework Benchmark — traffic-mix req/s</text>
-<text x="350" y="48" text-anchor="middle" font-size="10" fill="#999">v24.22.0 · Apple M4 · 1×(1s+2s)/test · c100 p10 · whiskers = min–max across rounds</text>
+<text x="350" y="48" text-anchor="middle" font-size="10" fill="#999">v24.22.0 · Apple M4 · 3×(1s+2s)/test · c100 p10 · whiskers = min–max across rounds</text>
 <text x="178" y="87" text-anchor="end" fill="#bbb" font-size="13">Fastify (no DI)</text>
-<rect x="190" y="64" width="410.0" height="36" fill="#aed6f1" rx="4" opacity="0.85"/>
-<text x="608" y="87" fill="#ccc" font-size="12" font-weight="600">107.4k req/s</text>
+<rect x="190" y="64" width="405.8" height="36" fill="#aed6f1" rx="4" opacity="0.85"/>
+<line x1="593.7" y1="82" x2="600.0" y2="82" stroke="#222" stroke-width="1.5"/>
+<line x1="593.7" y1="77" x2="593.7" y2="87" stroke="#222" stroke-width="1.5"/>
+<line x1="600.0" y1="77" x2="600.0" y2="87" stroke="#222" stroke-width="1.5"/>
+<text x="608" y="87" fill="#ccc" font-size="12" font-weight="600">115.8k req/s</text>
 <text x="608" y="100" fill="#777" font-size="10">fastest</text>
 <text x="178" y="135" text-anchor="end" fill="#bbb" font-size="13">Wooks (no DI)</text>
-<rect x="190" y="112" width="382.3" height="36" fill="#a9dfbf" rx="4" opacity="0.85"/>
-<text x="580.2558703344862" y="135" fill="#ccc" font-size="12" font-weight="600">100.1k req/s</text>
-<text x="580.2558703344862" y="148" fill="#777" font-size="10">1.07x slower</text>
+<rect x="190" y="112" width="405.3" height="36" fill="#a9dfbf" rx="4" opacity="0.85"/>
+<line x1="593.7" y1="130" x2="597.5" y2="130" stroke="#222" stroke-width="1.5"/>
+<line x1="593.7" y1="125" x2="593.7" y2="135" stroke="#222" stroke-width="1.5"/>
+<line x1="597.5" y1="125" x2="597.5" y2="135" stroke="#222" stroke-width="1.5"/>
+<text x="605.4886176117708" y="135" fill="#ccc" font-size="12" font-weight="600">115.7k req/s</text>
+<text x="605.4886176117708" y="148" fill="#777" font-size="10">1.00x slower</text>
 <text x="178" y="183" text-anchor="end" fill="#bbb" font-size="13">Moost</text>
-<rect x="190" y="160" width="363.8" height="36" fill="#58d68d" rx="4" opacity="0.85"/>
-<text x="561.8133869212343" y="183" fill="#ccc" font-size="12" font-weight="600">95.3k req/s</text>
-<text x="561.8133869212343" y="196" fill="#777" font-size="10">1.13x slower</text>
+<rect x="190" y="160" width="358.3" height="36" fill="#58d68d" rx="4" opacity="0.85"/>
+<line x1="546.2" y1="178" x2="549.7" y2="178" stroke="#222" stroke-width="1.5"/>
+<line x1="546.2" y1="173" x2="546.2" y2="183" stroke="#222" stroke-width="1.5"/>
+<line x1="549.7" y1="173" x2="549.7" y2="183" stroke="#222" stroke-width="1.5"/>
+<text x="557.6736545252177" y="183" fill="#ccc" font-size="12" font-weight="600">102.2k req/s</text>
+<text x="557.6736545252177" y="196" fill="#777" font-size="10">1.13x slower</text>
 <text x="178" y="231" text-anchor="end" fill="#bbb" font-size="13">NestJS (Fastify)</text>
-<rect x="190" y="208" width="276.8" height="36" fill="#5dade2" rx="4" opacity="0.85"/>
-<text x="474.7836207191767" y="231" fill="#ccc" font-size="12" font-weight="600">72.5k req/s</text>
-<text x="474.7836207191767" y="244" fill="#777" font-size="10">1.48x slower</text>
+<rect x="190" y="208" width="257.8" height="36" fill="#5dade2" rx="4" opacity="0.85"/>
+<line x1="448.0" y1="226" x2="449.7" y2="226" stroke="#222" stroke-width="1.5"/>
+<line x1="448.0" y1="221" x2="448.0" y2="231" stroke="#222" stroke-width="1.5"/>
+<line x1="449.7" y1="221" x2="449.7" y2="231" stroke="#222" stroke-width="1.5"/>
+<text x="457.6635511906958" y="231" fill="#ccc" font-size="12" font-weight="600">73.6k req/s</text>
+<text x="457.6635511906958" y="244" fill="#777" font-size="10">1.57x slower</text>
 <text x="178" y="279" text-anchor="end" fill="#bbb" font-size="13">Express (no DI)</text>
-<rect x="190" y="256" width="242.7" height="36" fill="#d7bde2" rx="4" opacity="0.85"/>
-<text x="440.7280729345256" y="279" fill="#ccc" font-size="12" font-weight="600">63.6k req/s</text>
-<text x="440.7280729345256" y="292" fill="#777" font-size="10">1.69x slower</text>
+<rect x="190" y="256" width="220.4" height="36" fill="#d7bde2" rx="4" opacity="0.85"/>
+<line x1="407.3" y1="274" x2="410.8" y2="274" stroke="#222" stroke-width="1.5"/>
+<line x1="407.3" y1="269" x2="407.3" y2="279" stroke="#222" stroke-width="1.5"/>
+<line x1="410.8" y1="269" x2="410.8" y2="279" stroke="#222" stroke-width="1.5"/>
+<text x="418.8288995059205" y="279" fill="#ccc" font-size="12" font-weight="600">62.9k req/s</text>
+<text x="418.8288995059205" y="292" fill="#777" font-size="10">1.84x slower</text>
 <text x="178" y="327" text-anchor="end" fill="#bbb" font-size="13">NestJS (Express)</text>
-<rect x="190" y="304" width="182.1" height="36" fill="#bb8fce" rx="4" opacity="0.85"/>
-<text x="380.09658108034023" y="327" fill="#ccc" font-size="12" font-weight="600">47.7k req/s</text>
-<text x="380.09658108034023" y="340" fill="#777" font-size="10">2.25x slower</text>
+<rect x="190" y="304" width="169.5" height="36" fill="#bb8fce" rx="4" opacity="0.85"/>
+<line x1="358.3" y1="322" x2="361.4" y2="322" stroke="#222" stroke-width="1.5"/>
+<line x1="358.3" y1="317" x2="358.3" y2="327" stroke="#222" stroke-width="1.5"/>
+<line x1="361.4" y1="317" x2="361.4" y2="327" stroke="#222" stroke-width="1.5"/>
+<text x="369.3857794549428" y="327" fill="#ccc" font-size="12" font-weight="600">48.4k req/s</text>
+<text x="369.3857794549428" y="340" fill="#777" font-size="10">2.39x slower</text>
 </svg>

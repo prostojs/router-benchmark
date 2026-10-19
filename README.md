@@ -54,31 +54,33 @@ This means the headline "traffic-mix req/s" number answers: **"how fast would th
 
 ## Results
 
-The published results are an **indicative estimate from a single round on a laptop**: Apple M4 MacBook Air (fanless), Node.js 24.22, with reduced run settings (HTTP: 1 round, 1 s warmup + 2 s measured per test, 1 s measured in DB mode; router: 1 round, 5 samples; validator: 1 round, 10 samples). Every results file records the environment, the package versions and the settings. Treat differences of a few percent as noise.
+The published results are an **indicative estimate from a single round on a laptop**: Apple M4 MacBook Air (fanless), Node.js 24.22, with reduced run settings (HTTP: 1 s warmup + 2 s measured per test, 1 s measured in DB mode, 1 round, except the Moost suite with its no-DI baselines and the Wooks DB suite, which ran 3 rounds; router: 1 round, 5 samples; validator: 1 round, 10 samples). Every results file records the environment, the package versions and the settings. Treat differences of a few percent as noise.
+
+Note on versions: adding ajv 8.20 for the validator benchmark moved Fastify's transitive ajv dependency from 8.18 to 8.20 (normal pnpm resolution of the shared range); Fastify itself is unchanged at its pinned version.
 
 ### Router — pure route matching (22 long routes)
 
 ![Router Benchmark](packages/router-benchmark/results/results-long-chart.svg)
 
-The compiled rou3 router (`rou3/compiler`) is the fastest on every route shape (about 135k op/ms on short routes, 39k on long, 57k on mixed). ProstoRouter (`@prostojs/router`, used by Wooks and Moost) is mid-pack: 43k op/ms on short routes, 9.6k on long and 29k on mixed; find-my-way is ahead of it on long routes. See the [router-benchmark README](packages/router-benchmark/README.md) for all shapes and the 22–200 route scaling series.
+The compiled rou3 router (`rou3/compiler`) is the fastest on every route shape (about 142k op/ms on short routes, 39k on long, 56k on mixed). ProstoRouter (`@prostojs/router`, used by Wooks and Moost) is mid-pack: 42k op/ms on short routes, 9.4k on long and 30k on mixed; find-my-way is ahead of it on long routes. See the [router-benchmark README](packages/router-benchmark/README.md) for all shapes and the 22–200 route scaling series.
 
 ### Wooks — full HTTP framework
 
 ![Wooks Benchmark](packages/wooks-benchmark/results/results-chart.svg)
 
-Fastify has the highest traffic-mix throughput (115,880 req/s). Wooks is 1.08x behind (107,749), followed by Hono (98,364), h3 (86,165) and Express (63,060). Wooks has the highest throughput on the cookie-authenticated GET routes, and the lowest of all five on the large (~25 KB) JSON POST. See the [wooks-benchmark README](packages/wooks-benchmark/README.md) for the per-test breakdown.
+Fastify has the highest traffic-mix throughput (116,447 req/s). Wooks is 1.02x behind (113,670, within the noise of a single round), followed by Hono (95,579), h3 (84,600) and Express (59,065). Wooks has the highest throughput on the cookie-authenticated GET routes. On the large (~25 KB) JSON POST all five are within 12.5–14.2k req/s (Wooks 13,255); Wooks 0.7.30 was the slowest there (9,380), 0.7.31 sped up its JSON body path. See the [wooks-benchmark README](packages/wooks-benchmark/README.md) for the per-test breakdown.
 
 ### Moost — DI framework overhead
 
 ![Moost Benchmark](packages/moost-benchmark/results/results-chart.svg)
 
-The same run also measures the HTTP frameworks without DI. Moost costs 4.8% of traffic-mix throughput on top of Wooks (95,304 vs 100,135 req/s). NestJS costs 32.5% on top of Fastify (72,506 vs 107,403) and 25% on top of Express (47,702 vs 63,585). A large part of NestJS's cost comes from the bot/scanner tests, because NestJS parses the request body before its guards run. See the [moost-benchmark README](packages/moost-benchmark/README.md) for the per-category analysis.
+The same run (3 rounds) also measures the HTTP frameworks without DI. Moost costs 11.6% of traffic-mix throughput on top of Wooks (102,250 vs 115,670 req/s). NestJS costs 36.5% on top of Fastify (73,569 vs 115,810) and 23.1% on top of Express (48,369 vs 62,901). Moost is 1.39x ahead of NestJS (Fastify). A large part of NestJS's cost comes from the bot/scanner tests, because NestJS parses the request body before its guards run. See the [moost-benchmark README](packages/moost-benchmark/README.md) for the per-category analysis.
 
-### Validator — atscript vs zod
+### Validator — atscript vs 12 other engines
 
-![Validator Benchmark (strip mode)](packages/validator-benchmark/results/strip-chart.svg)
+![Validator Benchmark (passthrough mode)](packages/validator-benchmark/results/passthrough-chart.svg)
 
-Same `Order` model, same accept/reject decisions and the same violations detected on invalid input (checked by a pre-flight). Against zod's default `safeParse()`, the atscript validator is about level on a valid order, about 1.4x faster on a valid 50-item order and 2.4–2.8x faster on invalid input. zod's ahead-of-time `z.compile()` is 8–9x faster than atscript on valid input; atscript is still faster on invalid input. atscript is slower when it has to strip unknown properties (2.4x behind `safeParse()`) and on the standalone payment union when its first branch matches. atscript has no compile mode yet; one is planned. See the [validator-benchmark README](packages/validator-benchmark/README.md) and [RESULTS.md](packages/validator-benchmark/RESULTS.md).
+The same `Order` model in 13 engines from 9 libraries (atscript, zod `safeParse()` / `z.compile()` / `z.compile()` + `validate()`, valibot, yup, joi, ajv, ArkType `T()` / `T.allows()`, class-validator, TypeBox `Compile()` / `Value`), with the same accept/reject decisions and the same violations detected on invalid input (checked by a pre-flight). The compiled validators lead on valid input: on a valid order (passthrough mode) TypeBox `Compile()` does 4.6M ops/s, ArkType 3.6M, ajv 2.3M and zod `z.compile()` 1.8M, against 0.47M for the atscript validator; across the three unknown-property modes they are 2–10x ahead of atscript on valid input (except TypeBox in strip mode, where its uncompiled `Clean()` step makes it slower than atscript). In passthrough and strict mode atscript is the fastest of the non-compiled engines on valid input: 1.05–1.3x ahead of zod `safeParse()` on a valid order and 1.6–2.2x on a 50-item order, and far ahead of joi, yup, class-validator and TypeBox `Value`. On invalid input with a full error report ajv is far ahead (1.9M ops/s); valibot (0.39M) and atscript (0.36M) follow, 2.3–2.8x ahead of zod and 6–11x ahead of compiled TypeBox and ArkType. atscript is slower than zod `safeParse()` when it has to strip unknown properties (2.4x behind), and behind valibot on first-error and invalid-union inputs. atscript has no compile mode yet; one is planned. See the [validator-benchmark README](packages/validator-benchmark/README.md) and [RESULTS.md](packages/validator-benchmark/RESULTS.md).
 
 ### With simulated DB
 
@@ -88,17 +90,17 @@ All the benchmarks above measure pure framework overhead with no real work in ha
 
 ![Wooks Benchmark (with DB)](packages/wooks-benchmark/results/results-db-chart.svg)
 
-Fastify 78,315 req/s, Wooks 75,499 (1.04x behind), Hono 61,399, h3 60,826, Express 48,914. The fastest-to-slowest ratio narrows from 1.84x to 1.60x. See the [wooks-benchmark README](packages/wooks-benchmark/README.md#with-simulated-db-redis).
+Fastify 87,791 req/s, Wooks 82,779 (1.06x behind), Hono 69,204, h3 67,771, Express 51,933 (3 rounds). The fastest-to-slowest ratio narrows from 1.97x to 1.69x; Wooks is 6% behind Fastify instead of 2%. Fastify's three rounds spread the most (80.6–89.0k req/s). See the [wooks-benchmark README](packages/wooks-benchmark/README.md#with-simulated-db-redis).
 
 #### Moost — with DB
 
 ![Moost Benchmark (with DB)](packages/moost-benchmark/results/results-db-chart.svg)
 
-Moost 68,346 req/s, NestJS (Fastify) 59,632, NestJS (Express) 42,168. Moost's lead over NestJS (Fastify) narrows from 1.31x to 1.15x, and it comes from the bot/scanner tests, where NestJS parses the body before its guards run. Without those two tests NestJS (Fastify) is slightly ahead (about 72k vs 69k req/s); it is faster on the header-auth routes, Moost on 404s. See the [moost-benchmark README](packages/moost-benchmark/README.md#with-simulated-db-redis).
+Moost 73,910 req/s, NestJS (Fastify) 60,518, NestJS (Express) 42,691. Moost's lead over NestJS (Fastify) narrows from 1.39x to 1.22x, and it comes from the bot/scanner tests, where NestJS parses the body before its guards run. Without those two tests the two are about level (about 75k vs 73k req/s); NestJS (Fastify) is faster on the header-auth routes, Moost on 404s and 401s. See the [moost-benchmark README](packages/moost-benchmark/README.md#with-simulated-db-redis).
 
 #### The takeaway
 
-A single Redis call per request already narrows the framework differences. A real application does more per request (several queries, rendering, business logic), so the share of time spent in the framework gets smaller still. Measure your own workload before choosing a framework for speed.
+A single Redis call per request already narrows the gap between the fastest and the slowest framework. A real application does more per request (several queries, rendering, business logic), so the share of time spent in the framework gets smaller still. Measure your own workload before choosing a framework for speed.
 
 ## Running
 
@@ -117,7 +119,7 @@ pnpm bench:wooks:db    # with simulated Redis DB calls
 pnpm bench:moost
 pnpm bench:moost:db    # with simulated Redis DB calls
 
-# Validator benchmark (atscript vs zod, ~12 min)
+# Validator benchmark (atscript vs 12 other engines, ~40 min)
 pnpm bench:validator
 
 # All benchmarks (router + scale + wooks + moost, ~90 min)

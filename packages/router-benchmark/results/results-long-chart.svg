@@ -4,26 +4,26 @@
 <text x="350" y="48" text-anchor="middle" font-size="10" fill="#999">v24.22.0 · Apple M4 · median of 1 rounds · whiskers = min–max round median</text>
 <text x="178" y="87" text-anchor="end" fill="#bbb" font-size="13">Rou3 (compiled)</text>
 <rect x="190" y="64" width="410.0" height="36" fill="#5dade2" rx="4" opacity="0.85"/>
-<text x="608" y="87" fill="#ccc" font-size="12" font-weight="600">39.3k op/ms</text>
+<text x="608" y="87" fill="#ccc" font-size="12" font-weight="600">38.8k op/ms</text>
 <text x="608" y="100" fill="#777" font-size="10">fastest</text>
 <text x="178" y="135" text-anchor="end" fill="#bbb" font-size="13">FindMyWay</text>
-<rect x="190" y="112" width="115.6" height="36" fill="#58d68d" rx="4" opacity="0.85"/>
-<text x="313.58974901790907" y="135" fill="#ccc" font-size="12" font-weight="600">11.1k op/ms</text>
-<text x="313.58974901790907" y="148" fill="#777" font-size="10">3.55x slower</text>
+<rect x="190" y="112" width="118.9" height="36" fill="#58d68d" rx="4" opacity="0.85"/>
+<text x="316.9362732889311" y="135" fill="#ccc" font-size="12" font-weight="600">11.3k op/ms</text>
+<text x="316.9362732889311" y="148" fill="#777" font-size="10">3.45x slower</text>
 <text x="178" y="183" text-anchor="end" fill="#bbb" font-size="13">ProstoRouter</text>
-<rect x="190" y="160" width="100.1" height="36" fill="#bb8fce" rx="4" opacity="0.85"/>
-<text x="298.1086999202062" y="183" fill="#ccc" font-size="12" font-weight="600">9.6k op/ms</text>
-<text x="298.1086999202062" y="196" fill="#777" font-size="10">4.10x slower</text>
+<rect x="190" y="160" width="99.8" height="36" fill="#bb8fce" rx="4" opacity="0.85"/>
+<text x="297.7605510815055" y="183" fill="#ccc" font-size="12" font-weight="600">9.4k op/ms</text>
+<text x="297.7605510815055" y="196" fill="#777" font-size="10">4.11x slower</text>
 <text x="178" y="231" text-anchor="end" fill="#bbb" font-size="13">Hono (RegExpRouter)</text>
-<rect x="190" y="208" width="92.8" height="36" fill="#f4d03f" rx="4" opacity="0.85"/>
-<text x="290.8273094649686" y="231" fill="#ccc" font-size="12" font-weight="600">8.9k op/ms</text>
-<text x="290.8273094649686" y="244" fill="#777" font-size="10">4.42x slower</text>
+<rect x="190" y="208" width="96.7" height="36" fill="#f4d03f" rx="4" opacity="0.85"/>
+<text x="294.7047192769528" y="231" fill="#ccc" font-size="12" font-weight="600">9.2k op/ms</text>
+<text x="294.7047192769528" y="244" fill="#777" font-size="10">4.24x slower</text>
 <text x="178" y="279" text-anchor="end" fill="#bbb" font-size="13">Rou3</text>
-<rect x="190" y="256" width="68.1" height="36" fill="#48c9b0" rx="4" opacity="0.85"/>
-<text x="266.1414818262453" y="279" fill="#ccc" font-size="12" font-weight="600">6.5k op/ms</text>
-<text x="266.1414818262453" y="292" fill="#777" font-size="10">6.02x slower</text>
+<rect x="190" y="256" width="69.2" height="36" fill="#48c9b0" rx="4" opacity="0.85"/>
+<text x="267.22278426745663" y="279" fill="#ccc" font-size="12" font-weight="600">6.6k op/ms</text>
+<text x="267.22278426745663" y="292" fill="#777" font-size="10">5.92x slower</text>
 <text x="178" y="327" text-anchor="end" fill="#bbb" font-size="13">Express</text>
-<rect x="190" y="304" width="11.9" height="36" fill="#85c1e9" rx="4" opacity="0.85"/>
-<text x="209.92894147384666" y="327" fill="#ccc" font-size="12" font-weight="600">1.1k op/ms</text>
-<text x="209.92894147384666" y="340" fill="#777" font-size="10">34.37x slower</text>
+<rect x="190" y="304" width="11.7" height="36" fill="#85c1e9" rx="4" opacity="0.85"/>
+<text x="209.68647132338714" y="327" fill="#ccc" font-size="12" font-weight="600">1.1k op/ms</text>
+<text x="209.68647132338714" y="340" fill="#777" font-size="10">35.08x slower</text>
 </svg>

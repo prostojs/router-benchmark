@@ -14,17 +14,17 @@ A benchmark measuring the overhead of decorator-based dependency injection frame
 
 This benchmark isolates the **cost of the DI/decorator layer** by comparing each framework with its underlying HTTP engine. The no-DI baselines (the Wooks, Fastify and Express servers from the [wooks benchmark](../wooks-benchmark/)) are measured in the same run (`--baselines`), so the comparison uses one consistent measurement.
 
-Indicative estimate, single round on a laptop: Apple M4 MacBook Air (fanless), Node.js 24.22, 1 round of 1 s warmup + 2 s measured per test. [RESULTS.md](RESULTS.md) records the environment, versions and settings. Treat differences of a few percent as noise.
+Indicative estimate on a laptop: Apple M4 MacBook Air (fanless), Node.js 24.22, 3 rounds of 1 s warmup + 2 s measured per test (the round-to-round spread of each headline number is under 2%). [RESULTS.md](RESULTS.md) records the environment, versions and settings. Treat differences of a few percent as noise.
 
 | DI framework | Base framework | Base req/s | DI req/s | DI-layer cost | Cost without the bot/scanner tests |
 |--------------|---------------|-----------:|---------:|---------:|---------:|
-| Moost | Wooks | 100,135 | 95,304 | **4.8%** | 4.9% |
-| NestJS (Fastify) | Fastify | 107,403 | 72,506 | **32.5%** | 15.4% |
-| NestJS (Express) | Express | 63,585 | 47,702 | **25.0%** | 15.1% |
+| Moost | Wooks | 115,670 | 102,250 | **11.6%** | 11.5% |
+| NestJS (Fastify) | Fastify | 115,810 | 73,569 | **36.5%** | 19.9% |
+| NestJS (Express) | Express | 62,901 | 48,369 | **23.1%** | 12.7% |
 
 req/s = traffic-mix throughput (weighted harmonic mean). Both frameworks give you decorators, dependency injection, guards and interceptors, and both evaluate their decorators at runtime using TypeScript's `emitDecoratorMetadata`.
 
-A large part of NestJS's cost comes from the two bot/scanner tests (large POST body with bad credentials, 4% of traffic): NestJS parses the request body before its guards run, so it handles them at about 12k req/s instead of 52–77k. The last column recomputes the traffic mix without those two tests; Moost's DI-layer cost is still about a third of NestJS's.
+A large part of NestJS's cost comes from the two bot/scanner tests (large POST body with bad credentials, 4% of traffic): NestJS parses the request body before its guards run, so it handles them at about 12k req/s instead of 54–86k. The last column recomputes the traffic mix without those two tests: Moost's DI-layer cost is then a little over half of NestJS's on Fastify and slightly below NestJS's on Express.
 
 ## Results
 
@@ -34,34 +34,34 @@ See [RESULTS.md](RESULTS.md) for the per-test numbers and p99 latency.
 
 | Framework | traffic-mix req/s | relative |
 |-----------|----------:|-------|
-| Fastify (no DI) | 107,403 | fastest |
-| Wooks (no DI) | 100,135 | 1.07x slower |
-| Moost | 95,304 | 1.13x slower |
-| NestJS (Fastify) | 72,506 | 1.48x slower |
-| Express (no DI) | 63,585 | 1.69x slower |
-| NestJS (Express) | 47,702 | 2.25x slower |
+| Fastify (no DI) | 115,810 | fastest |
+| Wooks (no DI) | 115,670 | 1.00x slower |
+| Moost | 102,250 | 1.13x slower |
+| NestJS (Fastify) | 73,569 | 1.57x slower |
+| Express (no DI) | 62,901 | 1.84x slower |
+| NestJS (Express) | 48,369 | 2.39x slower |
 
 ### Where the Overhead Goes
 
 Not all request types are affected equally by the DI layer:
 
-**Cookie-auth reads (42% of traffic)** — Moost costs 0–5% vs Wooks (137–146k req/s), NestJS costs 11–14% vs Fastify (113–118k req/s). Moost is 17–24% ahead of NestJS (Fastify) on these routes.
+**Cookie-auth reads (42% of traffic)** — Moost costs 12–13% vs Wooks (137–144k req/s), NestJS costs 16–17% vs Fastify (about 120k req/s). Moost is 14–19% ahead of NestJS (Fastify) on these routes.
 
-**404 handling** — Moost handles 404s at 157–161k req/s, the same as Wooks. NestJS handles them at about 85k on Fastify (46–51% below plain Fastify) and about 51k on Express.
+**404 handling** — Moost handles 404s at 158–163k req/s, 7% below Wooks. NestJS handles them at about 86k on Fastify (55% below plain Fastify) and about 52k on Express.
 
-**Auth failures (401)** — the largest DI cost for Moost: about 100k req/s vs about 143k for Wooks (30%). NestJS loses more: about 75k vs about 180k for Fastify (58%).
+**Auth failures (401)** — the largest DI cost for Moost: about 101k req/s vs 143–151k for Wooks (30–33%). NestJS loses more: 77–80k vs about 197k for Fastify (59–61%). Moost is about 1.3x faster than NestJS (Fastify) here.
 
-**Bot/scanner traffic (large body + bad auth)** — Moost rejects before parsing the body, at 59–62k req/s (close to Wooks). NestJS parses the body first and handles these requests at about 12k on both platforms, about 5x slower than Moost.
+**Bot/scanner traffic (large body + bad auth)** — Moost rejects before parsing the body, at 59–61k req/s (13% below Wooks). NestJS parses the body first and handles these requests at about 12k on both platforms, about 5x slower than Moost.
 
-**Static and header-auth GETs** — Moost costs 4–9% vs Wooks, NestJS 0–11% vs Fastify. Moost and NestJS (Fastify) are level on the header-auth routes; NestJS (Fastify) is 7–8% ahead on the wildcard routes and Moost 6% ahead on the short static route.
+**Static and header-auth GETs** — Moost costs 10–21% vs Wooks, NestJS 13–23% vs Fastify. Moost is 4% ahead of NestJS (Fastify) on the short static route and level on the header-auth static route; NestJS (Fastify) is 3–5% ahead on the header-auth param and long static routes and 8–11% ahead on the wildcard routes.
 
-**Body parsing** — on small JSON bodies Moost costs 6–7% vs Wooks and NestJS 14–16% vs Fastify; Moost is ahead of NestJS (Fastify) on the cookie-auth POST/PUT, behind it on the header-auth POST. On the large (~25 KB) JSON body, Moost is the slowest (9,199 req/s vs about 12,300 for both NestJS platforms), as Wooks is in the wooks benchmark.
+**Body parsing** — on small JSON bodies Moost costs 10–13% vs Wooks and NestJS 18–22% vs Fastify; Moost is 5% ahead of NestJS (Fastify) on the cookie-auth POST/PUT and 7% behind it on the header-auth POST. On the large (~25 KB) JSON body, Moost is the fastest of the three DI frameworks (13,345 req/s vs 12,340 for NestJS (Fastify) and 12,654 for NestJS (Express)); with Moost 0.6.52 / Wooks 0.7.30 it was the slowest (9,199).
 
-**Login (set-cookie)** — NestJS (Fastify) 98,359 vs Moost 89,285.
+**Login (set-cookie)** — NestJS (Fastify) 95,875 vs Moost 89,277.
 
 ### The Bottom Line
 
-Moost gives you decorator-driven controllers, guards, interceptors and dependency injection with a small DI-layer cost on top of Wooks (4.8% here). On the most common production workload (cookie-authenticated reads), Moost is 17–24% ahead of NestJS on Fastify. NestJS (Fastify) is level with or ahead of Moost on header-auth GETs, wildcard routes, login, the header-auth small POST and large bodies. The headline gap (1.31x) is widened by the bot/scanner tests, where NestJS parses the body before checking auth.
+Moost gives you decorator-driven controllers, guards, interceptors and dependency injection with a DI-layer cost of 11.6% on top of Wooks, against 36.5% for NestJS on top of Fastify. On the most common production workload (cookie-authenticated reads), Moost is 14–19% ahead of NestJS on Fastify. NestJS (Fastify) is ahead of Moost on the wildcard routes, login, the header-auth param and long static routes and the header-auth small POST. The headline gap (1.39x) is widened by the bot/scanner tests, where NestJS parses the body before checking auth; without them Moost is 1.12x ahead.
 
 ## With Simulated DB (Redis)
 
@@ -73,19 +73,21 @@ See [RESULTS-DB.md](RESULTS-DB.md) for the full breakdown.
 
 | Framework | traffic-mix req/s | relative |
 |-----------|----------:|-------|
-| Moost | 68,346 | fastest |
-| NestJS (Fastify) | 59,632 | 1.15x slower |
-| NestJS (Express) | 42,168 | 1.62x slower |
+| Moost | 73,910 | fastest |
+| NestJS (Fastify) | 60,518 | 1.22x slower |
+| NestJS (Express) | 42,691 | 1.73x slower |
 
 ### The Gap Narrows
 
-Without DB calls Moost is 1.31x ahead of NestJS (Fastify); with one Redis call per authenticated request it is 1.15x ahead. That remaining lead comes from the bot/scanner tests: without them NestJS (Fastify) is slightly ahead (72,117 vs 68,981 req/s). Per category, with the DB call:
+Without DB calls Moost is 1.39x ahead of NestJS (Fastify); with one Redis call per authenticated request it is 1.22x ahead. That remaining lead comes from the bot/scanner tests: without them the two are about level (Moost 74,715 vs NestJS (Fastify) 73,422 req/s). Per category, with the DB call:
 
-- **Cookie-auth reads:** Moost and NestJS (Fastify) are level, or Moost slightly ahead (80–87k req/s).
-- **Header-auth routes:** NestJS (Fastify) is 24–31% ahead of Moost.
-- **Static and wildcard routes, login:** NestJS (Fastify) is 4–11% ahead.
-- **404s:** Moost is about 1.9x faster (157–164k vs 84–85k).
-- **Bot/scanner:** Moost is about 4.8x faster (56k vs 12k), because NestJS parses the body first.
+- **Cookie-auth reads:** Moost and NestJS (Fastify) are level (84–87k req/s).
+- **Cookie-auth small POST/PUT:** Moost is 3–4% ahead (about 61k vs 59k).
+- **Header-auth routes:** NestJS (Fastify) is 14–18% ahead of Moost on the GETs and 6% on the small POST.
+- **Wildcard routes, login:** NestJS (Fastify) is 6–8% ahead; Moost is 6% ahead on the short static route.
+- **Auth failures (401):** Moost is 22–27% faster (93–97k vs 76k).
+- **404s:** Moost is about 1.9x faster (157–161k vs 84k).
+- **Bot/scanner:** Moost is about 5x faster (58–60k vs 12k), because NestJS parses the body first.
 
 The more real work each request does — database queries, cache lookups, business logic, external API calls — the smaller the share of time spent in the framework and its DI layer. Measure your own workload before choosing a DI framework for speed.
 
@@ -98,7 +100,7 @@ Same harness and workload as the [wooks benchmark](../wooks-benchmark/README.md#
 - Handlers are synchronous in pure mode; only `--db` mode returns a promise for the Redis round-trip.
 - **Drain between runs:** after every run the orchestrator waits until the server process reports all client connections closed (abort after 5 s), instead of a fixed sleep.
 - **Pre-flight equivalence check** on every server start (status, body, headers, invalid-body → 400).
-- Per test (defaults): 2 s warmup + 5 s measured; 3 rounds with rotated framework order (the published results used a reduced run: 1 round, 1 s warmup + 2 s measured, 1 s measured in DB mode); median per test; runs with > 0.1% unexpected responses are flagged INVALID.
+- Per test (defaults): 2 s warmup + 5 s measured; 3 rounds with rotated framework order (the published results used a reduced run: 1 s warmup + 2 s measured, 3 rounds, with baselines; DB mode 1 s measured, 1 round); median per test; runs with > 0.1% unexpected responses are flagged INVALID.
 - Headline = weighted harmonic mean of per-test medians (traffic-mix throughput).
 - Auth: Moost uses `defineAuthGuard` interceptors (run before argument resolution, so `@Body()` is never parsed for unauthorized requests); NestJS uses `@UseGuards` guards. NestJS registers its JSON body parser globally (platform default), so on both NestJS platforms the body is parsed *before* guards run — that is NestJS' idiomatic behaviour and is intentionally not worked around.
 - One version of each HTTP engine: the root `pnpm.overrides` pins `express` and `fastify`, so NestJS' platform adapters run on exactly the same Express/Fastify versions as the no-DI baselines (NestJS otherwise bundles its own, slightly older copies).

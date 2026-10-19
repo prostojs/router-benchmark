@@ -4,7 +4,7 @@
   "quick": false,
   "only": null,
   "environment": {
-    "date": "2026-10-19T12:08:20.365Z",
+    "date": "2026-10-19T20:43:42.055Z",
     "node": "v24.22.0",
     "v8": "13.6.233.17-node.57",
     "os": "Darwin 27.0.0 (darwin arm64)",
@@ -16,9 +16,9 @@
   "versions": {
     "autocannon": "8.0.0",
     "ioredis": "6.0.0",
-    "wooks": "0.7.30",
-    "@wooksjs/event-http": "0.7.30",
-    "@wooksjs/http-body": "0.7.30",
+    "wooks": "0.7.31",
+    "@wooksjs/event-http": "0.7.31",
+    "@wooksjs/http-body": "0.7.31",
     "@prostojs/router": "0.3.6",
     "fastify": "5.12.7",
     "@fastify/cookie": "11.1.3",
@@ -31,7 +31,7 @@
   "settings": {
     "warmupSec": 1,
     "durationSec": 1,
-    "rounds": 1,
+    "rounds": 3,
     "connections": 100,
     "pipelining": 10,
     "workers": 0,
@@ -41,52 +41,52 @@
   },
   "summary": {
     "Fastify": {
-      "mixRps": 78315,
-      "weightedArithmeticRps": 95043,
-      "roundMinRps": 78315,
-      "roundMaxRps": 78315,
-      "roundCv": 0,
+      "mixRps": 87791,
+      "weightedArithmeticRps": 109795,
+      "roundMinRps": 80649,
+      "roundMaxRps": 89048,
+      "roundCv": 0.05337245627241178,
       "relative": "fastest",
       "valid": true,
       "invalidTests": []
     },
     "Wooks": {
-      "mixRps": 75499,
-      "weightedArithmeticRps": 97777,
-      "roundMinRps": 75499,
-      "roundMaxRps": 75499,
-      "roundCv": 0,
-      "relative": "1.04x slower",
+      "mixRps": 82779,
+      "weightedArithmeticRps": 100527,
+      "roundMinRps": 81913,
+      "roundMaxRps": 83445,
+      "roundCv": 0.009374980087175735,
+      "relative": "1.06x slower",
       "valid": true,
       "invalidTests": []
     },
     "Hono": {
-      "mixRps": 61399,
-      "weightedArithmeticRps": 72737,
-      "roundMinRps": 61399,
-      "roundMaxRps": 61399,
-      "roundCv": 0,
-      "relative": "1.28x slower",
+      "mixRps": 69204,
+      "weightedArithmeticRps": 84187,
+      "roundMinRps": 66321,
+      "roundMaxRps": 70115,
+      "roundCv": 0.02929083817340269,
+      "relative": "1.27x slower",
       "valid": true,
       "invalidTests": []
     },
     "h3": {
-      "mixRps": 60826,
-      "weightedArithmeticRps": 70182,
-      "roundMinRps": 60826,
-      "roundMaxRps": 60826,
-      "roundCv": 0,
-      "relative": "1.29x slower",
+      "mixRps": 67771,
+      "weightedArithmeticRps": 77978,
+      "roundMinRps": 67439,
+      "roundMaxRps": 68260,
+      "roundCv": 0.00605983165041019,
+      "relative": "1.30x slower",
       "valid": true,
       "invalidTests": []
     },
     "Express": {
-      "mixRps": 48914,
-      "weightedArithmeticRps": 55261,
-      "roundMinRps": 48914,
-      "roundMaxRps": 48914,
-      "roundCv": 0,
-      "relative": "1.60x slower",
+      "mixRps": 51933,
+      "weightedArithmeticRps": 59980,
+      "roundMinRps": 50610,
+      "roundMaxRps": 52614,
+      "roundCv": 0.01977516415484395,
+      "relative": "1.69x slower",
       "valid": true,
       "invalidTests": []
     }
@@ -97,75 +97,85 @@
       "expectStatus": 200,
       "frameworks": {
         "Wooks": {
-          "medianRps": 193610,
-          "minRps": 193610,
-          "maxRps": 193610,
-          "cv": 0,
+          "medianRps": 190585,
+          "minRps": 183391,
+          "maxRps": 196276,
+          "cv": 0.03396968467211845,
           "rounds": [
-            193610
+            196276,
+            190585,
+            183391
           ],
-          "latencyP50ms": 5,
-          "latencyP99ms": 10,
+          "latencyP50ms": 6,
+          "latencyP99ms": 8,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Fastify": {
-          "medianRps": 144539,
-          "minRps": 144539,
-          "maxRps": 144539,
-          "cv": 0,
+          "medianRps": 192967,
+          "minRps": 161100,
+          "maxRps": 202583,
+          "cv": 0.11702145462263339,
           "rounds": [
-            144539
+            202583,
+            161100,
+            192967
           ],
-          "latencyP50ms": 6,
-          "latencyP99ms": 15,
+          "latencyP50ms": 5,
+          "latencyP99ms": 8,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "h3": {
-          "medianRps": 168856,
-          "minRps": 168856,
-          "maxRps": 168856,
-          "cv": 0,
+          "medianRps": 172741,
+          "minRps": 167613,
+          "maxRps": 173472,
+          "cv": 0.018640536739221183,
           "rounds": [
-            168856
+            173472,
+            172741,
+            167613
           ],
           "latencyP50ms": 4,
-          "latencyP99ms": 12,
+          "latencyP99ms": 9,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Hono": {
-          "medianRps": 144290,
-          "minRps": 144290,
-          "maxRps": 144290,
-          "cv": 0,
+          "medianRps": 177976,
+          "minRps": 175602,
+          "maxRps": 179511,
+          "cv": 0.011083229514361402,
           "rounds": [
-            144290
+            177976,
+            175602,
+            179511
           ],
-          "latencyP50ms": 7,
-          "latencyP99ms": 13,
+          "latencyP50ms": 6,
+          "latencyP99ms": 8,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Express": {
-          "medianRps": 85159,
-          "minRps": 85159,
-          "maxRps": 85159,
-          "cv": 0,
+          "medianRps": 106964,
+          "minRps": 105601,
+          "maxRps": 108744,
+          "cv": 0.014715775844191764,
           "rounds": [
-            85159
+            105601,
+            106964,
+            108744
           ],
-          "latencyP50ms": 12,
-          "latencyP99ms": 24,
+          "latencyP50ms": 6,
+          "latencyP99ms": 14,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -178,44 +188,50 @@
       "expectStatus": 201,
       "frameworks": {
         "Wooks": {
-          "medianRps": 70011,
-          "minRps": 70011,
-          "maxRps": 70011,
-          "cv": 0,
+          "medianRps": 73015,
+          "minRps": 71274,
+          "maxRps": 73559,
+          "cv": 0.016437299054300705,
           "rounds": [
-            70011
+            73559,
+            73015,
+            71274
           ],
-          "latencyP50ms": 12,
-          "latencyP99ms": 26,
+          "latencyP50ms": 11,
+          "latencyP99ms": 21,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Fastify": {
-          "medianRps": 71777,
-          "minRps": 71777,
-          "maxRps": 71777,
-          "cv": 0,
+          "medianRps": 82479,
+          "minRps": 70092,
+          "maxRps": 82850,
+          "cv": 0.09252920687243067,
           "rounds": [
-            71777
+            82479,
+            70092,
+            82850
           ],
-          "latencyP50ms": 12,
-          "latencyP99ms": 22,
+          "latencyP50ms": 10,
+          "latencyP99ms": 18,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "h3": {
-          "medianRps": 70486,
-          "minRps": 70486,
-          "maxRps": 70486,
-          "cv": 0,
+          "medianRps": 72544,
+          "minRps": 71500.9900990099,
+          "maxRps": 74199,
+          "cv": 0.018701874763265465,
           "rounds": [
-            70486
+            72544,
+            71501,
+            74199
           ],
-          "latencyP50ms": 12,
+          "latencyP50ms": 11,
           "latencyP99ms": 22,
           "errorRate": 0,
           "unexpectedResponses": 0,
@@ -223,30 +239,34 @@
           "valid": true
         },
         "Hono": {
-          "medianRps": 52780,
-          "minRps": 52780,
-          "maxRps": 52780,
-          "cv": 0,
+          "medianRps": 59592,
+          "minRps": 58123,
+          "maxRps": 59635,
+          "cv": 0.014561191691623801,
           "rounds": [
-            52780
+            59592,
+            58123,
+            59635
           ],
-          "latencyP50ms": 16,
-          "latencyP99ms": 31,
+          "latencyP50ms": 14,
+          "latencyP99ms": 26,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Express": {
-          "medianRps": 48412.87128712871,
-          "minRps": 48412.87128712871,
-          "maxRps": 48412.87128712871,
-          "cv": 0,
+          "medianRps": 53939,
+          "minRps": 52261,
+          "maxRps": 55560,
+          "cv": 0.03059313924856735,
           "rounds": [
-            48413
+            52261,
+            53939,
+            55560
           ],
-          "latencyP50ms": 17,
-          "latencyP99ms": 33,
+          "latencyP50ms": 15,
+          "latencyP99ms": 34,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -259,75 +279,85 @@
       "expectStatus": 200,
       "frameworks": {
         "Wooks": {
-          "medianRps": 175425,
-          "minRps": 175425,
-          "maxRps": 175425,
-          "cv": 0,
+          "medianRps": 173362,
+          "minRps": 170131,
+          "maxRps": 177017,
+          "cv": 0.019856534562742303,
           "rounds": [
-            175425
+            177017,
+            173362,
+            170131
           ],
-          "latencyP50ms": 5,
-          "latencyP99ms": 11,
+          "latencyP50ms": 7,
+          "latencyP99ms": 7,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Fastify": {
-          "medianRps": 157000,
-          "minRps": 157000,
-          "maxRps": 157000,
-          "cv": 0,
+          "medianRps": 189943,
+          "minRps": 155838,
+          "maxRps": 192444,
+          "cv": 0.11399010803517239,
           "rounds": [
-            157000
+            192444,
+            155838,
+            189943
           ],
-          "latencyP50ms": 4,
-          "latencyP99ms": 12,
+          "latencyP50ms": 6,
+          "latencyP99ms": 7,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "h3": {
-          "medianRps": 133345,
-          "minRps": 133345,
-          "maxRps": 133345,
-          "cv": 0,
+          "medianRps": 137942,
+          "minRps": 137731,
+          "maxRps": 141546,
+          "cv": 0.01541836110443322,
           "rounds": [
-            133345
+            137731,
+            137942,
+            141546
           ],
-          "latencyP50ms": 6,
-          "latencyP99ms": 13,
+          "latencyP50ms": 5,
+          "latencyP99ms": 10,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Hono": {
-          "medianRps": 111026.73267326732,
-          "minRps": 111026.73267326732,
-          "maxRps": 111026.73267326732,
-          "cv": 0,
+          "medianRps": 134316,
+          "minRps": 132468,
+          "maxRps": 136960,
+          "cv": 0.016775906967906238,
           "rounds": [
-            111027
+            132468,
+            134316,
+            136960
           ],
-          "latencyP50ms": 10,
-          "latencyP99ms": 14,
+          "latencyP50ms": 9,
+          "latencyP99ms": 10,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Express": {
-          "medianRps": 89409,
-          "minRps": 89409,
-          "maxRps": 89409,
-          "cv": 0,
+          "medianRps": 99895,
+          "minRps": 95905,
+          "maxRps": 100273,
+          "cv": 0.024522378054670602,
           "rounds": [
-            89409
+            95905,
+            100273,
+            99895
           ],
-          "latencyP50ms": 13,
-          "latencyP99ms": 16,
+          "latencyP50ms": 7,
+          "latencyP99ms": 14,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -340,75 +370,85 @@
       "expectStatus": 200,
       "frameworks": {
         "Wooks": {
-          "medianRps": 171452.47524752474,
-          "minRps": 171452.47524752474,
-          "maxRps": 171452.47524752474,
-          "cv": 0,
+          "medianRps": 167299,
+          "minRps": 166812,
+          "maxRps": 171695,
+          "cv": 0.015952725963310717,
           "rounds": [
-            171452
+            171695,
+            166812,
+            167299
           ],
-          "latencyP50ms": 6,
-          "latencyP99ms": 11,
+          "latencyP50ms": 7,
+          "latencyP99ms": 8,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Fastify": {
-          "medianRps": 154725,
-          "minRps": 154725,
-          "maxRps": 154725,
-          "cv": 0,
+          "medianRps": 188734,
+          "minRps": 157036,
+          "maxRps": 194988,
+          "cv": 0.11288560880913646,
           "rounds": [
-            154725
+            194988,
+            157036,
+            188734
           ],
-          "latencyP50ms": 4,
-          "latencyP99ms": 12,
+          "latencyP50ms": 6,
+          "latencyP99ms": 7,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "h3": {
-          "medianRps": 123805,
-          "minRps": 123805,
-          "maxRps": 123805,
-          "cv": 0,
+          "medianRps": 136762,
+          "minRps": 133730,
+          "maxRps": 137686,
+          "cv": 0.015210203252030251,
           "rounds": [
-            123805
+            137686,
+            133730,
+            136762
           ],
-          "latencyP50ms": 7,
-          "latencyP99ms": 14,
+          "latencyP50ms": 5,
+          "latencyP99ms": 10,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Hono": {
-          "medianRps": 110894,
-          "minRps": 110894,
-          "maxRps": 110894,
-          "cv": 0,
+          "medianRps": 130705,
+          "minRps": 130311,
+          "maxRps": 131397,
+          "cv": 0.004203011169237036,
           "rounds": [
-            110894
+            131397,
+            130311,
+            130705
           ],
-          "latencyP50ms": 10,
-          "latencyP99ms": 15,
+          "latencyP50ms": 9,
+          "latencyP99ms": 10,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Express": {
-          "medianRps": 82505,
-          "minRps": 82505,
-          "maxRps": 82505,
-          "cv": 0,
+          "medianRps": 96316,
+          "minRps": 92656,
+          "maxRps": 96856,
+          "cv": 0.023982897366954248,
           "rounds": [
-            82505
+            92656,
+            96856,
+            96316
           ],
-          "latencyP50ms": 14,
-          "latencyP99ms": 20,
+          "latencyP50ms": 9,
+          "latencyP99ms": 15,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -421,29 +461,33 @@
       "expectStatus": 200,
       "frameworks": {
         "Wooks": {
-          "medianRps": 107629,
-          "minRps": 107629,
-          "maxRps": 107629,
-          "cv": 0,
+          "medianRps": 107381,
+          "minRps": 101412,
+          "maxRps": 108018,
+          "cv": 0.03450671327280464,
           "rounds": [
-            107629
+            101412,
+            108018,
+            107381
           ],
           "latencyP50ms": 8,
-          "latencyP99ms": 17,
+          "latencyP99ms": 18,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Fastify": {
-          "medianRps": 107265,
-          "minRps": 107265,
-          "maxRps": 107265,
-          "cv": 0,
+          "medianRps": 125401,
+          "minRps": 110076,
+          "maxRps": 126902,
+          "cv": 0.07708632488393109,
           "rounds": [
-            107265
+            126902,
+            110076,
+            125401
           ],
-          "latencyP50ms": 8,
+          "latencyP50ms": 7,
           "latencyP99ms": 16,
           "errorRate": 0,
           "unexpectedResponses": 0,
@@ -451,45 +495,51 @@
           "valid": true
         },
         "h3": {
-          "medianRps": 88267,
-          "minRps": 88267,
-          "maxRps": 88267,
-          "cv": 0,
+          "medianRps": 98115,
+          "minRps": 96639,
+          "maxRps": 101214,
+          "cv": 0.023667973364688982,
           "rounds": [
-            88267
+            96639,
+            98115,
+            101214
           ],
           "latencyP50ms": 9,
-          "latencyP99ms": 23,
+          "latencyP99ms": 16,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Hono": {
-          "medianRps": 79751,
-          "minRps": 79751,
-          "maxRps": 79751,
-          "cv": 0,
+          "medianRps": 85737,
+          "minRps": 72934,
+          "maxRps": 91497,
+          "cv": 0.11394231109822749,
           "rounds": [
-            79751
+            85737,
+            72934,
+            91497
           ],
-          "latencyP50ms": 11,
-          "latencyP99ms": 19,
+          "latencyP50ms": 10,
+          "latencyP99ms": 20,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Express": {
-          "medianRps": 65929,
-          "minRps": 65929,
-          "maxRps": 65929,
-          "cv": 0,
+          "medianRps": 70156,
+          "minRps": 69074,
+          "maxRps": 72912,
+          "cv": 0.02798469611215911,
           "rounds": [
-            65929
+            69074,
+            70156,
+            72912
           ],
-          "latencyP50ms": 13,
-          "latencyP99ms": 24,
+          "latencyP50ms": 12,
+          "latencyP99ms": 23,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -502,75 +552,85 @@
       "expectStatus": 200,
       "frameworks": {
         "Wooks": {
-          "medianRps": 90191,
-          "minRps": 90191,
-          "maxRps": 90191,
-          "cv": 0,
+          "medianRps": 101721,
+          "minRps": 94730,
+          "maxRps": 103040,
+          "cv": 0.044735716122525304,
           "rounds": [
-            90191
+            94730,
+            103040,
+            101721
           ],
-          "latencyP50ms": 9,
-          "latencyP99ms": 24,
+          "latencyP50ms": 8,
+          "latencyP99ms": 17,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Fastify": {
-          "medianRps": 106834,
-          "minRps": 106834,
-          "maxRps": 106834,
-          "cv": 0,
+          "medianRps": 124647,
+          "minRps": 109404,
+          "maxRps": 126081,
+          "cv": 0.0769914683034106,
           "rounds": [
-            106834
+            124647,
+            109404,
+            126081
           ],
-          "latencyP50ms": 8,
-          "latencyP99ms": 19,
+          "latencyP50ms": 7,
+          "latencyP99ms": 14,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "h3": {
-          "medianRps": 87547,
-          "minRps": 87547,
-          "maxRps": 87547,
-          "cv": 0,
+          "medianRps": 91381,
+          "minRps": 90383,
+          "maxRps": 95032,
+          "cv": 0.026525821960081724,
           "rounds": [
-            87547
+            91381,
+            90383,
+            95032
           ],
-          "latencyP50ms": 10,
-          "latencyP99ms": 18,
+          "latencyP50ms": 9,
+          "latencyP99ms": 17,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Hono": {
-          "medianRps": 67915.84158415842,
-          "minRps": 67915.84158415842,
-          "maxRps": 67915.84158415842,
-          "cv": 0,
+          "medianRps": 85688,
+          "minRps": 78467,
+          "maxRps": 88842,
+          "cv": 0.06306829290655361,
           "rounds": [
-            67916
+            85688,
+            78467,
+            88842
           ],
-          "latencyP50ms": 12,
-          "latencyP99ms": 33,
+          "latencyP50ms": 10,
+          "latencyP99ms": 21,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Express": {
-          "medianRps": 63852,
-          "minRps": 63852,
-          "maxRps": 63852,
-          "cv": 0,
+          "medianRps": 69997,
+          "minRps": 69538,
+          "maxRps": 71010,
+          "cv": 0.010731788964361647,
           "rounds": [
-            63852
+            69538,
+            69997,
+            71010
           ],
-          "latencyP50ms": 13,
-          "latencyP99ms": 24,
+          "latencyP50ms": 12,
+          "latencyP99ms": 22,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -583,12 +643,14 @@
       "expectStatus": 200,
       "frameworks": {
         "Wooks": {
-          "medianRps": 105273,
-          "minRps": 105273,
-          "maxRps": 105273,
-          "cv": 0,
+          "medianRps": 102012,
+          "minRps": 98982,
+          "maxRps": 105143,
+          "cv": 0.030188817180400968,
           "rounds": [
-            105273
+            98982,
+            105143,
+            102012
           ],
           "latencyP50ms": 8,
           "latencyP99ms": 19,
@@ -598,60 +660,68 @@
           "valid": true
         },
         "Fastify": {
-          "medianRps": 104271,
-          "minRps": 104271,
-          "maxRps": 104271,
-          "cv": 0,
+          "medianRps": 121226,
+          "minRps": 106622,
+          "maxRps": 121995,
+          "cv": 0.07428034067552003,
           "rounds": [
-            104271
+            121226,
+            106622,
+            121995
           ],
-          "latencyP50ms": 8,
-          "latencyP99ms": 19,
+          "latencyP50ms": 7,
+          "latencyP99ms": 16,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "h3": {
-          "medianRps": 84814,
-          "minRps": 84814,
-          "maxRps": 84814,
-          "cv": 0,
+          "medianRps": 89697,
+          "minRps": 87965,
+          "maxRps": 90839,
+          "cv": 0.016168187438617622,
           "rounds": [
-            84814
+            87965,
+            89697,
+            90839
           ],
-          "latencyP50ms": 10,
-          "latencyP99ms": 20,
+          "latencyP50ms": 9,
+          "latencyP99ms": 18,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Hono": {
-          "medianRps": 66753,
-          "minRps": 66753,
-          "maxRps": 66753,
-          "cv": 0,
+          "medianRps": 75878,
+          "minRps": 74498,
+          "maxRps": 78209,
+          "cv": 0.02461708864991695,
           "rounds": [
-            66753
+            78209,
+            74498,
+            75878
           ],
-          "latencyP50ms": 13,
-          "latencyP99ms": 27,
+          "latencyP50ms": 11,
+          "latencyP99ms": 23,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Express": {
-          "medianRps": 60638,
-          "minRps": 60638,
-          "maxRps": 60638,
-          "cv": 0,
+          "medianRps": 67834,
+          "minRps": 66786,
+          "maxRps": 69757,
+          "cv": 0.022118270620390564,
           "rounds": [
-            60638
+            67834,
+            66786,
+            69757
           ],
-          "latencyP50ms": 14,
-          "latencyP99ms": 26,
+          "latencyP50ms": 12,
+          "latencyP99ms": 24,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -664,75 +734,85 @@
       "expectStatus": 201,
       "frameworks": {
         "Wooks": {
-          "medianRps": 78792,
-          "minRps": 78792,
-          "maxRps": 78792,
-          "cv": 0,
+          "medianRps": 75695,
+          "minRps": 75052,
+          "maxRps": 76520,
+          "cv": 0.009713833513684478,
           "rounds": [
-            78792
+            76520,
+            75695,
+            75052
           ],
-          "latencyP50ms": 10,
-          "latencyP99ms": 22,
+          "latencyP50ms": 11,
+          "latencyP99ms": 20,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Fastify": {
-          "medianRps": 74456,
-          "minRps": 74456,
-          "maxRps": 74456,
-          "cv": 0,
+          "medianRps": 84181,
+          "minRps": 76046,
+          "maxRps": 85689,
+          "cv": 0.06327964957063235,
           "rounds": [
-            74456
+            85689,
+            76046,
+            84181
           ],
-          "latencyP50ms": 11,
-          "latencyP99ms": 21,
+          "latencyP50ms": 10,
+          "latencyP99ms": 18,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "h3": {
-          "medianRps": 66239,
-          "minRps": 66239,
-          "maxRps": 66239,
-          "cv": 0,
+          "medianRps": 77649,
+          "minRps": 77526,
+          "maxRps": 77911,
+          "cv": 0.002530880041729175,
           "rounds": [
-            66239
+            77526,
+            77911,
+            77649
           ],
-          "latencyP50ms": 12,
-          "latencyP99ms": 34,
+          "latencyP50ms": 11,
+          "latencyP99ms": 19,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Hono": {
-          "medianRps": 60826,
-          "minRps": 60826,
-          "maxRps": 60826,
-          "cv": 0,
+          "medianRps": 68327,
+          "minRps": 67287,
+          "maxRps": 70268,
+          "cv": 0.02204695271986903,
           "rounds": [
-            60826
+            68327,
+            67287,
+            70268
           ],
-          "latencyP50ms": 14,
-          "latencyP99ms": 25,
+          "latencyP50ms": 12,
+          "latencyP99ms": 23,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Express": {
-          "medianRps": 51773,
-          "minRps": 51773,
-          "maxRps": 51773,
-          "cv": 0,
+          "medianRps": 55226,
+          "minRps": 53646,
+          "maxRps": 56101,
+          "cv": 0.022626553550406533,
           "rounds": [
-            51773
+            53646,
+            55226,
+            56101
           ],
-          "latencyP50ms": 16,
-          "latencyP99ms": 31,
+          "latencyP50ms": 15,
+          "latencyP99ms": 32,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -745,42 +825,48 @@
       "expectStatus": 401,
       "frameworks": {
         "Wooks": {
-          "medianRps": 149709,
-          "minRps": 149709,
-          "maxRps": 149709,
-          "cv": 0,
+          "medianRps": 146805,
+          "minRps": 145099,
+          "maxRps": 148328,
+          "cv": 0.011008041525763112,
           "rounds": [
-            149709
+            146805,
+            148328,
+            145099
           ],
-          "latencyP50ms": 7,
-          "latencyP99ms": 11,
+          "latencyP50ms": 8,
+          "latencyP99ms": 9,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Fastify": {
-          "medianRps": 158029,
-          "minRps": 158029,
-          "maxRps": 158029,
-          "cv": 0,
+          "medianRps": 189145,
+          "minRps": 157893,
+          "maxRps": 194663,
+          "cv": 0.10981596787011387,
           "rounds": [
-            158029
+            194663,
+            157893,
+            189145
           ],
-          "latencyP50ms": 4,
-          "latencyP99ms": 12,
+          "latencyP50ms": 6,
+          "latencyP99ms": 7,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "h3": {
-          "medianRps": 80667,
-          "minRps": 80667,
-          "maxRps": 80667,
-          "cv": 0,
+          "medianRps": 79054,
+          "minRps": 78944,
+          "maxRps": 80549,
+          "cv": 0.01127553233387782,
           "rounds": [
-            80667
+            80549,
+            79054,
+            78944
           ],
           "latencyP50ms": 9,
           "latencyP99ms": 18,
@@ -790,30 +876,34 @@
           "valid": true
         },
         "Hono": {
-          "medianRps": 132749,
-          "minRps": 132749,
-          "maxRps": 132749,
-          "cv": 0,
+          "medianRps": 156855,
+          "minRps": 152159,
+          "maxRps": 158802,
+          "cv": 0.021899529969743602,
           "rounds": [
-            132749
+            158802,
+            152159,
+            156855
           ],
-          "latencyP50ms": 8,
-          "latencyP99ms": 13,
+          "latencyP50ms": 7,
+          "latencyP99ms": 8,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Express": {
-          "medianRps": 91693,
-          "minRps": 91693,
-          "maxRps": 91693,
-          "cv": 0,
+          "medianRps": 102116,
+          "minRps": 100293,
+          "maxRps": 105552,
+          "cv": 0.026013771417714698,
           "rounds": [
-            91693
+            100293,
+            105552,
+            102116
           ],
-          "latencyP50ms": 12,
-          "latencyP99ms": 18,
+          "latencyP50ms": 7,
+          "latencyP99ms": 14,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -826,75 +916,85 @@
       "expectStatus": 200,
       "frameworks": {
         "Wooks": {
-          "medianRps": 89573,
-          "minRps": 89573,
-          "maxRps": 89573,
-          "cv": 0,
+          "medianRps": 95263,
+          "minRps": 93417,
+          "maxRps": 96860,
+          "cv": 0.018102542550956082,
           "rounds": [
-            89573
+            93417,
+            95263,
+            96860
           ],
           "latencyP50ms": 9,
-          "latencyP99ms": 21,
+          "latencyP99ms": 17,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Fastify": {
-          "medianRps": 87433,
-          "minRps": 87433,
-          "maxRps": 87433,
-          "cv": 0,
+          "medianRps": 99171,
+          "minRps": 91105,
+          "maxRps": 101823,
+          "cv": 0.05733242919700261,
           "rounds": [
-            87433
+            99171,
+            91105,
+            101823
           ],
-          "latencyP50ms": 10,
-          "latencyP99ms": 21,
+          "latencyP50ms": 9,
+          "latencyP99ms": 17,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "h3": {
-          "medianRps": 65835,
-          "minRps": 65835,
-          "maxRps": 65835,
-          "cv": 0,
+          "medianRps": 73411,
+          "minRps": 73374,
+          "maxRps": 73755,
+          "cv": 0.002858060157436778,
           "rounds": [
-            65835
+            73411,
+            73755,
+            73374
           ],
-          "latencyP50ms": 13,
-          "latencyP99ms": 26,
+          "latencyP50ms": 11,
+          "latencyP99ms": 21,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Hono": {
-          "medianRps": 62272.27722772277,
-          "minRps": 62272.27722772277,
-          "maxRps": 62272.27722772277,
-          "cv": 0,
+          "medianRps": 71148,
+          "minRps": 67629,
+          "maxRps": 72605,
+          "cv": 0.03630699493583038,
           "rounds": [
-            62272
+            72605,
+            67629,
+            71148
           ],
-          "latencyP50ms": 13,
-          "latencyP99ms": 29,
+          "latencyP50ms": 12,
+          "latencyP99ms": 25,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Express": {
-          "medianRps": 48089,
-          "minRps": 48089,
-          "maxRps": 48089,
-          "cv": 0,
+          "medianRps": 52446,
+          "minRps": 50851,
+          "maxRps": 52556,
+          "cv": 0.018367583617434912,
           "rounds": [
-            48089
+            50851,
+            52446,
+            52556
           ],
-          "latencyP50ms": 17,
-          "latencyP99ms": 33,
+          "latencyP50ms": 16,
+          "latencyP99ms": 32,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -907,75 +1007,85 @@
       "expectStatus": 200,
       "frameworks": {
         "Wooks": {
-          "medianRps": 87548,
-          "minRps": 87548,
-          "maxRps": 87548,
-          "cv": 0,
+          "medianRps": 94975,
+          "minRps": 92785,
+          "maxRps": 95885,
+          "cv": 0.016853120406337033,
           "rounds": [
-            87548
+            92785,
+            95885,
+            94975
           ],
-          "latencyP50ms": 10,
-          "latencyP99ms": 21,
+          "latencyP50ms": 9,
+          "latencyP99ms": 17,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Fastify": {
-          "medianRps": 89545,
-          "minRps": 89545,
-          "maxRps": 89545,
-          "cv": 0,
+          "medianRps": 97556,
+          "minRps": 90505,
+          "maxRps": 101415,
+          "cv": 0.0573340560945766,
           "rounds": [
-            89545
+            97556,
+            90505,
+            101415
           ],
-          "latencyP50ms": 10,
-          "latencyP99ms": 18,
+          "latencyP50ms": 9,
+          "latencyP99ms": 17,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "h3": {
-          "medianRps": 58967,
-          "minRps": 58967,
-          "maxRps": 58967,
-          "cv": 0,
+          "medianRps": 73519,
+          "minRps": 72389.10891089108,
+          "maxRps": 73741,
+          "cv": 0.009901839093112756,
           "rounds": [
-            58967
+            73519,
+            72389,
+            73741
           ],
-          "latencyP50ms": 14,
-          "latencyP99ms": 36,
+          "latencyP50ms": 11,
+          "latencyP99ms": 21,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Hono": {
-          "medianRps": 63433,
-          "minRps": 63433,
-          "maxRps": 63433,
-          "cv": 0,
+          "medianRps": 72856,
+          "minRps": 63737,
+          "maxRps": 73964,
+          "cv": 0.07996105750270088,
           "rounds": [
-            63433
+            72856,
+            63737,
+            73964
           ],
-          "latencyP50ms": 13,
-          "latencyP99ms": 30,
+          "latencyP50ms": 11,
+          "latencyP99ms": 21,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Express": {
-          "medianRps": 48311,
-          "minRps": 48311,
-          "maxRps": 48311,
-          "cv": 0,
+          "medianRps": 51254,
+          "minRps": 49268,
+          "maxRps": 52675,
+          "cv": 0.0335115619882279,
           "rounds": [
-            48311
+            49268,
+            51254,
+            52675
           ],
-          "latencyP50ms": 18,
-          "latencyP99ms": 32,
+          "latencyP50ms": 16,
+          "latencyP99ms": 33,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -988,75 +1098,85 @@
       "expectStatus": 200,
       "frameworks": {
         "Wooks": {
-          "medianRps": 88530,
-          "minRps": 88530,
-          "maxRps": 88530,
-          "cv": 0,
+          "medianRps": 92629,
+          "minRps": 92598,
+          "maxRps": 95355,
+          "cv": 0.016924268002291146,
           "rounds": [
-            88530
+            92598,
+            92629,
+            95355
           ],
-          "latencyP50ms": 10,
-          "latencyP99ms": 18,
+          "latencyP50ms": 9,
+          "latencyP99ms": 16,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Fastify": {
-          "medianRps": 87750,
-          "minRps": 87750,
-          "maxRps": 87750,
-          "cv": 0,
+          "medianRps": 98047,
+          "minRps": 89574,
+          "maxRps": 100048,
+          "cv": 0.057986246596235816,
           "rounds": [
-            87750
+            98047,
+            89574,
+            100048
           ],
-          "latencyP50ms": 10,
-          "latencyP99ms": 19,
+          "latencyP50ms": 9,
+          "latencyP99ms": 17,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "h3": {
-          "medianRps": 61180,
-          "minRps": 61180,
-          "maxRps": 61180,
-          "cv": 0,
+          "medianRps": 70418,
+          "minRps": 68647,
+          "maxRps": 70610,
+          "cv": 0.015483669060508779,
           "rounds": [
-            61180
+            70418,
+            70610,
+            68647
           ],
-          "latencyP50ms": 13,
-          "latencyP99ms": 31,
+          "latencyP50ms": 12,
+          "latencyP99ms": 24,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Hono": {
-          "medianRps": 62913,
-          "minRps": 62913,
-          "maxRps": 62913,
-          "cv": 0,
+          "medianRps": 71488,
+          "minRps": 68217,
+          "maxRps": 71884,
+          "cv": 0.028535388614687438,
           "rounds": [
-            62913
+            71884,
+            68217,
+            71488
           ],
-          "latencyP50ms": 13,
-          "latencyP99ms": 26,
+          "latencyP50ms": 11,
+          "latencyP99ms": 24,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Express": {
-          "medianRps": 46758,
-          "minRps": 46758,
-          "maxRps": 46758,
-          "cv": 0,
+          "medianRps": 49699,
+          "minRps": 47678,
+          "maxRps": 50467,
+          "cv": 0.029233121246572735,
           "rounds": [
-            46758
+            47678,
+            49699,
+            50467
           ],
-          "latencyP50ms": 18,
-          "latencyP99ms": 34,
+          "latencyP50ms": 17,
+          "latencyP99ms": 35,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -1069,75 +1189,85 @@
       "expectStatus": 201,
       "frameworks": {
         "Wooks": {
-          "medianRps": 68342.57425742575,
-          "minRps": 68342.57425742575,
-          "maxRps": 68342.57425742575,
-          "cv": 0,
+          "medianRps": 67799,
+          "minRps": 67763.36633663367,
+          "maxRps": 68917,
+          "cv": 0.009624533151790085,
           "rounds": [
-            68343
+            67763,
+            68917,
+            67799
           ],
           "latencyP50ms": 12,
-          "latencyP99ms": 25,
+          "latencyP99ms": 26,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Fastify": {
-          "medianRps": 63209,
-          "minRps": 63209,
-          "maxRps": 63209,
-          "cv": 0,
+          "medianRps": 71232,
+          "minRps": 64120,
+          "maxRps": 71496,
+          "cv": 0.060688155794227656,
           "rounds": [
-            63209
+            71496,
+            64120,
+            71232
           ],
-          "latencyP50ms": 13,
-          "latencyP99ms": 25,
+          "latencyP50ms": 11,
+          "latencyP99ms": 24,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "h3": {
-          "medianRps": 51402.9702970297,
-          "minRps": 51402.9702970297,
-          "maxRps": 51402.9702970297,
-          "cv": 0,
+          "medianRps": 56382.17821782178,
+          "minRps": 56348,
+          "maxRps": 58779,
+          "cv": 0.024379631796474146,
           "rounds": [
-            51403
+            56382,
+            56348,
+            58779
           ],
-          "latencyP50ms": 16,
-          "latencyP99ms": 35,
+          "latencyP50ms": 14,
+          "latencyP99ms": 27,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Hono": {
-          "medianRps": 49236,
-          "minRps": 49236,
-          "maxRps": 49236,
-          "cv": 0,
+          "medianRps": 56311,
+          "minRps": 55285,
+          "maxRps": 57757,
+          "cv": 0.02200018361602437,
           "rounds": [
-            49236
+            55285,
+            56311,
+            57757
           ],
-          "latencyP50ms": 16,
-          "latencyP99ms": 39,
+          "latencyP50ms": 14,
+          "latencyP99ms": 28,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Express": {
-          "medianRps": 39479.207920792076,
-          "minRps": 39479.207920792076,
-          "maxRps": 39479.207920792076,
-          "cv": 0,
+          "medianRps": 40296,
+          "minRps": 38625,
+          "maxRps": 40945,
+          "cv": 0.0299566902377798,
           "rounds": [
-            39479
+            38625,
+            40296,
+            40945
           ],
           "latencyP50ms": 20,
-          "latencyP99ms": 39,
+          "latencyP99ms": 47,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -1150,12 +1280,14 @@
       "expectStatus": 201,
       "frameworks": {
         "Wooks": {
-          "medianRps": 68507,
-          "minRps": 68507,
-          "maxRps": 68507,
-          "cv": 0,
+          "medianRps": 68287,
+          "minRps": 67608,
+          "maxRps": 70249,
+          "cv": 0.019958723190301675,
           "rounds": [
-            68507
+            67608,
+            70249,
+            68287
           ],
           "latencyP50ms": 12,
           "latencyP99ms": 26,
@@ -1165,60 +1297,68 @@
           "valid": true
         },
         "Fastify": {
-          "medianRps": 63494,
-          "minRps": 63494,
-          "maxRps": 63494,
-          "cv": 0,
+          "medianRps": 70418.81188118811,
+          "minRps": 65050,
+          "maxRps": 71323,
+          "cv": 0.04919402645411961,
           "rounds": [
-            63494
+            70419,
+            65050,
+            71323
           ],
-          "latencyP50ms": 13,
-          "latencyP99ms": 24,
+          "latencyP50ms": 12,
+          "latencyP99ms": 21,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "h3": {
-          "medianRps": 52794.05940594059,
-          "minRps": 52794.05940594059,
-          "maxRps": 52794.05940594059,
-          "cv": 0,
+          "medianRps": 58100,
+          "minRps": 57782,
+          "maxRps": 59893,
+          "cv": 0.019425094175495133,
           "rounds": [
-            52794
+            57782,
+            58100,
+            59893
           ],
-          "latencyP50ms": 15,
-          "latencyP99ms": 31,
+          "latencyP50ms": 14,
+          "latencyP99ms": 26,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Hono": {
-          "medianRps": 51064,
-          "minRps": 51064,
-          "maxRps": 51064,
-          "cv": 0,
+          "medianRps": 56441,
+          "minRps": 55530,
+          "maxRps": 58121,
+          "cv": 0.02318243263976178,
           "rounds": [
-            51064
+            55530,
+            56441,
+            58121
           ],
-          "latencyP50ms": 16,
-          "latencyP99ms": 35,
+          "latencyP50ms": 14,
+          "latencyP99ms": 28,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Express": {
-          "medianRps": 40725,
-          "minRps": 40725,
-          "maxRps": 40725,
-          "cv": 0,
+          "medianRps": 39015,
+          "minRps": 38126,
+          "maxRps": 39671,
+          "cv": 0.019914632411958056,
           "rounds": [
-            40725
+            38126,
+            39015,
+            39671
           ],
-          "latencyP50ms": 20,
-          "latencyP99ms": 41,
+          "latencyP50ms": 21,
+          "latencyP99ms": 48,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -1231,75 +1371,85 @@
       "expectStatus": 201,
       "frameworks": {
         "Wooks": {
-          "medianRps": 8024.752475247525,
-          "minRps": 8024.752475247525,
-          "maxRps": 8024.752475247525,
-          "cv": 0,
+          "medianRps": 12044.554455445545,
+          "minRps": 12008.910891089108,
+          "maxRps": 12049.50495049505,
+          "cv": 0.0018402916926072727,
           "rounds": [
-            8025
+            12050,
+            12045,
+            12009
           ],
-          "latencyP50ms": 113,
-          "latencyP99ms": 119,
+          "latencyP50ms": 81,
+          "latencyP99ms": 93,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Fastify": {
-          "medianRps": 10920.79207920792,
-          "minRps": 10920.79207920792,
-          "maxRps": 10920.79207920792,
-          "cv": 0,
+          "medianRps": 11551.485148514852,
+          "minRps": 11235.643564356436,
+          "maxRps": 11620,
+          "cv": 0.017875268335400773,
           "rounds": [
-            10921
+            11236,
+            11620,
+            11551
           ],
-          "latencyP50ms": 86,
-          "latencyP99ms": 90,
+          "latencyP50ms": 90,
+          "latencyP99ms": 104,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "h3": {
-          "medianRps": 13142,
-          "minRps": 13142,
-          "maxRps": 13142,
-          "cv": 0,
+          "medianRps": 13153.465346534653,
+          "minRps": 12909.90099009901,
+          "maxRps": 13414,
+          "cv": 0.01915759322767177,
           "rounds": [
-            13142
+            13414,
+            12910,
+            13153
           ],
-          "latencyP50ms": 73,
-          "latencyP99ms": 81,
+          "latencyP50ms": 74,
+          "latencyP99ms": 80,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Hono": {
-          "medianRps": 12273.267326732674,
-          "minRps": 12273.267326732674,
-          "maxRps": 12273.267326732674,
-          "cv": 0,
+          "medianRps": 12122.772277227723,
+          "minRps": 12087,
+          "maxRps": 13030,
+          "cv": 0.04305188519130951,
           "rounds": [
-            12273
+            12123,
+            13030,
+            12087
           ],
-          "latencyP50ms": 78,
-          "latencyP99ms": 90,
+          "latencyP50ms": 79,
+          "latencyP99ms": 95,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Express": {
-          "medianRps": 11026.732673267326,
-          "minRps": 11026.732673267326,
-          "maxRps": 11026.732673267326,
-          "cv": 0,
+          "medianRps": 11654.455445544554,
+          "minRps": 11589,
+          "maxRps": 11666,
+          "cv": 0.0035686447547884194,
           "rounds": [
-            11027
+            11654,
+            11666,
+            11589
           ],
-          "latencyP50ms": 85,
-          "latencyP99ms": 97,
+          "latencyP50ms": 84,
+          "latencyP99ms": 90,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -1312,75 +1462,85 @@
       "expectStatus": 401,
       "frameworks": {
         "Wooks": {
-          "medianRps": 142119,
-          "minRps": 142119,
-          "maxRps": 142119,
-          "cv": 0,
+          "medianRps": 142250,
+          "minRps": 141498,
+          "maxRps": 143475,
+          "cv": 0.007007248664221954,
           "rounds": [
-            142119
+            141498,
+            142250,
+            143475
           ],
           "latencyP50ms": 8,
-          "latencyP99ms": 12,
+          "latencyP99ms": 9,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Fastify": {
-          "medianRps": 142228,
-          "minRps": 142228,
-          "maxRps": 142228,
-          "cv": 0,
+          "medianRps": 193404,
+          "minRps": 159377,
+          "maxRps": 202842,
+          "cv": 0.12344163554809152,
           "rounds": [
-            142228
+            193404,
+            159377,
+            202842
           ],
-          "latencyP50ms": 5,
-          "latencyP99ms": 16,
+          "latencyP50ms": 6,
+          "latencyP99ms": 7,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "h3": {
-          "medianRps": 76521,
-          "minRps": 76521,
-          "maxRps": 76521,
-          "cv": 0,
+          "medianRps": 79667,
+          "minRps": 77894,
+          "maxRps": 79957,
+          "cv": 0.014106014534304384,
           "rounds": [
-            76521
+            79667,
+            79957,
+            77894
           ],
           "latencyP50ms": 9,
-          "latencyP99ms": 19,
+          "latencyP99ms": 18,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Hono": {
-          "medianRps": 133573,
-          "minRps": 133573,
-          "maxRps": 133573,
-          "cv": 0,
+          "medianRps": 158459,
+          "minRps": 158161,
+          "maxRps": 161363,
+          "cv": 0.011102508544108538,
           "rounds": [
-            133573
+            158459,
+            161363,
+            158161
           ],
-          "latencyP50ms": 8,
-          "latencyP99ms": 13,
+          "latencyP50ms": 7,
+          "latencyP99ms": 8,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Express": {
-          "medianRps": 80870,
-          "minRps": 80870,
-          "maxRps": 80870,
-          "cv": 0,
+          "medianRps": 93325,
+          "minRps": 91271,
+          "maxRps": 94202,
+          "cv": 0.016187760390028453,
           "rounds": [
-            80870
+            94202,
+            93325,
+            91271
           ],
-          "latencyP50ms": 13,
-          "latencyP99ms": 26,
+          "latencyP50ms": 8,
+          "latencyP99ms": 15,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -1393,75 +1553,85 @@
       "expectStatus": 404,
       "frameworks": {
         "Wooks": {
-          "medianRps": 171828,
-          "minRps": 171828,
-          "maxRps": 171828,
-          "cv": 0,
+          "medianRps": 170972,
+          "minRps": 168771,
+          "maxRps": 176496,
+          "cv": 0.023127873263801772,
           "rounds": [
-            171828
+            170972,
+            176496,
+            168771
           ],
-          "latencyP50ms": 6,
-          "latencyP99ms": 11,
+          "latencyP50ms": 7,
+          "latencyP99ms": 8,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Fastify": {
-          "medianRps": 154165,
-          "minRps": 154165,
-          "maxRps": 154165,
-          "cv": 0,
+          "medianRps": 176631,
+          "minRps": 154416,
+          "maxRps": 188600,
+          "cv": 0.100141244396553,
           "rounds": [
-            154165
+            188600,
+            154416,
+            176631
           ],
-          "latencyP50ms": 4,
-          "latencyP99ms": 12,
+          "latencyP50ms": 6,
+          "latencyP99ms": 9,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "h3": {
-          "medianRps": 74425,
-          "minRps": 74425,
-          "maxRps": 74425,
-          "cv": 0,
+          "medianRps": 83665,
+          "minRps": 83607,
+          "maxRps": 83746,
+          "cv": 0.0008343994369701322,
           "rounds": [
-            74425
+            83746,
+            83665,
+            83607
           ],
-          "latencyP50ms": 15,
-          "latencyP99ms": 20,
+          "latencyP50ms": 9,
+          "latencyP99ms": 16,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Hono": {
-          "medianRps": 141535,
-          "minRps": 141535,
-          "maxRps": 141535,
-          "cv": 0,
+          "medianRps": 164402,
+          "minRps": 159768,
+          "maxRps": 167170,
+          "cv": 0.022835481665421167,
           "rounds": [
-            141535
+            164402,
+            159768,
+            167170
           ],
-          "latencyP50ms": 8,
-          "latencyP99ms": 12,
+          "latencyP50ms": 7,
+          "latencyP99ms": 8,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Express": {
-          "medianRps": 86466,
-          "minRps": 86466,
-          "maxRps": 86466,
-          "cv": 0,
+          "medianRps": 97269,
+          "minRps": 96941,
+          "maxRps": 98110,
+          "cv": 0.006188100267402072,
           "rounds": [
-            86466
+            98110,
+            97269,
+            96941
           ],
           "latencyP50ms": 8,
-          "latencyP99ms": 26,
+          "latencyP99ms": 16,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -1474,75 +1644,85 @@
       "expectStatus": 404,
       "frameworks": {
         "Wooks": {
-          "medianRps": 163903,
-          "minRps": 163903,
-          "maxRps": 163903,
-          "cv": 0,
+          "medianRps": 161528,
+          "minRps": 161011,
+          "maxRps": 166471,
+          "cv": 0.018491600280892397,
           "rounds": [
-            163903
+            166471,
+            161011,
+            161528
           ],
           "latencyP50ms": 7,
-          "latencyP99ms": 11,
+          "latencyP99ms": 8,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Fastify": {
-          "medianRps": 150575,
-          "minRps": 150575,
-          "maxRps": 150575,
-          "cv": 0,
+          "medianRps": 169443,
+          "minRps": 151166,
+          "maxRps": 185453,
+          "cv": 0.10170287224812959,
           "rounds": [
-            150575
+            185453,
+            151166,
+            169443
           ],
-          "latencyP50ms": 5,
-          "latencyP99ms": 12,
+          "latencyP50ms": 6,
+          "latencyP99ms": 10,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "h3": {
-          "medianRps": 76627,
-          "minRps": 76627,
-          "maxRps": 76627,
-          "cv": 0,
+          "medianRps": 81470,
+          "minRps": 81237,
+          "maxRps": 81800,
+          "cv": 0.003470934490720944,
           "rounds": [
-            76627
+            81800,
+            81237,
+            81470
           ],
-          "latencyP50ms": 14,
-          "latencyP99ms": 19,
+          "latencyP50ms": 9,
+          "latencyP99ms": 17,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Hono": {
-          "medianRps": 140223,
-          "minRps": 140223,
-          "maxRps": 140223,
-          "cv": 0,
+          "medianRps": 160957,
+          "minRps": 156587,
+          "maxRps": 166776,
+          "cv": 0.03166280523941444,
           "rounds": [
-            140223
+            166776,
+            156587,
+            160957
           ],
-          "latencyP50ms": 8,
-          "latencyP99ms": 12,
+          "latencyP50ms": 7,
+          "latencyP99ms": 8,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Express": {
-          "medianRps": 91168,
-          "minRps": 91168,
-          "maxRps": 91168,
-          "cv": 0,
+          "medianRps": 96530,
+          "minRps": 95503,
+          "maxRps": 96695,
+          "cv": 0.006710754663300676,
           "rounds": [
-            91168
+            96530,
+            96695,
+            95503
           ],
           "latencyP50ms": 8,
-          "latencyP99ms": 19,
+          "latencyP99ms": 16,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -1555,75 +1735,85 @@
       "expectStatus": 401,
       "frameworks": {
         "Wooks": {
-          "medianRps": 68341,
-          "minRps": 68341,
-          "maxRps": 68341,
-          "cv": 0,
+          "medianRps": 66788,
+          "minRps": 65781,
+          "maxRps": 68697,
+          "cv": 0.022076286790408906,
           "rounds": [
-            68341
+            68697,
+            66788,
+            65781
           ],
           "latencyP50ms": 0,
-          "latencyP99ms": 90,
+          "latencyP99ms": 87,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Fastify": {
-          "medianRps": 67533,
-          "minRps": 67533,
-          "maxRps": 67533,
-          "cv": 0,
+          "medianRps": 78339,
+          "minRps": 73796,
+          "maxRps": 84135,
+          "cv": 0.0657993690200916,
           "rounds": [
-            67533
+            84135,
+            73796,
+            78339
           ],
           "latencyP50ms": 0,
-          "latencyP99ms": 65,
+          "latencyP99ms": 71,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "h3": {
-          "medianRps": 45900,
-          "minRps": 45900,
-          "maxRps": 45900,
-          "cv": 0,
+          "medianRps": 48276,
+          "minRps": 48180,
+          "maxRps": 49529,
+          "cv": 0.0154673046143149,
           "rounds": [
-            45900
+            49529,
+            48276,
+            48180
           ],
           "latencyP50ms": 0,
-          "latencyP99ms": 132,
+          "latencyP99ms": 125,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Hono": {
-          "medianRps": 58385,
-          "minRps": 58385,
-          "maxRps": 58385,
-          "cv": 0,
+          "medianRps": 64584,
+          "minRps": 62880,
+          "maxRps": 67461,
+          "cv": 0.035635157381473014,
           "rounds": [
-            58385
+            67461,
+            62880,
+            64584
           ],
           "latencyP50ms": 0,
-          "latencyP99ms": 101,
+          "latencyP99ms": 93,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Express": {
-          "medianRps": 55364,
-          "minRps": 55364,
-          "maxRps": 55364,
-          "cv": 0,
+          "medianRps": 57959,
+          "minRps": 57927.72277227723,
+          "maxRps": 59700,
+          "cv": 0.017330177218124156,
           "rounds": [
-            55364
+            57928,
+            59700,
+            57959
           ],
           "latencyP50ms": 0,
-          "latencyP99ms": 107,
+          "latencyP99ms": 109,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -1636,75 +1826,85 @@
       "expectStatus": 401,
       "frameworks": {
         "Wooks": {
-          "medianRps": 66985,
-          "minRps": 66985,
-          "maxRps": 66985,
-          "cv": 0,
+          "medianRps": 65192,
+          "minRps": 64844,
+          "maxRps": 67190,
+          "cv": 0.019257384277996382,
           "rounds": [
-            66985
+            67190,
+            65192,
+            64844
           ],
           "latencyP50ms": 0,
-          "latencyP99ms": 88,
+          "latencyP99ms": 86,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Fastify": {
-          "medianRps": 73300,
-          "minRps": 73300,
-          "maxRps": 73300,
-          "cv": 0,
+          "medianRps": 79261,
+          "minRps": 74220,
+          "maxRps": 83213,
+          "cv": 0.05713042030483955,
           "rounds": [
-            73300
+            83213,
+            74220,
+            79261
           ],
           "latencyP50ms": 0,
-          "latencyP99ms": 79,
+          "latencyP99ms": 70,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "h3": {
-          "medianRps": 40976,
-          "minRps": 40976,
-          "maxRps": 40976,
-          "cv": 0,
+          "medianRps": 46562,
+          "minRps": 45527,
+          "maxRps": 46801,
+          "cv": 0.014626932404023837,
           "rounds": [
-            40976
+            46801,
+            46562,
+            45527
           ],
           "latencyP50ms": 0,
-          "latencyP99ms": 158,
+          "latencyP99ms": 136,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Hono": {
-          "medianRps": 56211,
-          "minRps": 56211,
-          "maxRps": 56211,
-          "cv": 0,
+          "medianRps": 63428,
+          "minRps": 62475,
+          "maxRps": 65315.841584158414,
+          "cv": 0.022683372279767404,
           "rounds": [
-            56211
+            65316,
+            62475,
+            63428
           ],
           "latencyP50ms": 0,
-          "latencyP99ms": 107,
+          "latencyP99ms": 96,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "Express": {
-          "medianRps": 50406,
-          "minRps": 50406,
-          "maxRps": 50406,
-          "cv": 0,
+          "medianRps": 53698,
+          "minRps": 53530,
+          "maxRps": 54369,
+          "cv": 0.00824122886485588,
           "rounds": [
-            50406
+            54369,
+            53698,
+            53530
           ],
           "latencyP50ms": 0,
-          "latencyP99ms": 120,
+          "latencyP99ms": 111,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,

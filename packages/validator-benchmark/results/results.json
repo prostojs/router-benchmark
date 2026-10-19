@@ -1,9 +1,9 @@
 {
   "quick": false,
   "only": null,
-  "elapsedSec": 143,
+  "elapsedSec": 455,
   "environment": {
-    "date": "2026-10-19T11:49:13.856Z",
+    "date": "2026-10-19T20:02:07.474Z",
     "node": "v24.22.0",
     "v8": "13.6.233.17-node.57",
     "os": "Darwin 27.0.0 (darwin arm64)",
@@ -13,9 +13,18 @@
     "nodeEnv": ""
   },
   "versions": {
+    "@atscript/typescript": "0.1.109",
+    "@atscript/core": "0.1.109",
     "zod": "4.6.7",
-    "@atscript/typescript": "0.1.108",
-    "@atscript/core": "0.1.108"
+    "valibot": "1.5.0",
+    "yup": "1.7.1",
+    "joi": "18.3.0",
+    "ajv": "8.20.0",
+    "arktype": "2.2.8",
+    "class-validator": "0.15.1",
+    "class-transformer": "0.5.1",
+    "reflect-metadata": "0.2.2",
+    "typebox": "1.4.2"
   },
   "settings": {
     "rounds": 1,
@@ -29,23 +38,62 @@
   },
   "modes": {
     "strip": {
-      "zod": "z.object()",
-      "unknownProps": "strip"
+      "unknownProps": "strip",
+      "libs": {
+        "atscript": "unknownProps: 'strip'",
+        "zod": "z.object()",
+        "valibot": "v.object()",
+        "yup": "stripUnknown: true",
+        "joi": "stripUnknown: true",
+        "ajv": "additionalProperties: false + removeAdditional: true",
+        "arktype": "'+': 'delete'",
+        "class-validator": "whitelist: true",
+        "typebox": "open objects + Clean() after Check()"
+      }
     },
     "passthrough": {
-      "zod": "z.looseObject()",
-      "unknownProps": "ignore"
+      "unknownProps": "ignore",
+      "libs": {
+        "atscript": "unknownProps: 'ignore'",
+        "zod": "z.looseObject()",
+        "valibot": "v.looseObject()",
+        "yup": "default",
+        "joi": "allowUnknown: true",
+        "ajv": "open objects",
+        "arktype": "'+': 'ignore' (default)",
+        "class-validator": "default",
+        "typebox": "open objects (default)"
+      }
     },
     "strict": {
-      "zod": "z.strictObject()",
-      "unknownProps": "error"
+      "unknownProps": "error",
+      "libs": {
+        "atscript": "unknownProps: 'error'",
+        "zod": "z.strictObject()",
+        "valibot": "v.strictObject()",
+        "yup": ".exact()",
+        "joi": "default",
+        "ajv": "additionalProperties: false",
+        "arktype": "'+': 'reject'",
+        "class-validator": "whitelist + forbidNonWhitelisted",
+        "typebox": "additionalProperties: false"
+      }
     }
   },
   "engines": {
     "atscript": "atscript validate()",
     "zod": "zod safeParse()",
     "zod-compiled": "zod z.compile() + safeParse()",
-    "zod-compiled-validate": "zod z.compile() + validate() [boolean only]"
+    "zod-compiled-validate": "zod z.compile() + validate() [boolean only]",
+    "valibot": "valibot safeParse()",
+    "yup": "yup validateSync()",
+    "joi": "joi validate()",
+    "ajv": "ajv compiled validate()",
+    "arktype": "arktype T(input)",
+    "arktype-allows": "arktype T.allows() [boolean only]",
+    "class-validator": "class-validator validateSync()",
+    "typebox-compiled": "typebox Compile() + Check()",
+    "typebox-value": "typebox Value.Check()"
   },
   "scenarios": {
     "valid-order": {
@@ -140,14 +188,20 @@
     }
   },
   "preflight": {
-    "checks": 757,
-    "edgeCases": 53,
+    "checks": 2488,
+    "edgeCases": 57,
     "errorReports": {
       "strip": {
         "invalid-order-all-errors": {
-          "atscript": 15,
-          "zod": 18,
-          "zod-compiled": 18,
+          "raw": {
+            "atscript": 15,
+            "zod": 18,
+            "zod-compiled": 18,
+            "valibot": 18,
+            "yup": 15,
+            "joi": 15,
+            "class-validator": 16
+          },
           "violatedPaths": [
             "customer.email",
             "customer.firstName",
@@ -167,9 +221,15 @@
           ]
         },
         "union-invalid": {
-          "atscript": 1,
-          "zod": 1,
-          "zod-compiled": 1,
+          "raw": {
+            "atscript": 1,
+            "zod": 1,
+            "zod-compiled": 1,
+            "valibot": 1,
+            "yup": 1,
+            "joi": 1,
+            "class-validator": 2
+          },
           "violatedPaths": [
             ""
           ]
@@ -177,9 +237,19 @@
       },
       "passthrough": {
         "invalid-order-all-errors": {
-          "atscript": 15,
-          "zod": 18,
-          "zod-compiled": 18,
+          "raw": {
+            "atscript": 15,
+            "zod": 18,
+            "zod-compiled": 18,
+            "valibot": 18,
+            "yup": 15,
+            "joi": 15,
+            "ajv": 20,
+            "arktype": 15,
+            "class-validator": 16,
+            "typebox-compiled": 22,
+            "typebox-value": 22
+          },
           "violatedPaths": [
             "customer.email",
             "customer.firstName",
@@ -199,9 +269,19 @@
           ]
         },
         "union-invalid": {
-          "atscript": 1,
-          "zod": 1,
-          "zod-compiled": 1,
+          "raw": {
+            "atscript": 1,
+            "zod": 1,
+            "zod-compiled": 1,
+            "valibot": 1,
+            "yup": 1,
+            "joi": 1,
+            "ajv": 6,
+            "arktype": 1,
+            "class-validator": 2,
+            "typebox-compiled": 3,
+            "typebox-value": 3
+          },
           "violatedPaths": [
             ""
           ]
@@ -209,9 +289,19 @@
       },
       "strict": {
         "unknown-props-order": {
-          "atscript": 6,
-          "zod": 6,
-          "zod-compiled": 6,
+          "raw": {
+            "atscript": 6,
+            "zod": 6,
+            "zod-compiled": 6,
+            "valibot": 6,
+            "yup": 7,
+            "joi": 6,
+            "ajv": 13,
+            "arktype": 6,
+            "class-validator": 12,
+            "typebox-compiled": 24,
+            "typebox-value": 24
+          },
           "violatedPaths": [
             "customer.loyaltyTier",
             "customer.shippingAddress.geo",
@@ -222,9 +312,19 @@
           ]
         },
         "invalid-order-all-errors": {
-          "atscript": 15,
-          "zod": 18,
-          "zod-compiled": 18,
+          "raw": {
+            "atscript": 15,
+            "zod": 18,
+            "zod-compiled": 18,
+            "valibot": 18,
+            "yup": 16,
+            "joi": 15,
+            "ajv": 24,
+            "arktype": 15,
+            "class-validator": 20,
+            "typebox-compiled": 27,
+            "typebox-value": 27
+          },
           "violatedPaths": [
             "customer.email",
             "customer.firstName",
@@ -244,9 +344,19 @@
           ]
         },
         "union-invalid": {
-          "atscript": 1,
-          "zod": 1,
-          "zod-compiled": 1,
+          "raw": {
+            "atscript": 1,
+            "zod": 1,
+            "zod-compiled": 1,
+            "valibot": 1,
+            "yup": 2,
+            "joi": 1,
+            "ajv": 8,
+            "arktype": 1,
+            "class-validator": 3,
+            "typebox-compiled": 7,
+            "typebox-value": 7
+          },
           "violatedPaths": [
             ""
           ]
@@ -255,35 +365,205 @@
     },
     "firstError": {
       "strip": {
-        "atscriptErrors": 1,
+        "errors": {
+          "atscript": 1,
+          "valibot": 1,
+          "yup": 1,
+          "joi": 1
+        },
         "rootPropsRead": {
           "atscript": [
             "orderId"
           ],
           "zod-compiled-validate": [
             "orderId"
+          ],
+          "valibot": [
+            "orderId"
+          ],
+          "yup": [
+            "orderId",
+            "customer",
+            "items",
+            "payment",
+            "subtotal",
+            "tax",
+            "shipping",
+            "total",
+            "createdAt"
+          ],
+          "joi": [
+            "orderId",
+            "customer",
+            "items",
+            "payment",
+            "subtotal",
+            "tax",
+            "shipping",
+            "total",
+            "createdAt"
           ]
         }
       },
       "passthrough": {
-        "atscriptErrors": 1,
+        "errors": {
+          "atscript": 1,
+          "valibot": 1,
+          "yup": 1,
+          "joi": 1,
+          "ajv": 1,
+          "typebox-compiled": 1,
+          "typebox-value": 1
+        },
         "rootPropsRead": {
           "atscript": [
             "orderId"
           ],
           "zod-compiled-validate": [
             "orderId"
+          ],
+          "valibot": [
+            "orderId"
+          ],
+          "yup": [
+            "orderId",
+            "customer",
+            "items",
+            "payment",
+            "subtotal",
+            "tax",
+            "shipping",
+            "total",
+            "createdAt"
+          ],
+          "joi": [
+            "orderId",
+            "customer",
+            "items",
+            "payment",
+            "subtotal",
+            "tax",
+            "shipping",
+            "total",
+            "createdAt"
+          ],
+          "ajv": [
+            "orderId",
+            "customer",
+            "items",
+            "payment",
+            "subtotal",
+            "tax",
+            "shipping",
+            "total",
+            "createdAt"
+          ],
+          "arktype-allows": [
+            "customer",
+            "createdAt"
+          ],
+          "typebox-compiled": [
+            "orderId",
+            "customer",
+            "items",
+            "payment",
+            "subtotal",
+            "tax",
+            "shipping",
+            "total",
+            "createdAt"
+          ],
+          "typebox-value": [
+            "orderId",
+            "customer",
+            "items",
+            "payment",
+            "subtotal",
+            "tax",
+            "shipping",
+            "total",
+            "createdAt"
           ]
         }
       },
       "strict": {
-        "atscriptErrors": 1,
+        "errors": {
+          "atscript": 1,
+          "valibot": 1,
+          "yup": 1,
+          "joi": 1,
+          "ajv": 1,
+          "typebox-compiled": 1,
+          "typebox-value": 1
+        },
         "rootPropsRead": {
           "atscript": [
             "orderId"
           ],
           "zod-compiled-validate": [
             "orderId"
+          ],
+          "valibot": [
+            "orderId"
+          ],
+          "yup": [
+            "orderId",
+            "customer",
+            "items",
+            "payment",
+            "subtotal",
+            "tax",
+            "shipping",
+            "total",
+            "createdAt"
+          ],
+          "joi": [
+            "orderId",
+            "customer",
+            "items",
+            "payment",
+            "subtotal",
+            "tax",
+            "shipping",
+            "total",
+            "createdAt"
+          ],
+          "ajv": [
+            "orderId",
+            "customer",
+            "items",
+            "payment",
+            "subtotal",
+            "tax",
+            "shipping",
+            "total",
+            "createdAt"
+          ],
+          "arktype-allows": [
+            "customer",
+            "createdAt"
+          ],
+          "typebox-compiled": [
+            "orderId",
+            "customer",
+            "items",
+            "payment",
+            "subtotal",
+            "tax",
+            "shipping",
+            "total",
+            "createdAt"
+          ],
+          "typebox-value": [
+            "orderId",
+            "customer",
+            "items",
+            "payment",
+            "subtotal",
+            "tax",
+            "shipping",
+            "total",
+            "createdAt"
           ]
         }
       }
@@ -292,40 +572,193 @@
       "strip": {
         "atscript": {
           "valid": true,
-          "inputKeepsUnknownProps": false,
-          "returnsCopy": false
+          "outputKeepsUnknownProps": false,
+          "returnsCopy": false,
+          "inputKeepsUnknownProps": false
         },
         "zod": {
           "valid": true,
           "outputKeepsUnknownProps": false,
-          "inputKeepsUnknownProps": true,
-          "returnsCopy": true
+          "returnsCopy": true,
+          "inputKeepsUnknownProps": true
+        },
+        "zod-compiled": {
+          "valid": true,
+          "outputKeepsUnknownProps": false,
+          "returnsCopy": true,
+          "inputKeepsUnknownProps": true
+        },
+        "valibot": {
+          "valid": true,
+          "outputKeepsUnknownProps": false,
+          "returnsCopy": true,
+          "inputKeepsUnknownProps": true
+        },
+        "yup": {
+          "valid": true,
+          "outputKeepsUnknownProps": false,
+          "returnsCopy": true,
+          "inputKeepsUnknownProps": true
+        },
+        "joi": {
+          "valid": true,
+          "outputKeepsUnknownProps": false,
+          "returnsCopy": true,
+          "inputKeepsUnknownProps": true
+        },
+        "class-validator": {
+          "valid": true,
+          "outputKeepsUnknownProps": false,
+          "returnsCopy": true,
+          "inputKeepsUnknownProps": true
+        },
+        "typebox-compiled": {
+          "valid": true,
+          "outputKeepsUnknownProps": false,
+          "returnsCopy": false,
+          "inputKeepsUnknownProps": false
+        },
+        "typebox-value": {
+          "valid": true,
+          "outputKeepsUnknownProps": false,
+          "returnsCopy": false,
+          "inputKeepsUnknownProps": false
         }
       },
       "passthrough": {
         "atscript": {
           "valid": true,
-          "inputKeepsUnknownProps": true,
-          "returnsCopy": false
+          "outputKeepsUnknownProps": true,
+          "returnsCopy": false,
+          "inputKeepsUnknownProps": true
         },
         "zod": {
           "valid": true,
           "outputKeepsUnknownProps": true,
-          "inputKeepsUnknownProps": true,
-          "returnsCopy": true
+          "returnsCopy": true,
+          "inputKeepsUnknownProps": true
+        },
+        "zod-compiled": {
+          "valid": true,
+          "outputKeepsUnknownProps": true,
+          "returnsCopy": true,
+          "inputKeepsUnknownProps": true
+        },
+        "valibot": {
+          "valid": true,
+          "outputKeepsUnknownProps": true,
+          "returnsCopy": true,
+          "inputKeepsUnknownProps": true
+        },
+        "yup": {
+          "valid": true,
+          "outputKeepsUnknownProps": true,
+          "returnsCopy": false,
+          "inputKeepsUnknownProps": true
+        },
+        "joi": {
+          "valid": true,
+          "outputKeepsUnknownProps": true,
+          "returnsCopy": true,
+          "inputKeepsUnknownProps": true
+        },
+        "ajv": {
+          "valid": true,
+          "outputKeepsUnknownProps": true,
+          "returnsCopy": false,
+          "inputKeepsUnknownProps": true
+        },
+        "arktype": {
+          "valid": true,
+          "outputKeepsUnknownProps": true,
+          "returnsCopy": false,
+          "inputKeepsUnknownProps": true
+        },
+        "class-validator": {
+          "valid": true,
+          "outputKeepsUnknownProps": true,
+          "returnsCopy": true,
+          "inputKeepsUnknownProps": true
+        },
+        "typebox-compiled": {
+          "valid": true,
+          "outputKeepsUnknownProps": true,
+          "returnsCopy": false,
+          "inputKeepsUnknownProps": true
+        },
+        "typebox-value": {
+          "valid": true,
+          "outputKeepsUnknownProps": true,
+          "returnsCopy": false,
+          "inputKeepsUnknownProps": true
         }
       },
       "strict": {
         "atscript": {
           "valid": false,
-          "inputKeepsUnknownProps": true,
-          "returnsCopy": false
+          "outputKeepsUnknownProps": null,
+          "returnsCopy": null,
+          "inputKeepsUnknownProps": true
         },
         "zod": {
           "valid": false,
           "outputKeepsUnknownProps": null,
-          "inputKeepsUnknownProps": true,
-          "returnsCopy": null
+          "returnsCopy": null,
+          "inputKeepsUnknownProps": true
+        },
+        "zod-compiled": {
+          "valid": false,
+          "outputKeepsUnknownProps": null,
+          "returnsCopy": null,
+          "inputKeepsUnknownProps": true
+        },
+        "valibot": {
+          "valid": false,
+          "outputKeepsUnknownProps": null,
+          "returnsCopy": null,
+          "inputKeepsUnknownProps": true
+        },
+        "yup": {
+          "valid": false,
+          "outputKeepsUnknownProps": null,
+          "returnsCopy": null,
+          "inputKeepsUnknownProps": true
+        },
+        "joi": {
+          "valid": false,
+          "outputKeepsUnknownProps": null,
+          "returnsCopy": null,
+          "inputKeepsUnknownProps": true
+        },
+        "ajv": {
+          "valid": false,
+          "outputKeepsUnknownProps": null,
+          "returnsCopy": null,
+          "inputKeepsUnknownProps": true
+        },
+        "arktype": {
+          "valid": false,
+          "outputKeepsUnknownProps": null,
+          "returnsCopy": null,
+          "inputKeepsUnknownProps": true
+        },
+        "class-validator": {
+          "valid": false,
+          "outputKeepsUnknownProps": null,
+          "returnsCopy": null,
+          "inputKeepsUnknownProps": true
+        },
+        "typebox-compiled": {
+          "valid": false,
+          "outputKeepsUnknownProps": null,
+          "returnsCopy": null,
+          "inputKeepsUnknownProps": true
+        },
+        "typebox-value": {
+          "valid": false,
+          "outputKeepsUnknownProps": null,
+          "returnsCopy": null,
+          "inputKeepsUnknownProps": true
         }
       }
     }
@@ -335,1520 +768,4720 @@
       "mode": "strip",
       "scenario": "valid-order",
       "engine": "atscript",
-      "opsPerSec": 424198,
-      "p25": 422180,
-      "p75": 424588,
-      "nsPerOp": 2357,
+      "opsPerSec": 375049,
+      "p25": 374695,
+      "p75": 376341,
+      "nsPerOp": 2666,
       "samples": 10,
       "roundMedians": [
-        424198
+        375049
       ],
       "roundBatchSizes": [
-        16603
+        14880
       ]
     },
     {
       "mode": "strip",
       "scenario": "valid-order",
       "engine": "zod",
-      "opsPerSec": 407451,
-      "p25": 340039,
-      "p75": 443313,
-      "nsPerOp": 2454,
+      "opsPerSec": 433236,
+      "p25": 348065,
+      "p75": 438644,
+      "nsPerOp": 2308,
       "samples": 10,
       "roundMedians": [
-        407451
+        433236
       ],
       "roundBatchSizes": [
-        17649
+        17821
       ]
     },
     {
       "mode": "strip",
       "scenario": "valid-order",
       "engine": "zod-compiled",
-      "opsPerSec": 3573528,
-      "p25": 3100617,
-      "p75": 3641671,
-      "nsPerOp": 280,
+      "opsPerSec": 3519617,
+      "p25": 3078219,
+      "p75": 3582501,
+      "nsPerOp": 284,
       "samples": 10,
       "roundMedians": [
-        3573528
+        3519617
       ],
       "roundBatchSizes": [
-        144852
+        143977
       ]
     },
     {
       "mode": "strip",
       "scenario": "valid-order",
       "engine": "zod-compiled-validate",
-      "opsPerSec": 3892838,
-      "p25": 3428153,
-      "p75": 3912001,
-      "nsPerOp": 257,
+      "opsPerSec": 3724760,
+      "p25": 3282029,
+      "p75": 3747163,
+      "nsPerOp": 268,
       "samples": 10,
       "roundMedians": [
-        3892838
+        3724760
       ],
       "roundBatchSizes": [
-        157171
+        152765
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "valid-order",
+      "engine": "valibot",
+      "opsPerSec": 353651,
+      "p25": 350440,
+      "p75": 361749,
+      "nsPerOp": 2828,
+      "samples": 10,
+      "roundMedians": [
+        353651
+      ],
+      "roundBatchSizes": [
+        14825
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "valid-order",
+      "engine": "yup",
+      "opsPerSec": 19323,
+      "p25": 17667,
+      "p75": 19373,
+      "nsPerOp": 51751,
+      "samples": 10,
+      "roundMedians": [
+        19323
+      ],
+      "roundBatchSizes": [
+        843
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "valid-order",
+      "engine": "joi",
+      "opsPerSec": 54898,
+      "p25": 54696,
+      "p75": 55109,
+      "nsPerOp": 18216,
+      "samples": 10,
+      "roundMedians": [
+        54898
+      ],
+      "roundBatchSizes": [
+        2603
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "valid-order",
+      "engine": "class-validator",
+      "opsPerSec": 17205,
+      "p25": 17051,
+      "p75": 17470,
+      "nsPerOp": 58122,
+      "samples": 10,
+      "roundMedians": [
+        17205
+      ],
+      "roundBatchSizes": [
+        968
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "valid-order",
+      "engine": "typebox-compiled",
+      "opsPerSec": 8434,
+      "p25": 8107,
+      "p75": 8566,
+      "nsPerOp": 118569,
+      "samples": 10,
+      "roundMedians": [
+        8434
+      ],
+      "roundBatchSizes": [
+        366
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "valid-order",
+      "engine": "typebox-value",
+      "opsPerSec": 6547,
+      "p25": 6229,
+      "p75": 6705,
+      "nsPerOp": 152743,
+      "samples": 10,
+      "roundMedians": [
+        6547
+      ],
+      "roundBatchSizes": [
+        283
       ]
     },
     {
       "mode": "strip",
       "scenario": "valid-order-paypal",
       "engine": "atscript",
-      "opsPerSec": 439700,
-      "p25": 434285,
-      "p75": 441683,
-      "nsPerOp": 2274,
+      "opsPerSec": 417211,
+      "p25": 414497,
+      "p75": 417648,
+      "nsPerOp": 2397,
       "samples": 10,
       "roundMedians": [
-        439700
+        417211
       ],
       "roundBatchSizes": [
-        17025
+        16260
       ]
     },
     {
       "mode": "strip",
       "scenario": "valid-order-paypal",
       "engine": "zod",
-      "opsPerSec": 441396,
-      "p25": 339632,
-      "p75": 448230,
-      "nsPerOp": 2266,
+      "opsPerSec": 433064,
+      "p25": 341628,
+      "p75": 435230,
+      "nsPerOp": 2309,
       "samples": 10,
       "roundMedians": [
-        441396
+        433064
       ],
       "roundBatchSizes": [
-        17740
+        17169
       ]
     },
     {
       "mode": "strip",
       "scenario": "valid-order-paypal",
       "engine": "zod-compiled",
-      "opsPerSec": 3771497,
-      "p25": 3246109,
-      "p75": 3798119,
-      "nsPerOp": 265,
+      "opsPerSec": 3632478,
+      "p25": 3216503,
+      "p75": 3704244,
+      "nsPerOp": 275,
       "samples": 10,
       "roundMedians": [
-        3771497
+        3632478
       ],
       "roundBatchSizes": [
-        156112
+        156454
       ]
     },
     {
       "mode": "strip",
       "scenario": "valid-order-paypal",
       "engine": "zod-compiled-validate",
-      "opsPerSec": 4103998,
-      "p25": 3638009,
-      "p75": 4169746,
-      "nsPerOp": 244,
+      "opsPerSec": 4047537,
+      "p25": 3609424,
+      "p75": 4089635,
+      "nsPerOp": 247,
       "samples": 10,
       "roundMedians": [
-        4103998
+        4047537
       ],
       "roundBatchSizes": [
-        169005
+        169526
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "valid-order-paypal",
+      "engine": "valibot",
+      "opsPerSec": 353073,
+      "p25": 342636,
+      "p75": 353861,
+      "nsPerOp": 2832,
+      "samples": 10,
+      "roundMedians": [
+        353073
+      ],
+      "roundBatchSizes": [
+        14722
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "valid-order-paypal",
+      "engine": "yup",
+      "opsPerSec": 13779,
+      "p25": 13751,
+      "p75": 14109,
+      "nsPerOp": 72575,
+      "samples": 10,
+      "roundMedians": [
+        13779
+      ],
+      "roundBatchSizes": [
+        594
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "valid-order-paypal",
+      "engine": "joi",
+      "opsPerSec": 52125,
+      "p25": 51968,
+      "p75": 52739,
+      "nsPerOp": 19185,
+      "samples": 10,
+      "roundMedians": [
+        52125
+      ],
+      "roundBatchSizes": [
+        2477
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "valid-order-paypal",
+      "engine": "class-validator",
+      "opsPerSec": 16461,
+      "p25": 16199,
+      "p75": 16690,
+      "nsPerOp": 60749,
+      "samples": 10,
+      "roundMedians": [
+        16461
+      ],
+      "roundBatchSizes": [
+        923
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "valid-order-paypal",
+      "engine": "typebox-compiled",
+      "opsPerSec": 8620,
+      "p25": 8232,
+      "p75": 8748,
+      "nsPerOp": 116009,
+      "samples": 10,
+      "roundMedians": [
+        8620
+      ],
+      "roundBatchSizes": [
+        378
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "valid-order-paypal",
+      "engine": "typebox-value",
+      "opsPerSec": 6748,
+      "p25": 6347,
+      "p75": 6865,
+      "nsPerOp": 148183,
+      "samples": 10,
+      "roundMedians": [
+        6748
+      ],
+      "roundBatchSizes": [
+        289
       ]
     },
     {
       "mode": "strip",
       "scenario": "large-order-50-items",
       "engine": "atscript",
-      "opsPerSec": 70053,
-      "p25": 69959,
-      "p75": 70254,
-      "nsPerOp": 14275,
+      "opsPerSec": 70428,
+      "p25": 70249,
+      "p75": 70860,
+      "nsPerOp": 14199,
       "samples": 10,
       "roundMedians": [
-        70053
+        70428
       ],
       "roundBatchSizes": [
-        2812
+        2825
       ]
     },
     {
       "mode": "strip",
       "scenario": "large-order-50-items",
       "engine": "zod",
-      "opsPerSec": 49721,
-      "p25": 45095,
-      "p75": 50482,
-      "nsPerOp": 20112,
+      "opsPerSec": 49187,
+      "p25": 44509,
+      "p75": 50590,
+      "nsPerOp": 20331,
       "samples": 10,
       "roundMedians": [
-        49721
+        49187
       ],
       "roundBatchSizes": [
-        2062
+        2043
       ]
     },
     {
       "mode": "strip",
       "scenario": "large-order-50-items",
       "engine": "zod-compiled",
-      "opsPerSec": 644417,
-      "p25": 541785,
-      "p75": 650063,
-      "nsPerOp": 1552,
+      "opsPerSec": 629388,
+      "p25": 528278,
+      "p75": 634998,
+      "nsPerOp": 1589,
       "samples": 10,
       "roundMedians": [
-        644417
+        629388
       ],
       "roundBatchSizes": [
-        25854
+        25595
       ]
     },
     {
       "mode": "strip",
       "scenario": "large-order-50-items",
       "engine": "zod-compiled-validate",
-      "opsPerSec": 648815,
-      "p25": 562569,
-      "p75": 653280,
-      "nsPerOp": 1541,
+      "opsPerSec": 643149,
+      "p25": 560190,
+      "p75": 655383,
+      "nsPerOp": 1555,
       "samples": 10,
       "roundMedians": [
-        648815
+        643149
       ],
       "roundBatchSizes": [
-        26122
+        25620
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "large-order-50-items",
+      "engine": "valibot",
+      "opsPerSec": 37695,
+      "p25": 36553,
+      "p75": 37908,
+      "nsPerOp": 26528,
+      "samples": 10,
+      "roundMedians": [
+        37695
+      ],
+      "roundBatchSizes": [
+        1517
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "large-order-50-items",
+      "engine": "yup",
+      "opsPerSec": 1936,
+      "p25": 1739,
+      "p75": 1962,
+      "nsPerOp": 516580,
+      "samples": 10,
+      "roundMedians": [
+        1936
+      ],
+      "roundBatchSizes": [
+        84
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "large-order-50-items",
+      "engine": "joi",
+      "opsPerSec": 4529,
+      "p25": 4497,
+      "p75": 4557,
+      "nsPerOp": 220818,
+      "samples": 10,
+      "roundMedians": [
+        4529
+      ],
+      "roundBatchSizes": [
+        226
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "large-order-50-items",
+      "engine": "class-validator",
+      "opsPerSec": 1770,
+      "p25": 1730,
+      "p75": 1842,
+      "nsPerOp": 564859,
+      "samples": 10,
+      "roundMedians": [
+        1770
+      ],
+      "roundBatchSizes": [
+        98
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "large-order-50-items",
+      "engine": "typebox-compiled",
+      "opsPerSec": 1599,
+      "p25": 1517,
+      "p75": 1623,
+      "nsPerOp": 625215,
+      "samples": 10,
+      "roundMedians": [
+        1599
+      ],
+      "roundBatchSizes": [
+        69
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "large-order-50-items",
+      "engine": "typebox-value",
+      "opsPerSec": 888,
+      "p25": 854,
+      "p75": 910,
+      "nsPerOp": 1126172,
+      "samples": 10,
+      "roundMedians": [
+        888
+      ],
+      "roundBatchSizes": [
+        40
       ]
     },
     {
       "mode": "strip",
       "scenario": "unknown-props-order",
       "engine": "atscript",
-      "opsPerSec": 185189,
-      "p25": 183328,
-      "p75": 185663,
-      "nsPerOp": 5400,
+      "opsPerSec": 181246,
+      "p25": 180210,
+      "p75": 181855,
+      "nsPerOp": 5517,
       "samples": 10,
       "roundMedians": [
-        185189
+        181246
       ],
       "roundBatchSizes": [
-        7757
+        7621
       ]
     },
     {
       "mode": "strip",
       "scenario": "unknown-props-order",
       "engine": "zod",
-      "opsPerSec": 453789,
-      "p25": 362357,
-      "p75": 456394,
-      "nsPerOp": 2204,
+      "opsPerSec": 442130,
+      "p25": 352285,
+      "p75": 447338,
+      "nsPerOp": 2262,
       "samples": 10,
       "roundMedians": [
-        453789
+        442130
       ],
       "roundBatchSizes": [
-        18169
+        17940
       ]
     },
     {
       "mode": "strip",
       "scenario": "unknown-props-order",
       "engine": "zod-compiled",
-      "opsPerSec": 2991214,
-      "p25": 2601237,
-      "p75": 3024529,
-      "nsPerOp": 334,
+      "opsPerSec": 2696672,
+      "p25": 2551390,
+      "p75": 2796823,
+      "nsPerOp": 371,
       "samples": 10,
       "roundMedians": [
-        2991214
+        2696672
       ],
       "roundBatchSizes": [
-        113354
+        114599
       ]
     },
     {
       "mode": "strip",
       "scenario": "unknown-props-order",
       "engine": "zod-compiled-validate",
-      "opsPerSec": 3019502,
-      "p25": 2782291,
-      "p75": 3131685,
-      "nsPerOp": 331,
+      "opsPerSec": 2772667,
+      "p25": 2624604,
+      "p75": 2948527,
+      "nsPerOp": 361,
       "samples": 10,
       "roundMedians": [
-        3019502
+        2772667
       ],
       "roundBatchSizes": [
-        117771
+        117109
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "unknown-props-order",
+      "engine": "valibot",
+      "opsPerSec": 360185,
+      "p25": 345724,
+      "p75": 366500,
+      "nsPerOp": 2776,
+      "samples": 10,
+      "roundMedians": [
+        360185
+      ],
+      "roundBatchSizes": [
+        14599
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "unknown-props-order",
+      "engine": "yup",
+      "opsPerSec": 19146,
+      "p25": 17446,
+      "p75": 19380,
+      "nsPerOp": 52231,
+      "samples": 10,
+      "roundMedians": [
+        19146
+      ],
+      "roundBatchSizes": [
+        830
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "unknown-props-order",
+      "engine": "joi",
+      "opsPerSec": 50708,
+      "p25": 50111,
+      "p75": 50966,
+      "nsPerOp": 19721,
+      "samples": 10,
+      "roundMedians": [
+        50708
+      ],
+      "roundBatchSizes": [
+        2404
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "unknown-props-order",
+      "engine": "class-validator",
+      "opsPerSec": 16338,
+      "p25": 16033,
+      "p75": 16465,
+      "nsPerOp": 61207,
+      "samples": 10,
+      "roundMedians": [
+        16338
+      ],
+      "roundBatchSizes": [
+        868
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "unknown-props-order",
+      "engine": "typebox-compiled",
+      "opsPerSec": 8625,
+      "p25": 8377,
+      "p75": 8724,
+      "nsPerOp": 115943,
+      "samples": 10,
+      "roundMedians": [
+        8625
+      ],
+      "roundBatchSizes": [
+        366
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "unknown-props-order",
+      "engine": "typebox-value",
+      "opsPerSec": 6464,
+      "p25": 6414,
+      "p75": 6494,
+      "nsPerOp": 154692,
+      "samples": 10,
+      "roundMedians": [
+        6464
+      ],
+      "roundBatchSizes": [
+        271
       ]
     },
     {
       "mode": "strip",
       "scenario": "invalid-order-all-errors",
       "engine": "atscript",
-      "opsPerSec": 329558,
-      "p25": 328783,
-      "p75": 330128,
-      "nsPerOp": 3034,
+      "opsPerSec": 326562,
+      "p25": 316950,
+      "p75": 327763,
+      "nsPerOp": 3062,
       "samples": 10,
       "roundMedians": [
-        329558
+        326562
       ],
       "roundBatchSizes": [
-        13318
+        12782
       ]
     },
     {
       "mode": "strip",
       "scenario": "invalid-order-all-errors",
       "engine": "zod",
-      "opsPerSec": 137199,
-      "p25": 105449,
-      "p75": 143045,
-      "nsPerOp": 7289,
+      "opsPerSec": 139207,
+      "p25": 108699,
+      "p75": 144792,
+      "nsPerOp": 7184,
       "samples": 10,
       "roundMedians": [
-        137199
+        139207
       ],
       "roundBatchSizes": [
-        5590
+        5606
       ]
     },
     {
       "mode": "strip",
       "scenario": "invalid-order-all-errors",
       "engine": "zod-compiled",
-      "opsPerSec": 126958,
-      "p25": 126222,
-      "p75": 142280,
-      "nsPerOp": 7877,
+      "opsPerSec": 143172,
+      "p25": 136633,
+      "p75": 146771,
+      "nsPerOp": 6985,
       "samples": 10,
       "roundMedians": [
-        126958
+        143172
       ],
       "roundBatchSizes": [
-        5193
+        5796
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "invalid-order-all-errors",
+      "engine": "valibot",
+      "opsPerSec": 434193,
+      "p25": 404085,
+      "p75": 435969,
+      "nsPerOp": 2303,
+      "samples": 10,
+      "roundMedians": [
+        434193
+      ],
+      "roundBatchSizes": [
+        17460
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "invalid-order-all-errors",
+      "engine": "yup",
+      "opsPerSec": 4942,
+      "p25": 4767,
+      "p75": 5300,
+      "nsPerOp": 202339,
+      "samples": 10,
+      "roundMedians": [
+        4942
+      ],
+      "roundBatchSizes": [
+        208
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "invalid-order-all-errors",
+      "engine": "joi",
+      "opsPerSec": 48966,
+      "p25": 48398,
+      "p75": 49086,
+      "nsPerOp": 20422,
+      "samples": 10,
+      "roundMedians": [
+        48966
+      ],
+      "roundBatchSizes": [
+        2441
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "invalid-order-all-errors",
+      "engine": "class-validator",
+      "opsPerSec": 24948,
+      "p25": 24820,
+      "p75": 25292,
+      "nsPerOp": 40084,
+      "samples": 10,
+      "roundMedians": [
+        24948
+      ],
+      "roundBatchSizes": [
+        1356
       ]
     },
     {
       "mode": "strip",
       "scenario": "invalid-order-first-error",
       "engine": "atscript",
-      "opsPerSec": 5024695,
-      "p25": 5017581,
-      "p75": 5048848,
-      "nsPerOp": 199,
+      "opsPerSec": 4651024,
+      "p25": 4639028,
+      "p75": 4655251,
+      "nsPerOp": 215,
       "samples": 10,
       "roundMedians": [
-        5024695
+        4651024
       ],
       "roundBatchSizes": [
-        199702
+        183039
       ]
     },
     {
       "mode": "strip",
       "scenario": "invalid-order-first-error",
       "engine": "zod-compiled-validate",
-      "opsPerSec": 103495165,
-      "p25": 102743145,
-      "p75": 103988360,
+      "opsPerSec": 103533696,
+      "p25": 101166739,
+      "p75": 104551167,
       "nsPerOp": 10,
       "samples": 10,
       "roundMedians": [
-        103495165
+        103533696
       ],
       "roundBatchSizes": [
-        4170079
+        4170551
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "invalid-order-first-error",
+      "engine": "valibot",
+      "opsPerSec": 14624712,
+      "p25": 14035532,
+      "p75": 14634677,
+      "nsPerOp": 68,
+      "samples": 10,
+      "roundMedians": [
+        14624712
+      ],
+      "roundBatchSizes": [
+        559777
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "invalid-order-first-error",
+      "engine": "yup",
+      "opsPerSec": 23233,
+      "p25": 22938,
+      "p75": 23770,
+      "nsPerOp": 43042,
+      "samples": 10,
+      "roundMedians": [
+        23233
+      ],
+      "roundBatchSizes": [
+        987
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "invalid-order-first-error",
+      "engine": "joi",
+      "opsPerSec": 806859,
+      "p25": 799210,
+      "p75": 814820,
+      "nsPerOp": 1239,
+      "samples": 10,
+      "roundMedians": [
+        806859
+      ],
+      "roundBatchSizes": [
+        37375
       ]
     },
     {
       "mode": "strip",
       "scenario": "union-card",
       "engine": "atscript",
-      "opsPerSec": 4090524,
-      "p25": 4051545,
-      "p75": 4131544,
-      "nsPerOp": 244,
+      "opsPerSec": 3788153,
+      "p25": 3734026,
+      "p75": 3805471,
+      "nsPerOp": 264,
       "samples": 10,
       "roundMedians": [
-        4090524
+        3788153
       ],
       "roundBatchSizes": [
-        165135
+        147973
       ]
     },
     {
       "mode": "strip",
       "scenario": "union-card",
       "engine": "zod",
-      "opsPerSec": 8862742,
-      "p25": 8826298,
-      "p75": 8900386,
-      "nsPerOp": 113,
+      "opsPerSec": 8769705,
+      "p25": 8752495,
+      "p75": 8790577,
+      "nsPerOp": 114,
       "samples": 10,
       "roundMedians": [
-        8862742
+        8769705
       ],
       "roundBatchSizes": [
-        324632
+        340598
       ]
     },
     {
       "mode": "strip",
       "scenario": "union-card",
       "engine": "zod-compiled",
-      "opsPerSec": 23647607,
-      "p25": 23489776,
-      "p75": 23779065,
-      "nsPerOp": 42,
-      "samples": 10,
-      "roundMedians": [
-        23647607
-      ],
-      "roundBatchSizes": [
-        921329
-      ]
-    },
-    {
-      "mode": "strip",
-      "scenario": "union-card",
-      "engine": "zod-compiled-validate",
-      "opsPerSec": 23400732,
-      "p25": 23320811,
-      "p75": 23479061,
+      "opsPerSec": 23453830,
+      "p25": 23350041,
+      "p75": 23465493,
       "nsPerOp": 43,
       "samples": 10,
       "roundMedians": [
-        23400732
+        23453830
       ],
       "roundBatchSizes": [
-        916860
+        923066
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "union-card",
+      "engine": "zod-compiled-validate",
+      "opsPerSec": 23361976,
+      "p25": 23294088,
+      "p75": 23385081,
+      "nsPerOp": 43,
+      "samples": 10,
+      "roundMedians": [
+        23361976
+      ],
+      "roundBatchSizes": [
+        922138
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "union-card",
+      "engine": "valibot",
+      "opsPerSec": 5759469,
+      "p25": 5622761,
+      "p75": 5778242,
+      "nsPerOp": 174,
+      "samples": 10,
+      "roundMedians": [
+        5759469
+      ],
+      "roundBatchSizes": [
+        230201
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "union-card",
+      "engine": "yup",
+      "opsPerSec": 236641,
+      "p25": 230561,
+      "p75": 242564,
+      "nsPerOp": 4226,
+      "samples": 10,
+      "roundMedians": [
+        236641
+      ],
+      "roundBatchSizes": [
+        9969
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "union-card",
+      "engine": "joi",
+      "opsPerSec": 1279273,
+      "p25": 1275547,
+      "p75": 1282489,
+      "nsPerOp": 782,
+      "samples": 10,
+      "roundMedians": [
+        1279273
+      ],
+      "roundBatchSizes": [
+        55433
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "union-card",
+      "engine": "class-validator",
+      "opsPerSec": 219370,
+      "p25": 213560,
+      "p75": 220142,
+      "nsPerOp": 4559,
+      "samples": 10,
+      "roundMedians": [
+        219370
+      ],
+      "roundBatchSizes": [
+        11656
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "union-card",
+      "engine": "typebox-compiled",
+      "opsPerSec": 88106,
+      "p25": 80882,
+      "p75": 91709,
+      "nsPerOp": 11350,
+      "samples": 10,
+      "roundMedians": [
+        88106
+      ],
+      "roundBatchSizes": [
+        3745
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "union-card",
+      "engine": "typebox-value",
+      "opsPerSec": 69871,
+      "p25": 65189,
+      "p75": 70708,
+      "nsPerOp": 14312,
+      "samples": 10,
+      "roundMedians": [
+        69871
+      ],
+      "roundBatchSizes": [
+        3019
       ]
     },
     {
       "mode": "strip",
       "scenario": "union-paypal",
       "engine": "atscript",
-      "opsPerSec": 6081490,
-      "p25": 6068052,
-      "p75": 6112155,
-      "nsPerOp": 164,
+      "opsPerSec": 5356234,
+      "p25": 5350828,
+      "p75": 5363469,
+      "nsPerOp": 187,
       "samples": 10,
       "roundMedians": [
-        6081490
+        5356234
       ],
       "roundBatchSizes": [
-        241761
+        213930
       ]
     },
     {
       "mode": "strip",
       "scenario": "union-paypal",
       "engine": "zod",
-      "opsPerSec": 5828489,
-      "p25": 5341166,
-      "p75": 5869188,
-      "nsPerOp": 172,
+      "opsPerSec": 5889737,
+      "p25": 5520988,
+      "p75": 5949881,
+      "nsPerOp": 170,
       "samples": 10,
       "roundMedians": [
-        5828489
+        5889737
       ],
       "roundBatchSizes": [
-        225949
+        240160
       ]
     },
     {
       "mode": "strip",
       "scenario": "union-paypal",
       "engine": "zod-compiled",
-      "opsPerSec": 45577510,
-      "p25": 45333658,
-      "p75": 45636119,
+      "opsPerSec": 43996917,
+      "p25": 43802580,
+      "p75": 44052708,
+      "nsPerOp": 23,
+      "samples": 10,
+      "roundMedians": [
+        43996917
+      ],
+      "roundBatchSizes": [
+        1777161
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "union-paypal",
+      "engine": "zod-compiled-validate",
+      "opsPerSec": 45106639,
+      "p25": 44995096,
+      "p75": 45326814,
       "nsPerOp": 22,
       "samples": 10,
       "roundMedians": [
-        45577510
+        45106639
       ],
       "roundBatchSizes": [
-        1768225
+        1755541
       ]
     },
     {
       "mode": "strip",
       "scenario": "union-paypal",
-      "engine": "zod-compiled-validate",
-      "opsPerSec": 46196292,
-      "p25": 45908312,
-      "p75": 46428024,
-      "nsPerOp": 22,
+      "engine": "valibot",
+      "opsPerSec": 3791221,
+      "p25": 3380428,
+      "p75": 4010750,
+      "nsPerOp": 264,
       "samples": 10,
       "roundMedians": [
-        46196292
+        3791221
       ],
       "roundBatchSizes": [
-        1757674
+        155018
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "union-paypal",
+      "engine": "yup",
+      "opsPerSec": 78545,
+      "p25": 76826,
+      "p75": 79780,
+      "nsPerOp": 12731,
+      "samples": 10,
+      "roundMedians": [
+        78545
+      ],
+      "roundBatchSizes": [
+        3283
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "union-paypal",
+      "engine": "joi",
+      "opsPerSec": 850613,
+      "p25": 845359,
+      "p75": 857113,
+      "nsPerOp": 1176,
+      "samples": 10,
+      "roundMedians": [
+        850613
+      ],
+      "roundBatchSizes": [
+        37730
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "union-paypal",
+      "engine": "class-validator",
+      "opsPerSec": 132530,
+      "p25": 131959,
+      "p75": 133788,
+      "nsPerOp": 7545,
+      "samples": 10,
+      "roundMedians": [
+        132530
+      ],
+      "roundBatchSizes": [
+        7145
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "union-paypal",
+      "engine": "typebox-compiled",
+      "opsPerSec": 100268,
+      "p25": 90943,
+      "p75": 103032,
+      "nsPerOp": 9973,
+      "samples": 10,
+      "roundMedians": [
+        100268
+      ],
+      "roundBatchSizes": [
+        4280
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "union-paypal",
+      "engine": "typebox-value",
+      "opsPerSec": 89123,
+      "p25": 86837,
+      "p75": 89676,
+      "nsPerOp": 11221,
+      "samples": 10,
+      "roundMedians": [
+        89123
+      ],
+      "roundBatchSizes": [
+        3685
       ]
     },
     {
       "mode": "strip",
       "scenario": "union-invalid",
       "engine": "atscript",
-      "opsPerSec": 1677564,
-      "p25": 1669770,
-      "p75": 1682335,
-      "nsPerOp": 596,
+      "opsPerSec": 1578764,
+      "p25": 1570486,
+      "p75": 1586709,
+      "nsPerOp": 633,
       "samples": 10,
       "roundMedians": [
-        1677564
+        1578764
       ],
       "roundBatchSizes": [
-        65870
+        61716
       ]
     },
     {
       "mode": "strip",
       "scenario": "union-invalid",
       "engine": "zod",
-      "opsPerSec": 603115,
-      "p25": 553800,
-      "p75": 615333,
-      "nsPerOp": 1658,
+      "opsPerSec": 611982,
+      "p25": 556532,
+      "p75": 616800,
+      "nsPerOp": 1634,
       "samples": 10,
       "roundMedians": [
-        603115
+        611982
       ],
       "roundBatchSizes": [
-        24060
+        23709
       ]
     },
     {
       "mode": "strip",
       "scenario": "union-invalid",
       "engine": "zod-compiled",
-      "opsPerSec": 619952,
-      "p25": 554239,
-      "p75": 627616,
-      "nsPerOp": 1613,
+      "opsPerSec": 609466,
+      "p25": 543466,
+      "p75": 615185,
+      "nsPerOp": 1641,
       "samples": 10,
       "roundMedians": [
-        619952
+        609466
       ],
       "roundBatchSizes": [
-        23117
+        23602
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "union-invalid",
+      "engine": "valibot",
+      "opsPerSec": 2867544,
+      "p25": 2799533,
+      "p75": 2948429,
+      "nsPerOp": 349,
+      "samples": 10,
+      "roundMedians": [
+        2867544
+      ],
+      "roundBatchSizes": [
+        115505
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "union-invalid",
+      "engine": "yup",
+      "opsPerSec": 31580,
+      "p25": 31436,
+      "p75": 32003,
+      "nsPerOp": 31666,
+      "samples": 10,
+      "roundMedians": [
+        31580
+      ],
+      "roundBatchSizes": [
+        1302
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "union-invalid",
+      "engine": "joi",
+      "opsPerSec": 293283,
+      "p25": 288961,
+      "p75": 297261,
+      "nsPerOp": 3410,
+      "samples": 10,
+      "roundMedians": [
+        293283
+      ],
+      "roundBatchSizes": [
+        13970
+      ]
+    },
+    {
+      "mode": "strip",
+      "scenario": "union-invalid",
+      "engine": "class-validator",
+      "opsPerSec": 111118,
+      "p25": 110406,
+      "p75": 111946,
+      "nsPerOp": 8999,
+      "samples": 10,
+      "roundMedians": [
+        111118
+      ],
+      "roundBatchSizes": [
+        6132
       ]
     },
     {
       "mode": "passthrough",
       "scenario": "valid-order",
       "engine": "atscript",
-      "opsPerSec": 492165,
-      "p25": 488915,
-      "p75": 494289,
-      "nsPerOp": 2032,
+      "opsPerSec": 465739,
+      "p25": 460949,
+      "p75": 470559,
+      "nsPerOp": 2147,
       "samples": 10,
       "roundMedians": [
-        492165
+        465739
       ],
       "roundBatchSizes": [
-        19838
+        18783
       ]
     },
     {
       "mode": "passthrough",
       "scenario": "valid-order",
       "engine": "zod",
-      "opsPerSec": 391326,
-      "p25": 315550,
-      "p75": 398296,
-      "nsPerOp": 2555,
+      "opsPerSec": 397722,
+      "p25": 329646,
+      "p75": 403472,
+      "nsPerOp": 2514,
       "samples": 10,
       "roundMedians": [
-        391326
+        397722
       ],
       "roundBatchSizes": [
-        16305
+        16140
       ]
     },
     {
       "mode": "passthrough",
       "scenario": "valid-order",
       "engine": "zod-compiled",
-      "opsPerSec": 1901033,
-      "p25": 1612865,
-      "p75": 1905545,
-      "nsPerOp": 526,
+      "opsPerSec": 1836148,
+      "p25": 1586950,
+      "p75": 1870151,
+      "nsPerOp": 545,
       "samples": 10,
       "roundMedians": [
-        1901033
+        1836148
       ],
       "roundBatchSizes": [
-        78821
+        78625
       ]
     },
     {
       "mode": "passthrough",
       "scenario": "valid-order",
       "engine": "zod-compiled-validate",
-      "opsPerSec": 2404060,
-      "p25": 2180068,
-      "p75": 2434241,
-      "nsPerOp": 416,
+      "opsPerSec": 2391635,
+      "p25": 2154997,
+      "p75": 2412957,
+      "nsPerOp": 418,
       "samples": 10,
       "roundMedians": [
-        2404060
+        2391635
       ],
       "roundBatchSizes": [
-        101172
+        100953
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "valid-order",
+      "engine": "valibot",
+      "opsPerSec": 317934,
+      "p25": 306059,
+      "p75": 320416,
+      "nsPerOp": 3145,
+      "samples": 10,
+      "roundMedians": [
+        317934
+      ],
+      "roundBatchSizes": [
+        12831
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "valid-order",
+      "engine": "yup",
+      "opsPerSec": 19458,
+      "p25": 17653,
+      "p75": 19577,
+      "nsPerOp": 51393,
+      "samples": 10,
+      "roundMedians": [
+        19458
+      ],
+      "roundBatchSizes": [
+        848
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "valid-order",
+      "engine": "joi",
+      "opsPerSec": 54848,
+      "p25": 54605,
+      "p75": 55020,
+      "nsPerOp": 18232,
+      "samples": 10,
+      "roundMedians": [
+        54848
+      ],
+      "roundBatchSizes": [
+        2584
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "valid-order",
+      "engine": "ajv",
+      "opsPerSec": 2326338,
+      "p25": 2314466,
+      "p75": 2339308,
+      "nsPerOp": 430,
+      "samples": 10,
+      "roundMedians": [
+        2326338
+      ],
+      "roundBatchSizes": [
+        94050
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "valid-order",
+      "engine": "arktype",
+      "opsPerSec": 3602102,
+      "p25": 3593751,
+      "p75": 3604278,
+      "nsPerOp": 278,
+      "samples": 10,
+      "roundMedians": [
+        3602102
+      ],
+      "roundBatchSizes": [
+        143924
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "valid-order",
+      "engine": "arktype-allows",
+      "opsPerSec": 3775921,
+      "p25": 3750322,
+      "p75": 3823564,
+      "nsPerOp": 265,
+      "samples": 10,
+      "roundMedians": [
+        3775921
+      ],
+      "roundBatchSizes": [
+        151031
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "valid-order",
+      "engine": "class-validator",
+      "opsPerSec": 17308,
+      "p25": 17208,
+      "p75": 17665,
+      "nsPerOp": 57778,
+      "samples": 10,
+      "roundMedians": [
+        17308
+      ],
+      "roundBatchSizes": [
+        973
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "valid-order",
+      "engine": "typebox-compiled",
+      "opsPerSec": 4633019,
+      "p25": 4592997,
+      "p75": 4637472,
+      "nsPerOp": 216,
+      "samples": 10,
+      "roundMedians": [
+        4633019
+      ],
+      "roundBatchSizes": [
+        196066
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "valid-order",
+      "engine": "typebox-value",
+      "opsPerSec": 27054,
+      "p25": 26770,
+      "p75": 27133,
+      "nsPerOp": 36964,
+      "samples": 10,
+      "roundMedians": [
+        27054
+      ],
+      "roundBatchSizes": [
+        1186
       ]
     },
     {
       "mode": "passthrough",
       "scenario": "valid-order-paypal",
       "engine": "atscript",
-      "opsPerSec": 519659,
-      "p25": 517005,
-      "p75": 521194,
-      "nsPerOp": 1924,
+      "opsPerSec": 505353,
+      "p25": 503846,
+      "p75": 517667,
+      "nsPerOp": 1979,
       "samples": 10,
       "roundMedians": [
-        519659
+        505353
       ],
       "roundBatchSizes": [
-        20721
+        20088
       ]
     },
     {
       "mode": "passthrough",
       "scenario": "valid-order-paypal",
       "engine": "zod",
-      "opsPerSec": 374691,
-      "p25": 362915,
-      "p75": 374894,
-      "nsPerOp": 2669,
+      "opsPerSec": 384815,
+      "p25": 374041,
+      "p75": 385234,
+      "nsPerOp": 2599,
       "samples": 10,
       "roundMedians": [
-        374691
+        384815
       ],
       "roundBatchSizes": [
-        15056
+        15298
       ]
     },
     {
       "mode": "passthrough",
       "scenario": "valid-order-paypal",
       "engine": "zod-compiled",
-      "opsPerSec": 2009723,
-      "p25": 1719811,
-      "p75": 2024469,
-      "nsPerOp": 498,
-      "samples": 10,
-      "roundMedians": [
-        2009723
-      ],
-      "roundBatchSizes": [
-        83756
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "valid-order-paypal",
-      "engine": "zod-compiled-validate",
-      "opsPerSec": 2563222,
-      "p25": 2273590,
-      "p75": 2573113,
-      "nsPerOp": 390,
-      "samples": 10,
-      "roundMedians": [
-        2563222
-      ],
-      "roundBatchSizes": [
-        105289
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "large-order-50-items",
-      "engine": "atscript",
-      "opsPerSec": 94589,
-      "p25": 94250,
-      "p75": 94812,
-      "nsPerOp": 10572,
-      "samples": 10,
-      "roundMedians": [
-        94589
-      ],
-      "roundBatchSizes": [
-        3783
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "large-order-50-items",
-      "engine": "zod",
-      "opsPerSec": 38592,
-      "p25": 37602,
-      "p75": 42451,
-      "nsPerOp": 25912,
-      "samples": 10,
-      "roundMedians": [
-        38592
-      ],
-      "roundBatchSizes": [
-        1804
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "large-order-50-items",
-      "engine": "zod-compiled",
-      "opsPerSec": 243014,
-      "p25": 209177,
-      "p75": 246344,
-      "nsPerOp": 4115,
-      "samples": 10,
-      "roundMedians": [
-        243014
-      ],
-      "roundBatchSizes": [
-        10020
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "large-order-50-items",
-      "engine": "zod-compiled-validate",
-      "opsPerSec": 248460,
-      "p25": 221391,
-      "p75": 250678,
-      "nsPerOp": 4025,
-      "samples": 10,
-      "roundMedians": [
-        248460
-      ],
-      "roundBatchSizes": [
-        10257
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "unknown-props-order",
-      "engine": "atscript",
-      "opsPerSec": 492587,
-      "p25": 487635,
-      "p75": 493972,
-      "nsPerOp": 2030,
-      "samples": 10,
-      "roundMedians": [
-        492587
-      ],
-      "roundBatchSizes": [
-        19704
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "unknown-props-order",
-      "engine": "zod",
-      "opsPerSec": 360049,
-      "p25": 295590,
-      "p75": 365296,
-      "nsPerOp": 2777,
-      "samples": 10,
-      "roundMedians": [
-        360049
-      ],
-      "roundBatchSizes": [
-        14809
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "unknown-props-order",
-      "engine": "zod-compiled",
-      "opsPerSec": 1680538,
-      "p25": 1475504,
-      "p75": 1705217,
-      "nsPerOp": 595,
-      "samples": 10,
-      "roundMedians": [
-        1680538
-      ],
-      "roundBatchSizes": [
-        73597
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "unknown-props-order",
-      "engine": "zod-compiled-validate",
-      "opsPerSec": 2015004,
-      "p25": 1842549,
-      "p75": 2043541,
+      "opsPerSec": 2015681,
+      "p25": 1722349,
+      "p75": 2019448,
       "nsPerOp": 496,
       "samples": 10,
       "roundMedians": [
-        2015004
+        2015681
       ],
       "roundBatchSizes": [
-        78735
+        84148
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "valid-order-paypal",
+      "engine": "zod-compiled-validate",
+      "opsPerSec": 2594367,
+      "p25": 2310602,
+      "p75": 2616300,
+      "nsPerOp": 385,
+      "samples": 10,
+      "roundMedians": [
+        2594367
+      ],
+      "roundBatchSizes": [
+        108413
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "valid-order-paypal",
+      "engine": "valibot",
+      "opsPerSec": 316037,
+      "p25": 299594,
+      "p75": 318970,
+      "nsPerOp": 3164,
+      "samples": 10,
+      "roundMedians": [
+        316037
+      ],
+      "roundBatchSizes": [
+        13015
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "valid-order-paypal",
+      "engine": "yup",
+      "opsPerSec": 13795,
+      "p25": 13549,
+      "p75": 13974,
+      "nsPerOp": 72490,
+      "samples": 10,
+      "roundMedians": [
+        13795
+      ],
+      "roundBatchSizes": [
+        590
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "valid-order-paypal",
+      "engine": "joi",
+      "opsPerSec": 53000,
+      "p25": 52776,
+      "p75": 53148,
+      "nsPerOp": 18868,
+      "samples": 10,
+      "roundMedians": [
+        53000
+      ],
+      "roundBatchSizes": [
+        2534
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "valid-order-paypal",
+      "engine": "ajv",
+      "opsPerSec": 2328330,
+      "p25": 2325640,
+      "p75": 2340118,
+      "nsPerOp": 429,
+      "samples": 10,
+      "roundMedians": [
+        2328330
+      ],
+      "roundBatchSizes": [
+        93868
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "valid-order-paypal",
+      "engine": "arktype",
+      "opsPerSec": 3975095,
+      "p25": 3963399,
+      "p75": 3976654,
+      "nsPerOp": 252,
+      "samples": 10,
+      "roundMedians": [
+        3975095
+      ],
+      "roundBatchSizes": [
+        157748
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "valid-order-paypal",
+      "engine": "arktype-allows",
+      "opsPerSec": 4217727,
+      "p25": 4200376,
+      "p75": 4231014,
+      "nsPerOp": 237,
+      "samples": 10,
+      "roundMedians": [
+        4217727
+      ],
+      "roundBatchSizes": [
+        171053
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "valid-order-paypal",
+      "engine": "class-validator",
+      "opsPerSec": 16900,
+      "p25": 16708,
+      "p75": 17098,
+      "nsPerOp": 59170,
+      "samples": 10,
+      "roundMedians": [
+        16900
+      ],
+      "roundBatchSizes": [
+        944
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "valid-order-paypal",
+      "engine": "typebox-compiled",
+      "opsPerSec": 5199552,
+      "p25": 5166761,
+      "p75": 5234396,
+      "nsPerOp": 192,
+      "samples": 10,
+      "roundMedians": [
+        5199552
+      ],
+      "roundBatchSizes": [
+        219288
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "valid-order-paypal",
+      "engine": "typebox-value",
+      "opsPerSec": 28926,
+      "p25": 28678,
+      "p75": 28992,
+      "nsPerOp": 34571,
+      "samples": 10,
+      "roundMedians": [
+        28926
+      ],
+      "roundBatchSizes": [
+        1270
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "large-order-50-items",
+      "engine": "atscript",
+      "opsPerSec": 95128,
+      "p25": 94179,
+      "p75": 95760,
+      "nsPerOp": 10512,
+      "samples": 10,
+      "roundMedians": [
+        95128
+      ],
+      "roundBatchSizes": [
+        3785
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "large-order-50-items",
+      "engine": "zod",
+      "opsPerSec": 43269,
+      "p25": 39597,
+      "p75": 44627,
+      "nsPerOp": 23111,
+      "samples": 10,
+      "roundMedians": [
+        43269
+      ],
+      "roundBatchSizes": [
+        1805
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "large-order-50-items",
+      "engine": "zod-compiled",
+      "opsPerSec": 241759,
+      "p25": 209681,
+      "p75": 244702,
+      "nsPerOp": 4136,
+      "samples": 10,
+      "roundMedians": [
+        241759
+      ],
+      "roundBatchSizes": [
+        10026
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "large-order-50-items",
+      "engine": "zod-compiled-validate",
+      "opsPerSec": 250761,
+      "p25": 221476,
+      "p75": 253668,
+      "nsPerOp": 3988,
+      "samples": 10,
+      "roundMedians": [
+        250761
+      ],
+      "roundBatchSizes": [
+        10225
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "large-order-50-items",
+      "engine": "valibot",
+      "opsPerSec": 33419,
+      "p25": 32542,
+      "p75": 33518,
+      "nsPerOp": 29923,
+      "samples": 10,
+      "roundMedians": [
+        33419
+      ],
+      "roundBatchSizes": [
+        1337
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "large-order-50-items",
+      "engine": "yup",
+      "opsPerSec": 1936,
+      "p25": 1726,
+      "p75": 1943,
+      "nsPerOp": 516439,
+      "samples": 10,
+      "roundMedians": [
+        1936
+      ],
+      "roundBatchSizes": [
+        82
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "large-order-50-items",
+      "engine": "joi",
+      "opsPerSec": 4486,
+      "p25": 4458,
+      "p75": 4492,
+      "nsPerOp": 222924,
+      "samples": 10,
+      "roundMedians": [
+        4486
+      ],
+      "roundBatchSizes": [
+        226
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "large-order-50-items",
+      "engine": "ajv",
+      "opsPerSec": 372028,
+      "p25": 371411,
+      "p75": 372390,
+      "nsPerOp": 2688,
+      "samples": 10,
+      "roundMedians": [
+        372028
+      ],
+      "roundBatchSizes": [
+        16400
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "large-order-50-items",
+      "engine": "arktype",
+      "opsPerSec": 677872,
+      "p25": 676807,
+      "p75": 678162,
+      "nsPerOp": 1475,
+      "samples": 10,
+      "roundMedians": [
+        677872
+      ],
+      "roundBatchSizes": [
+        27109
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "large-order-50-items",
+      "engine": "arktype-allows",
+      "opsPerSec": 672338,
+      "p25": 665651,
+      "p75": 674155,
+      "nsPerOp": 1487,
+      "samples": 10,
+      "roundMedians": [
+        672338
+      ],
+      "roundBatchSizes": [
+        27036
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "large-order-50-items",
+      "engine": "class-validator",
+      "opsPerSec": 1946,
+      "p25": 1790,
+      "p75": 1999,
+      "nsPerOp": 513940,
+      "samples": 10,
+      "roundMedians": [
+        1946
+      ],
+      "roundBatchSizes": [
+        101
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "large-order-50-items",
+      "engine": "typebox-compiled",
+      "opsPerSec": 1221992,
+      "p25": 1210630,
+      "p75": 1235705,
+      "nsPerOp": 818,
+      "samples": 10,
+      "roundMedians": [
+        1221992
+      ],
+      "roundBatchSizes": [
+        51914
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "large-order-50-items",
+      "engine": "typebox-value",
+      "opsPerSec": 2285,
+      "p25": 2271,
+      "p75": 2290,
+      "nsPerOp": 437732,
+      "samples": 10,
+      "roundMedians": [
+        2285
+      ],
+      "roundBatchSizes": [
+        96
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "unknown-props-order",
+      "engine": "atscript",
+      "opsPerSec": 468046,
+      "p25": 465321,
+      "p75": 471650,
+      "nsPerOp": 2137,
+      "samples": 10,
+      "roundMedians": [
+        468046
+      ],
+      "roundBatchSizes": [
+        19215
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "unknown-props-order",
+      "engine": "zod",
+      "opsPerSec": 348131,
+      "p25": 286370,
+      "p75": 354291,
+      "nsPerOp": 2872,
+      "samples": 10,
+      "roundMedians": [
+        348131
+      ],
+      "roundBatchSizes": [
+        14364
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "unknown-props-order",
+      "engine": "zod-compiled",
+      "opsPerSec": 1592754,
+      "p25": 1349209,
+      "p75": 1619889,
+      "nsPerOp": 628,
+      "samples": 10,
+      "roundMedians": [
+        1592754
+      ],
+      "roundBatchSizes": [
+        69284
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "unknown-props-order",
+      "engine": "zod-compiled-validate",
+      "opsPerSec": 2004970,
+      "p25": 1821870,
+      "p75": 2039756,
+      "nsPerOp": 499,
+      "samples": 10,
+      "roundMedians": [
+        2004970
+      ],
+      "roundBatchSizes": [
+        79644
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "unknown-props-order",
+      "engine": "valibot",
+      "opsPerSec": 311019,
+      "p25": 296871,
+      "p75": 312033,
+      "nsPerOp": 3215,
+      "samples": 10,
+      "roundMedians": [
+        311019
+      ],
+      "roundBatchSizes": [
+        12680
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "unknown-props-order",
+      "engine": "yup",
+      "opsPerSec": 19301,
+      "p25": 17626,
+      "p75": 19472,
+      "nsPerOp": 51811,
+      "samples": 10,
+      "roundMedians": [
+        19301
+      ],
+      "roundBatchSizes": [
+        820
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "unknown-props-order",
+      "engine": "joi",
+      "opsPerSec": 54321,
+      "p25": 54004,
+      "p75": 54643,
+      "nsPerOp": 18409,
+      "samples": 10,
+      "roundMedians": [
+        54321
+      ],
+      "roundBatchSizes": [
+        2506
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "unknown-props-order",
+      "engine": "ajv",
+      "opsPerSec": 2259134,
+      "p25": 2237655,
+      "p75": 2267220,
+      "nsPerOp": 443,
+      "samples": 10,
+      "roundMedians": [
+        2259134
+      ],
+      "roundBatchSizes": [
+        87918
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "unknown-props-order",
+      "engine": "arktype",
+      "opsPerSec": 3249681,
+      "p25": 3180728,
+      "p75": 3313132,
+      "nsPerOp": 308,
+      "samples": 10,
+      "roundMedians": [
+        3249681
+      ],
+      "roundBatchSizes": [
+        141288
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "unknown-props-order",
+      "engine": "arktype-allows",
+      "opsPerSec": 3300945,
+      "p25": 3145727,
+      "p75": 3365370,
+      "nsPerOp": 303,
+      "samples": 10,
+      "roundMedians": [
+        3300945
+      ],
+      "roundBatchSizes": [
+        149225
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "unknown-props-order",
+      "engine": "class-validator",
+      "opsPerSec": 17312,
+      "p25": 17079,
+      "p75": 17421,
+      "nsPerOp": 57762,
+      "samples": 10,
+      "roundMedians": [
+        17312
+      ],
+      "roundBatchSizes": [
+        972
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "unknown-props-order",
+      "engine": "typebox-compiled",
+      "opsPerSec": 3325143,
+      "p25": 3308574,
+      "p75": 3348027,
+      "nsPerOp": 301,
+      "samples": 10,
+      "roundMedians": [
+        3325143
+      ],
+      "roundBatchSizes": [
+        157390
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "unknown-props-order",
+      "engine": "typebox-value",
+      "opsPerSec": 27739,
+      "p25": 27541,
+      "p75": 27951,
+      "nsPerOp": 36050,
+      "samples": 10,
+      "roundMedians": [
+        27739
+      ],
+      "roundBatchSizes": [
+        1225
       ]
     },
     {
       "mode": "passthrough",
       "scenario": "invalid-order-all-errors",
       "engine": "atscript",
-      "opsPerSec": 359055,
-      "p25": 355348,
-      "p75": 362394,
-      "nsPerOp": 2785,
+      "opsPerSec": 360701,
+      "p25": 359144,
+      "p75": 367757,
+      "nsPerOp": 2772,
       "samples": 10,
       "roundMedians": [
-        359055
+        360701
       ],
       "roundBatchSizes": [
-        14437
+        13956
       ]
     },
     {
       "mode": "passthrough",
       "scenario": "invalid-order-all-errors",
       "engine": "zod",
-      "opsPerSec": 119887,
-      "p25": 95525,
-      "p75": 125330,
-      "nsPerOp": 8341,
+      "opsPerSec": 129734,
+      "p25": 101429,
+      "p75": 136237,
+      "nsPerOp": 7708,
       "samples": 10,
       "roundMedians": [
-        119887
+        129734
       ],
       "roundBatchSizes": [
-        5042
+        5408
       ]
     },
     {
       "mode": "passthrough",
       "scenario": "invalid-order-all-errors",
       "engine": "zod-compiled",
-      "opsPerSec": 128088,
-      "p25": 103207,
-      "p75": 134624,
-      "nsPerOp": 7807,
+      "opsPerSec": 129102,
+      "p25": 126676,
+      "p75": 134803,
+      "nsPerOp": 7746,
       "samples": 10,
       "roundMedians": [
-        128088
+        129102
       ],
       "roundBatchSizes": [
-        5397
+        5360
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "invalid-order-all-errors",
+      "engine": "valibot",
+      "opsPerSec": 394022,
+      "p25": 357526,
+      "p75": 398246,
+      "nsPerOp": 2538,
+      "samples": 10,
+      "roundMedians": [
+        394022
+      ],
+      "roundBatchSizes": [
+        15920
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "invalid-order-all-errors",
+      "engine": "yup",
+      "opsPerSec": 5091,
+      "p25": 4769,
+      "p75": 5255,
+      "nsPerOp": 196408,
+      "samples": 10,
+      "roundMedians": [
+        5091
+      ],
+      "roundBatchSizes": [
+        212
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "invalid-order-all-errors",
+      "engine": "joi",
+      "opsPerSec": 49381,
+      "p25": 48417,
+      "p75": 50345,
+      "nsPerOp": 20251,
+      "samples": 10,
+      "roundMedians": [
+        49381
+      ],
+      "roundBatchSizes": [
+        2526
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "invalid-order-all-errors",
+      "engine": "ajv",
+      "opsPerSec": 1897593,
+      "p25": 1894750,
+      "p75": 1898965,
+      "nsPerOp": 527,
+      "samples": 10,
+      "roundMedians": [
+        1897593
+      ],
+      "roundBatchSizes": [
+        73679
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "invalid-order-all-errors",
+      "engine": "arktype",
+      "opsPerSec": 32415,
+      "p25": 32082,
+      "p75": 32720,
+      "nsPerOp": 30850,
+      "samples": 10,
+      "roundMedians": [
+        32415
+      ],
+      "roundBatchSizes": [
+        1517
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "invalid-order-all-errors",
+      "engine": "class-validator",
+      "opsPerSec": 25834,
+      "p25": 25688,
+      "p75": 26200,
+      "nsPerOp": 38708,
+      "samples": 10,
+      "roundMedians": [
+        25834
+      ],
+      "roundBatchSizes": [
+        1402
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "invalid-order-all-errors",
+      "engine": "typebox-compiled",
+      "opsPerSec": 58597,
+      "p25": 57638,
+      "p75": 58720,
+      "nsPerOp": 17066,
+      "samples": 10,
+      "roundMedians": [
+        58597
+      ],
+      "roundBatchSizes": [
+        2764
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "invalid-order-all-errors",
+      "engine": "typebox-value",
+      "opsPerSec": 53974,
+      "p25": 53210,
+      "p75": 54684,
+      "nsPerOp": 18527,
+      "samples": 10,
+      "roundMedians": [
+        53974
+      ],
+      "roundBatchSizes": [
+        2637
       ]
     },
     {
       "mode": "passthrough",
       "scenario": "invalid-order-first-error",
       "engine": "atscript",
-      "opsPerSec": 4996240,
-      "p25": 4977193,
-      "p75": 5005499,
-      "nsPerOp": 200,
-      "samples": 10,
-      "roundMedians": [
-        4996240
-      ],
-      "roundBatchSizes": [
-        197198
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "invalid-order-first-error",
-      "engine": "zod-compiled-validate",
-      "opsPerSec": 102534184,
-      "p25": 102066347,
-      "p75": 102758270,
-      "nsPerOp": 10,
-      "samples": 10,
-      "roundMedians": [
-        102534184
-      ],
-      "roundBatchSizes": [
-        4112173
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "union-card",
-      "engine": "atscript",
-      "opsPerSec": 4618693,
-      "p25": 4609100,
-      "p75": 4628343,
-      "nsPerOp": 217,
-      "samples": 10,
-      "roundMedians": [
-        4618693
-      ],
-      "roundBatchSizes": [
-        183636
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "union-card",
-      "engine": "zod",
-      "opsPerSec": 7446269,
-      "p25": 7413133,
-      "p75": 7473788,
-      "nsPerOp": 134,
-      "samples": 10,
-      "roundMedians": [
-        7446269
-      ],
-      "roundBatchSizes": [
-        294798
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "union-card",
-      "engine": "zod-compiled",
-      "opsPerSec": 16973368,
-      "p25": 16915424,
-      "p75": 17005886,
-      "nsPerOp": 59,
-      "samples": 10,
-      "roundMedians": [
-        16973368
-      ],
-      "roundBatchSizes": [
-        673175
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "union-card",
-      "engine": "zod-compiled-validate",
-      "opsPerSec": 16749036,
-      "p25": 16722405,
-      "p75": 16813059,
-      "nsPerOp": 60,
-      "samples": 10,
-      "roundMedians": [
-        16749036
-      ],
-      "roundBatchSizes": [
-        665736
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "union-paypal",
-      "engine": "atscript",
-      "opsPerSec": 6571661,
-      "p25": 6555564,
-      "p75": 6591492,
-      "nsPerOp": 152,
-      "samples": 10,
-      "roundMedians": [
-        6571661
-      ],
-      "roundBatchSizes": [
-        257431
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "union-paypal",
-      "engine": "zod",
-      "opsPerSec": 4937220,
-      "p25": 4700165,
-      "p75": 5012987,
-      "nsPerOp": 203,
-      "samples": 10,
-      "roundMedians": [
-        4937220
-      ],
-      "roundBatchSizes": [
-        202981
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "union-paypal",
-      "engine": "zod-compiled",
-      "opsPerSec": 36979173,
-      "p25": 36004846,
-      "p75": 37140485,
-      "nsPerOp": 27,
-      "samples": 10,
-      "roundMedians": [
-        36979173
-      ],
-      "roundBatchSizes": [
-        1469175
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "union-paypal",
-      "engine": "zod-compiled-validate",
-      "opsPerSec": 36531684,
-      "p25": 36213151,
-      "p75": 36726881,
-      "nsPerOp": 27,
-      "samples": 10,
-      "roundMedians": [
-        36531684
-      ],
-      "roundBatchSizes": [
-        1424862
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "union-invalid",
-      "engine": "atscript",
-      "opsPerSec": 1686832,
-      "p25": 1659116,
-      "p75": 1706014,
-      "nsPerOp": 593,
-      "samples": 10,
-      "roundMedians": [
-        1686832
-      ],
-      "roundBatchSizes": [
-        65806
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "union-invalid",
-      "engine": "zod",
-      "opsPerSec": 591681,
-      "p25": 536012,
-      "p75": 596234,
-      "nsPerOp": 1690,
-      "samples": 10,
-      "roundMedians": [
-        591681
-      ],
-      "roundBatchSizes": [
-        23051
-      ]
-    },
-    {
-      "mode": "passthrough",
-      "scenario": "union-invalid",
-      "engine": "zod-compiled",
-      "opsPerSec": 589647,
-      "p25": 523418,
-      "p75": 601348,
-      "nsPerOp": 1696,
-      "samples": 10,
-      "roundMedians": [
-        589647
-      ],
-      "roundBatchSizes": [
-        22730
-      ]
-    },
-    {
-      "mode": "strict",
-      "scenario": "valid-order",
-      "engine": "atscript",
-      "opsPerSec": 423495,
-      "p25": 422626,
-      "p75": 425733,
-      "nsPerOp": 2361,
-      "samples": 10,
-      "roundMedians": [
-        423495
-      ],
-      "roundBatchSizes": [
-        16627
-      ]
-    },
-    {
-      "mode": "strict",
-      "scenario": "valid-order",
-      "engine": "zod",
-      "opsPerSec": 390339,
-      "p25": 310396,
-      "p75": 398893,
-      "nsPerOp": 2562,
-      "samples": 10,
-      "roundMedians": [
-        390339
-      ],
-      "roundBatchSizes": [
-        15961
-      ]
-    },
-    {
-      "mode": "strict",
-      "scenario": "valid-order",
-      "engine": "zod-compiled",
-      "opsPerSec": 2786019,
-      "p25": 2398638,
-      "p75": 2808580,
-      "nsPerOp": 359,
-      "samples": 10,
-      "roundMedians": [
-        2786019
-      ],
-      "roundBatchSizes": [
-        116651
-      ]
-    },
-    {
-      "mode": "strict",
-      "scenario": "valid-order",
-      "engine": "zod-compiled-validate",
-      "opsPerSec": 2879785,
-      "p25": 2600095,
-      "p75": 2940627,
-      "nsPerOp": 347,
-      "samples": 10,
-      "roundMedians": [
-        2879785
-      ],
-      "roundBatchSizes": [
-        121298
-      ]
-    },
-    {
-      "mode": "strict",
-      "scenario": "valid-order-paypal",
-      "engine": "atscript",
-      "opsPerSec": 430386,
-      "p25": 429456,
-      "p75": 436380,
-      "nsPerOp": 2323,
-      "samples": 10,
-      "roundMedians": [
-        430386
-      ],
-      "roundBatchSizes": [
-        16878
-      ]
-    },
-    {
-      "mode": "strict",
-      "scenario": "valid-order-paypal",
-      "engine": "zod",
-      "opsPerSec": 381724,
-      "p25": 372752,
-      "p75": 383902,
-      "nsPerOp": 2620,
-      "samples": 10,
-      "roundMedians": [
-        381724
-      ],
-      "roundBatchSizes": [
-        15471
-      ]
-    },
-    {
-      "mode": "strict",
-      "scenario": "valid-order-paypal",
-      "engine": "zod-compiled",
-      "opsPerSec": 2928421,
-      "p25": 2562510,
-      "p75": 2950554,
-      "nsPerOp": 341,
-      "samples": 10,
-      "roundMedians": [
-        2928421
-      ],
-      "roundBatchSizes": [
-        123374
-      ]
-    },
-    {
-      "mode": "strict",
-      "scenario": "valid-order-paypal",
-      "engine": "zod-compiled-validate",
-      "opsPerSec": 3086417,
-      "p25": 2750432,
-      "p75": 3100807,
-      "nsPerOp": 324,
-      "samples": 10,
-      "roundMedians": [
-        3086417
-      ],
-      "roundBatchSizes": [
-        129709
-      ]
-    },
-    {
-      "mode": "strict",
-      "scenario": "large-order-50-items",
-      "engine": "atscript",
-      "opsPerSec": 71408,
-      "p25": 71227,
-      "p75": 71694,
-      "nsPerOp": 14004,
-      "samples": 10,
-      "roundMedians": [
-        71408
-      ],
-      "roundBatchSizes": [
-        2843
-      ]
-    },
-    {
-      "mode": "strict",
-      "scenario": "large-order-50-items",
-      "engine": "zod",
-      "opsPerSec": 43441,
-      "p25": 39659,
-      "p75": 44763,
-      "nsPerOp": 23020,
-      "samples": 10,
-      "roundMedians": [
-        43441
-      ],
-      "roundBatchSizes": [
-        1809
-      ]
-    },
-    {
-      "mode": "strict",
-      "scenario": "large-order-50-items",
-      "engine": "zod-compiled",
-      "opsPerSec": 405059,
-      "p25": 346912,
-      "p75": 410339,
-      "nsPerOp": 2469,
-      "samples": 10,
-      "roundMedians": [
-        405059
-      ],
-      "roundBatchSizes": [
-        16540
-      ]
-    },
-    {
-      "mode": "strict",
-      "scenario": "large-order-50-items",
-      "engine": "zod-compiled-validate",
-      "opsPerSec": 407840,
-      "p25": 356988,
-      "p75": 411414,
-      "nsPerOp": 2452,
-      "samples": 10,
-      "roundMedians": [
-        407840
-      ],
-      "roundBatchSizes": [
-        16513
-      ]
-    },
-    {
-      "mode": "strict",
-      "scenario": "unknown-props-order",
-      "engine": "atscript",
-      "opsPerSec": 184309,
-      "p25": 182639,
-      "p75": 186088,
-      "nsPerOp": 5426,
-      "samples": 10,
-      "roundMedians": [
-        184309
-      ],
-      "roundBatchSizes": [
-        7214
-      ]
-    },
-    {
-      "mode": "strict",
-      "scenario": "unknown-props-order",
-      "engine": "zod",
-      "opsPerSec": 174389,
-      "p25": 160883,
-      "p75": 178015,
-      "nsPerOp": 5734,
-      "samples": 10,
-      "roundMedians": [
-        174389
-      ],
-      "roundBatchSizes": [
-        6895
-      ]
-    },
-    {
-      "mode": "strict",
-      "scenario": "unknown-props-order",
-      "engine": "zod-compiled",
-      "opsPerSec": 173596,
-      "p25": 163914,
-      "p75": 176879,
-      "nsPerOp": 5760,
-      "samples": 10,
-      "roundMedians": [
-        173596
-      ],
-      "roundBatchSizes": [
-        6918
-      ]
-    },
-    {
-      "mode": "strict",
-      "scenario": "invalid-order-all-errors",
-      "engine": "atscript",
-      "opsPerSec": 313968,
-      "p25": 313796,
-      "p75": 316942,
-      "nsPerOp": 3185,
-      "samples": 10,
-      "roundMedians": [
-        313968
-      ],
-      "roundBatchSizes": [
-        12740
-      ]
-    },
-    {
-      "mode": "strict",
-      "scenario": "invalid-order-all-errors",
-      "engine": "zod",
-      "opsPerSec": 137632,
-      "p25": 105292,
-      "p75": 140631,
-      "nsPerOp": 7266,
-      "samples": 10,
-      "roundMedians": [
-        137632
-      ],
-      "roundBatchSizes": [
-        5587
-      ]
-    },
-    {
-      "mode": "strict",
-      "scenario": "invalid-order-all-errors",
-      "engine": "zod-compiled",
-      "opsPerSec": 133571,
-      "p25": 113127,
-      "p75": 140342,
-      "nsPerOp": 7487,
-      "samples": 10,
-      "roundMedians": [
-        133571
-      ],
-      "roundBatchSizes": [
-        5476
-      ]
-    },
-    {
-      "mode": "strict",
-      "scenario": "invalid-order-first-error",
-      "engine": "atscript",
-      "opsPerSec": 5158798,
-      "p25": 5153063,
-      "p75": 5170688,
+      "opsPerSec": 5166955,
+      "p25": 5154480,
+      "p75": 5170523,
       "nsPerOp": 194,
       "samples": 10,
       "roundMedians": [
-        5158798
+        5166955
       ],
       "roundBatchSizes": [
-        204205
+        202730
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "invalid-order-first-error",
+      "engine": "zod-compiled-validate",
+      "opsPerSec": 101885488,
+      "p25": 100903595,
+      "p75": 103295099,
+      "nsPerOp": 10,
+      "samples": 10,
+      "roundMedians": [
+        101885488
+      ],
+      "roundBatchSizes": [
+        4164190
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "invalid-order-first-error",
+      "engine": "valibot",
+      "opsPerSec": 14366685,
+      "p25": 13746699,
+      "p75": 14441013,
+      "nsPerOp": 70,
+      "samples": 10,
+      "roundMedians": [
+        14366685
+      ],
+      "roundBatchSizes": [
+        534115
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "invalid-order-first-error",
+      "engine": "yup",
+      "opsPerSec": 23931,
+      "p25": 23167,
+      "p75": 24193,
+      "nsPerOp": 41787,
+      "samples": 10,
+      "roundMedians": [
+        23931
+      ],
+      "roundBatchSizes": [
+        998
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "invalid-order-first-error",
+      "engine": "joi",
+      "opsPerSec": 760624,
+      "p25": 758468,
+      "p75": 772233,
+      "nsPerOp": 1315,
+      "samples": 10,
+      "roundMedians": [
+        760624
+      ],
+      "roundBatchSizes": [
+        35284
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "invalid-order-first-error",
+      "engine": "ajv",
+      "opsPerSec": 52505799,
+      "p25": 52448439,
+      "p75": 52637848,
+      "nsPerOp": 19,
+      "samples": 10,
+      "roundMedians": [
+        52505799
+      ],
+      "roundBatchSizes": [
+        2072080
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "invalid-order-first-error",
+      "engine": "arktype-allows",
+      "opsPerSec": 52924536,
+      "p25": 52702615,
+      "p75": 53299107,
+      "nsPerOp": 19,
+      "samples": 10,
+      "roundMedians": [
+        52924536
+      ],
+      "roundBatchSizes": [
+        2010742
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "invalid-order-first-error",
+      "engine": "typebox-compiled",
+      "opsPerSec": 168945,
+      "p25": 165227,
+      "p75": 177510,
+      "nsPerOp": 5919,
+      "samples": 10,
+      "roundMedians": [
+        168945
+      ],
+      "roundBatchSizes": [
+        7656
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "invalid-order-first-error",
+      "engine": "typebox-value",
+      "opsPerSec": 135602,
+      "p25": 132099,
+      "p75": 137716,
+      "nsPerOp": 7375,
+      "samples": 10,
+      "roundMedians": [
+        135602
+      ],
+      "roundBatchSizes": [
+        6220
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-card",
+      "engine": "atscript",
+      "opsPerSec": 4675581,
+      "p25": 4657321,
+      "p75": 4683622,
+      "nsPerOp": 214,
+      "samples": 10,
+      "roundMedians": [
+        4675581
+      ],
+      "roundBatchSizes": [
+        185184
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-card",
+      "engine": "zod",
+      "opsPerSec": 7402533,
+      "p25": 7395370,
+      "p75": 7410593,
+      "nsPerOp": 135,
+      "samples": 10,
+      "roundMedians": [
+        7402533
+      ],
+      "roundBatchSizes": [
+        294253
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-card",
+      "engine": "zod-compiled",
+      "opsPerSec": 16937344,
+      "p25": 16923424,
+      "p75": 16953710,
+      "nsPerOp": 59,
+      "samples": 10,
+      "roundMedians": [
+        16937344
+      ],
+      "roundBatchSizes": [
+        666217
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-card",
+      "engine": "zod-compiled-validate",
+      "opsPerSec": 17424917,
+      "p25": 17321822,
+      "p75": 17454634,
+      "nsPerOp": 57,
+      "samples": 10,
+      "roundMedians": [
+        17424917
+      ],
+      "roundBatchSizes": [
+        702765
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-card",
+      "engine": "valibot",
+      "opsPerSec": 5114988,
+      "p25": 4939727,
+      "p75": 5129632,
+      "nsPerOp": 196,
+      "samples": 10,
+      "roundMedians": [
+        5114988
+      ],
+      "roundBatchSizes": [
+        204198
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-card",
+      "engine": "yup",
+      "opsPerSec": 238965,
+      "p25": 231958,
+      "p75": 243799,
+      "nsPerOp": 4185,
+      "samples": 10,
+      "roundMedians": [
+        238965
+      ],
+      "roundBatchSizes": [
+        9905
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-card",
+      "engine": "joi",
+      "opsPerSec": 1254260,
+      "p25": 1118927,
+      "p75": 1255690,
+      "nsPerOp": 797,
+      "samples": 10,
+      "roundMedians": [
+        1254260
+      ],
+      "roundBatchSizes": [
+        53643
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-card",
+      "engine": "ajv",
+      "opsPerSec": 18724563,
+      "p25": 18391721,
+      "p75": 18876054,
+      "nsPerOp": 53,
+      "samples": 10,
+      "roundMedians": [
+        18724563
+      ],
+      "roundBatchSizes": [
+        744600
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-card",
+      "engine": "arktype",
+      "opsPerSec": 18159428,
+      "p25": 18114678,
+      "p75": 18226457,
+      "nsPerOp": 55,
+      "samples": 10,
+      "roundMedians": [
+        18159428
+      ],
+      "roundBatchSizes": [
+        730071
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-card",
+      "engine": "arktype-allows",
+      "opsPerSec": 24549247,
+      "p25": 24500025,
+      "p75": 24741040,
+      "nsPerOp": 41,
+      "samples": 10,
+      "roundMedians": [
+        24549247
+      ],
+      "roundBatchSizes": [
+        992446
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-card",
+      "engine": "class-validator",
+      "opsPerSec": 224003,
+      "p25": 223332,
+      "p75": 227560,
+      "nsPerOp": 4464,
+      "samples": 10,
+      "roundMedians": [
+        224003
+      ],
+      "roundBatchSizes": [
+        11619
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-card",
+      "engine": "typebox-compiled",
+      "opsPerSec": 24412503,
+      "p25": 24392624,
+      "p75": 24542187,
+      "nsPerOp": 41,
+      "samples": 10,
+      "roundMedians": [
+        24412503
+      ],
+      "roundBatchSizes": [
+        977588
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-card",
+      "engine": "typebox-value",
+      "opsPerSec": 399819,
+      "p25": 397511,
+      "p75": 400566,
+      "nsPerOp": 2501,
+      "samples": 10,
+      "roundMedians": [
+        399819
+      ],
+      "roundBatchSizes": [
+        16351
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-paypal",
+      "engine": "atscript",
+      "opsPerSec": 6255411,
+      "p25": 6236809,
+      "p75": 6278690,
+      "nsPerOp": 160,
+      "samples": 10,
+      "roundMedians": [
+        6255411
+      ],
+      "roundBatchSizes": [
+        250246
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-paypal",
+      "engine": "zod",
+      "opsPerSec": 5099578,
+      "p25": 4804731,
+      "p75": 5165417,
+      "nsPerOp": 196,
+      "samples": 10,
+      "roundMedians": [
+        5099578
+      ],
+      "roundBatchSizes": [
+        206963
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-paypal",
+      "engine": "zod-compiled",
+      "opsPerSec": 36369125,
+      "p25": 34774066,
+      "p75": 36644208,
+      "nsPerOp": 27,
+      "samples": 10,
+      "roundMedians": [
+        36369125
+      ],
+      "roundBatchSizes": [
+        1412222
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-paypal",
+      "engine": "zod-compiled-validate",
+      "opsPerSec": 36472171,
+      "p25": 36356385,
+      "p75": 36549842,
+      "nsPerOp": 27,
+      "samples": 10,
+      "roundMedians": [
+        36472171
+      ],
+      "roundBatchSizes": [
+        1448528
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-paypal",
+      "engine": "valibot",
+      "opsPerSec": 3651240,
+      "p25": 3396854,
+      "p75": 3714780,
+      "nsPerOp": 274,
+      "samples": 10,
+      "roundMedians": [
+        3651240
+      ],
+      "roundBatchSizes": [
+        145573
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-paypal",
+      "engine": "yup",
+      "opsPerSec": 77796,
+      "p25": 76822,
+      "p75": 78683,
+      "nsPerOp": 12854,
+      "samples": 10,
+      "roundMedians": [
+        77796
+      ],
+      "roundBatchSizes": [
+        3233
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-paypal",
+      "engine": "joi",
+      "opsPerSec": 899419,
+      "p25": 866841,
+      "p75": 905054,
+      "nsPerOp": 1112,
+      "samples": 10,
+      "roundMedians": [
+        899419
+      ],
+      "roundBatchSizes": [
+        40668
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-paypal",
+      "engine": "ajv",
+      "opsPerSec": 29877607,
+      "p25": 29828903,
+      "p75": 29926382,
+      "nsPerOp": 33,
+      "samples": 10,
+      "roundMedians": [
+        29877607
+      ],
+      "roundBatchSizes": [
+        1150400
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-paypal",
+      "engine": "arktype",
+      "opsPerSec": 31291816,
+      "p25": 31079500,
+      "p75": 31625271,
+      "nsPerOp": 32,
+      "samples": 10,
+      "roundMedians": [
+        31291816
+      ],
+      "roundBatchSizes": [
+        1273939
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-paypal",
+      "engine": "arktype-allows",
+      "opsPerSec": 53292635,
+      "p25": 53057507,
+      "p75": 53381742,
+      "nsPerOp": 19,
+      "samples": 10,
+      "roundMedians": [
+        53292635
+      ],
+      "roundBatchSizes": [
+        2081105
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-paypal",
+      "engine": "class-validator",
+      "opsPerSec": 136961,
+      "p25": 133463,
+      "p75": 138601,
+      "nsPerOp": 7301,
+      "samples": 10,
+      "roundMedians": [
+        136961
+      ],
+      "roundBatchSizes": [
+        7374
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-paypal",
+      "engine": "typebox-compiled",
+      "opsPerSec": 53227782,
+      "p25": 52601155,
+      "p75": 53648185,
+      "nsPerOp": 19,
+      "samples": 10,
+      "roundMedians": [
+        53227782
+      ],
+      "roundBatchSizes": [
+        2041274
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-paypal",
+      "engine": "typebox-value",
+      "opsPerSec": 729934,
+      "p25": 723631,
+      "p75": 731096,
+      "nsPerOp": 1370,
+      "samples": 10,
+      "roundMedians": [
+        729934
+      ],
+      "roundBatchSizes": [
+        30081
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-invalid",
+      "engine": "atscript",
+      "opsPerSec": 1733895,
+      "p25": 1729513,
+      "p75": 1738383,
+      "nsPerOp": 577,
+      "samples": 10,
+      "roundMedians": [
+        1733895
+      ],
+      "roundBatchSizes": [
+        69354
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-invalid",
+      "engine": "zod",
+      "opsPerSec": 593055,
+      "p25": 534526,
+      "p75": 597707,
+      "nsPerOp": 1686,
+      "samples": 10,
+      "roundMedians": [
+        593055
+      ],
+      "roundBatchSizes": [
+        23275
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-invalid",
+      "engine": "zod-compiled",
+      "opsPerSec": 584413,
+      "p25": 522251,
+      "p75": 591277,
+      "nsPerOp": 1711,
+      "samples": 10,
+      "roundMedians": [
+        584413
+      ],
+      "roundBatchSizes": [
+        22527
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-invalid",
+      "engine": "valibot",
+      "opsPerSec": 2757403,
+      "p25": 2611033,
+      "p75": 2797973,
+      "nsPerOp": 363,
+      "samples": 10,
+      "roundMedians": [
+        2757403
+      ],
+      "roundBatchSizes": [
+        110797
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-invalid",
+      "engine": "yup",
+      "opsPerSec": 32032,
+      "p25": 31694,
+      "p75": 32297,
+      "nsPerOp": 31218,
+      "samples": 10,
+      "roundMedians": [
+        32032
+      ],
+      "roundBatchSizes": [
+        1307
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-invalid",
+      "engine": "joi",
+      "opsPerSec": 320291,
+      "p25": 318135,
+      "p75": 322758,
+      "nsPerOp": 3122,
+      "samples": 10,
+      "roundMedians": [
+        320291
+      ],
+      "roundBatchSizes": [
+        15369
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-invalid",
+      "engine": "ajv",
+      "opsPerSec": 31712219,
+      "p25": 31488812,
+      "p75": 31844235,
+      "nsPerOp": 32,
+      "samples": 10,
+      "roundMedians": [
+        31712219
+      ],
+      "roundBatchSizes": [
+        1218894
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-invalid",
+      "engine": "arktype",
+      "opsPerSec": 310001,
+      "p25": 305666,
+      "p75": 311797,
+      "nsPerOp": 3226,
+      "samples": 10,
+      "roundMedians": [
+        310001
+      ],
+      "roundBatchSizes": [
+        13719
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-invalid",
+      "engine": "class-validator",
+      "opsPerSec": 118288,
+      "p25": 117689,
+      "p75": 121203,
+      "nsPerOp": 8454,
+      "samples": 10,
+      "roundMedians": [
+        118288
+      ],
+      "roundBatchSizes": [
+        6423
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-invalid",
+      "engine": "typebox-compiled",
+      "opsPerSec": 401779,
+      "p25": 396597,
+      "p75": 405699,
+      "nsPerOp": 2489,
+      "samples": 10,
+      "roundMedians": [
+        401779
+      ],
+      "roundBatchSizes": [
+        19125
+      ]
+    },
+    {
+      "mode": "passthrough",
+      "scenario": "union-invalid",
+      "engine": "typebox-value",
+      "opsPerSec": 310206,
+      "p25": 309482,
+      "p75": 312343,
+      "nsPerOp": 3224,
+      "samples": 10,
+      "roundMedians": [
+        310206
+      ],
+      "roundBatchSizes": [
+        14769
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order",
+      "engine": "atscript",
+      "opsPerSec": 408515,
+      "p25": 407957,
+      "p75": 409242,
+      "nsPerOp": 2448,
+      "samples": 10,
+      "roundMedians": [
+        408515
+      ],
+      "roundBatchSizes": [
+        16227
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order",
+      "engine": "zod",
+      "opsPerSec": 389196,
+      "p25": 313831,
+      "p75": 398729,
+      "nsPerOp": 2569,
+      "samples": 10,
+      "roundMedians": [
+        389196
+      ],
+      "roundBatchSizes": [
+        16070
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order",
+      "engine": "zod-compiled",
+      "opsPerSec": 2794374,
+      "p25": 2406473,
+      "p75": 2831161,
+      "nsPerOp": 358,
+      "samples": 10,
+      "roundMedians": [
+        2794374
+      ],
+      "roundBatchSizes": [
+        117685
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order",
+      "engine": "zod-compiled-validate",
+      "opsPerSec": 2916522,
+      "p25": 2558181,
+      "p75": 2926681,
+      "nsPerOp": 343,
+      "samples": 10,
+      "roundMedians": [
+        2916522
+      ],
+      "roundBatchSizes": [
+        121595
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order",
+      "engine": "valibot",
+      "opsPerSec": 312315,
+      "p25": 304912,
+      "p75": 318163,
+      "nsPerOp": 3202,
+      "samples": 10,
+      "roundMedians": [
+        312315
+      ],
+      "roundBatchSizes": [
+        13066
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order",
+      "engine": "yup",
+      "opsPerSec": 18720,
+      "p25": 17111,
+      "p75": 19036,
+      "nsPerOp": 53418,
+      "samples": 10,
+      "roundMedians": [
+        18720
+      ],
+      "roundBatchSizes": [
+        813
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order",
+      "engine": "joi",
+      "opsPerSec": 54910,
+      "p25": 54702,
+      "p75": 55025,
+      "nsPerOp": 18212,
+      "samples": 10,
+      "roundMedians": [
+        54910
+      ],
+      "roundBatchSizes": [
+        2562
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order",
+      "engine": "ajv",
+      "opsPerSec": 1731596,
+      "p25": 1700498,
+      "p75": 1787250,
+      "nsPerOp": 578,
+      "samples": 10,
+      "roundMedians": [
+        1731596
+      ],
+      "roundBatchSizes": [
+        68770
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order",
+      "engine": "arktype",
+      "opsPerSec": 920494,
+      "p25": 919769,
+      "p75": 924385,
+      "nsPerOp": 1086,
+      "samples": 10,
+      "roundMedians": [
+        920494
+      ],
+      "roundBatchSizes": [
+        37520
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order",
+      "engine": "arktype-allows",
+      "opsPerSec": 915653,
+      "p25": 912307,
+      "p75": 918432,
+      "nsPerOp": 1092,
+      "samples": 10,
+      "roundMedians": [
+        915653
+      ],
+      "roundBatchSizes": [
+        36582
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order",
+      "engine": "class-validator",
+      "opsPerSec": 17452,
+      "p25": 17118,
+      "p75": 17620,
+      "nsPerOp": 57302,
+      "samples": 10,
+      "roundMedians": [
+        17452
+      ],
+      "roundBatchSizes": [
+        973
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order",
+      "engine": "typebox-compiled",
+      "opsPerSec": 1199014,
+      "p25": 1198371,
+      "p75": 1205349,
+      "nsPerOp": 834,
+      "samples": 10,
+      "roundMedians": [
+        1199014
+      ],
+      "roundBatchSizes": [
+        51467
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order",
+      "engine": "typebox-value",
+      "opsPerSec": 20906,
+      "p25": 20811,
+      "p75": 21084,
+      "nsPerOp": 47833,
+      "samples": 10,
+      "roundMedians": [
+        20906
+      ],
+      "roundBatchSizes": [
+        922
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order-paypal",
+      "engine": "atscript",
+      "opsPerSec": 418689,
+      "p25": 416665,
+      "p75": 419748,
+      "nsPerOp": 2388,
+      "samples": 10,
+      "roundMedians": [
+        418689
+      ],
+      "roundBatchSizes": [
+        16888
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order-paypal",
+      "engine": "zod",
+      "opsPerSec": 379544,
+      "p25": 369496,
+      "p75": 380017,
+      "nsPerOp": 2635,
+      "samples": 10,
+      "roundMedians": [
+        379544
+      ],
+      "roundBatchSizes": [
+        15145
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order-paypal",
+      "engine": "zod-compiled",
+      "opsPerSec": 2934507,
+      "p25": 2564137,
+      "p75": 2976054,
+      "nsPerOp": 341,
+      "samples": 10,
+      "roundMedians": [
+        2934507
+      ],
+      "roundBatchSizes": [
+        124051
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order-paypal",
+      "engine": "zod-compiled-validate",
+      "opsPerSec": 2989883,
+      "p25": 2705947,
+      "p75": 3034899,
+      "nsPerOp": 334,
+      "samples": 10,
+      "roundMedians": [
+        2989883
+      ],
+      "roundBatchSizes": [
+        128317
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order-paypal",
+      "engine": "valibot",
+      "opsPerSec": 314737,
+      "p25": 303462,
+      "p75": 320495,
+      "nsPerOp": 3177,
+      "samples": 10,
+      "roundMedians": [
+        314737
+      ],
+      "roundBatchSizes": [
+        12704
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order-paypal",
+      "engine": "yup",
+      "opsPerSec": 13791,
+      "p25": 13545,
+      "p75": 14133,
+      "nsPerOp": 72513,
+      "samples": 10,
+      "roundMedians": [
+        13791
+      ],
+      "roundBatchSizes": [
+        586
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order-paypal",
+      "engine": "joi",
+      "opsPerSec": 51761,
+      "p25": 51629,
+      "p75": 52320,
+      "nsPerOp": 19319,
+      "samples": 10,
+      "roundMedians": [
+        51761
+      ],
+      "roundBatchSizes": [
+        2462
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order-paypal",
+      "engine": "ajv",
+      "opsPerSec": 1784650,
+      "p25": 1776636,
+      "p75": 1789174,
+      "nsPerOp": 560,
+      "samples": 10,
+      "roundMedians": [
+        1784650
+      ],
+      "roundBatchSizes": [
+        71509
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order-paypal",
+      "engine": "arktype",
+      "opsPerSec": 1011801,
+      "p25": 1005609,
+      "p75": 1015048,
+      "nsPerOp": 988,
+      "samples": 10,
+      "roundMedians": [
+        1011801
+      ],
+      "roundBatchSizes": [
+        40296
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order-paypal",
+      "engine": "arktype-allows",
+      "opsPerSec": 983912,
+      "p25": 982526,
+      "p75": 985129,
+      "nsPerOp": 1016,
+      "samples": 10,
+      "roundMedians": [
+        983912
+      ],
+      "roundBatchSizes": [
+        39295
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order-paypal",
+      "engine": "class-validator",
+      "opsPerSec": 15985,
+      "p25": 15820,
+      "p75": 16272,
+      "nsPerOp": 62560,
+      "samples": 10,
+      "roundMedians": [
+        15985
+      ],
+      "roundBatchSizes": [
+        913
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order-paypal",
+      "engine": "typebox-compiled",
+      "opsPerSec": 1260637,
+      "p25": 1255716,
+      "p75": 1280113,
+      "nsPerOp": 793,
+      "samples": 10,
+      "roundMedians": [
+        1260637
+      ],
+      "roundBatchSizes": [
+        54130
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "valid-order-paypal",
+      "engine": "typebox-value",
+      "opsPerSec": 21781,
+      "p25": 21745,
+      "p75": 21918,
+      "nsPerOp": 45912,
+      "samples": 10,
+      "roundMedians": [
+        21781
+      ],
+      "roundBatchSizes": [
+        975
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "large-order-50-items",
+      "engine": "atscript",
+      "opsPerSec": 69496,
+      "p25": 69133,
+      "p75": 69674,
+      "nsPerOp": 14389,
+      "samples": 10,
+      "roundMedians": [
+        69496
+      ],
+      "roundBatchSizes": [
+        2784
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "large-order-50-items",
+      "engine": "zod",
+      "opsPerSec": 42769,
+      "p25": 39123,
+      "p75": 44026,
+      "nsPerOp": 23381,
+      "samples": 10,
+      "roundMedians": [
+        42769
+      ],
+      "roundBatchSizes": [
+        1789
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "large-order-50-items",
+      "engine": "zod-compiled",
+      "opsPerSec": 397790,
+      "p25": 340871,
+      "p75": 402917,
+      "nsPerOp": 2514,
+      "samples": 10,
+      "roundMedians": [
+        397790
+      ],
+      "roundBatchSizes": [
+        16123
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "large-order-50-items",
+      "engine": "zod-compiled-validate",
+      "opsPerSec": 405978,
+      "p25": 353551,
+      "p75": 410176,
+      "nsPerOp": 2463,
+      "samples": 10,
+      "roundMedians": [
+        405978
+      ],
+      "roundBatchSizes": [
+        16204
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "large-order-50-items",
+      "engine": "valibot",
+      "opsPerSec": 34403,
+      "p25": 33596,
+      "p75": 34471,
+      "nsPerOp": 29067,
+      "samples": 10,
+      "roundMedians": [
+        34403
+      ],
+      "roundBatchSizes": [
+        1367
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "large-order-50-items",
+      "engine": "yup",
+      "opsPerSec": 1855,
+      "p25": 1673,
+      "p75": 1874,
+      "nsPerOp": 539057,
+      "samples": 10,
+      "roundMedians": [
+        1855
+      ],
+      "roundBatchSizes": [
+        80
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "large-order-50-items",
+      "engine": "joi",
+      "opsPerSec": 4548,
+      "p25": 4495,
+      "p75": 4558,
+      "nsPerOp": 219876,
+      "samples": 10,
+      "roundMedians": [
+        4548
+      ],
+      "roundBatchSizes": [
+        222
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "large-order-50-items",
+      "engine": "ajv",
+      "opsPerSec": 292587,
+      "p25": 277726,
+      "p75": 298461,
+      "nsPerOp": 3418,
+      "samples": 10,
+      "roundMedians": [
+        292587
+      ],
+      "roundBatchSizes": [
+        10872
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "large-order-50-items",
+      "engine": "arktype",
+      "opsPerSec": 99465,
+      "p25": 99131,
+      "p75": 99610,
+      "nsPerOp": 10054,
+      "samples": 10,
+      "roundMedians": [
+        99465
+      ],
+      "roundBatchSizes": [
+        4040
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "large-order-50-items",
+      "engine": "arktype-allows",
+      "opsPerSec": 101977,
+      "p25": 101211,
+      "p75": 102284,
+      "nsPerOp": 9806,
+      "samples": 10,
+      "roundMedians": [
+        101977
+      ],
+      "roundBatchSizes": [
+        4077
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "large-order-50-items",
+      "engine": "class-validator",
+      "opsPerSec": 1783,
+      "p25": 1768,
+      "p75": 1801,
+      "nsPerOp": 560905,
+      "samples": 10,
+      "roundMedians": [
+        1783
+      ],
+      "roundBatchSizes": [
+        99
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "large-order-50-items",
+      "engine": "typebox-compiled",
+      "opsPerSec": 144851,
+      "p25": 144442,
+      "p75": 145452,
+      "nsPerOp": 6904,
+      "samples": 10,
+      "roundMedians": [
+        144851
+      ],
+      "roundBatchSizes": [
+        6163
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "large-order-50-items",
+      "engine": "typebox-value",
+      "opsPerSec": 1799,
+      "p25": 1786,
+      "p75": 1809,
+      "nsPerOp": 555760,
+      "samples": 10,
+      "roundMedians": [
+        1799
+      ],
+      "roundBatchSizes": [
+        75
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "unknown-props-order",
+      "engine": "atscript",
+      "opsPerSec": 193381,
+      "p25": 193252,
+      "p75": 193701,
+      "nsPerOp": 5171,
+      "samples": 10,
+      "roundMedians": [
+        193381
+      ],
+      "roundBatchSizes": [
+        7559
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "unknown-props-order",
+      "engine": "zod",
+      "opsPerSec": 173737,
+      "p25": 135573,
+      "p75": 180362,
+      "nsPerOp": 5756,
+      "samples": 10,
+      "roundMedians": [
+        173737
+      ],
+      "roundBatchSizes": [
+        7104
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "unknown-props-order",
+      "engine": "zod-compiled",
+      "opsPerSec": 171355,
+      "p25": 159457,
+      "p75": 172713,
+      "nsPerOp": 5836,
+      "samples": 10,
+      "roundMedians": [
+        171355
+      ],
+      "roundBatchSizes": [
+        6903
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "unknown-props-order",
+      "engine": "valibot",
+      "opsPerSec": 240060,
+      "p25": 229227,
+      "p75": 242473,
+      "nsPerOp": 4166,
+      "samples": 10,
+      "roundMedians": [
+        240060
+      ],
+      "roundBatchSizes": [
+        9724
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "unknown-props-order",
+      "engine": "yup",
+      "opsPerSec": 5728,
+      "p25": 5411,
+      "p75": 5933,
+      "nsPerOp": 174591,
+      "samples": 10,
+      "roundMedians": [
+        5728
+      ],
+      "roundBatchSizes": [
+        256
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "unknown-props-order",
+      "engine": "joi",
+      "opsPerSec": 32821,
+      "p25": 32142,
+      "p75": 33468,
+      "nsPerOp": 30468,
+      "samples": 10,
+      "roundMedians": [
+        32821
+      ],
+      "roundBatchSizes": [
+        1865
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "unknown-props-order",
+      "engine": "ajv",
+      "opsPerSec": 1469757,
+      "p25": 1465301,
+      "p75": 1490960,
+      "nsPerOp": 680,
+      "samples": 10,
+      "roundMedians": [
+        1469757
+      ],
+      "roundBatchSizes": [
+        60630
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "unknown-props-order",
+      "engine": "arktype",
+      "opsPerSec": 41443,
+      "p25": 40389,
+      "p75": 41556,
+      "nsPerOp": 24129,
+      "samples": 10,
+      "roundMedians": [
+        41443
+      ],
+      "roundBatchSizes": [
+        2176
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "unknown-props-order",
+      "engine": "class-validator",
+      "opsPerSec": 15279,
+      "p25": 15104,
+      "p75": 15376,
+      "nsPerOp": 65449,
+      "samples": 10,
+      "roundMedians": [
+        15279
+      ],
+      "roundBatchSizes": [
+        860
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "unknown-props-order",
+      "engine": "typebox-compiled",
+      "opsPerSec": 13331,
+      "p25": 13158,
+      "p75": 13379,
+      "nsPerOp": 75012,
+      "samples": 10,
+      "roundMedians": [
+        13331
+      ],
+      "roundBatchSizes": [
+        632
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "unknown-props-order",
+      "engine": "typebox-value",
+      "opsPerSec": 12840,
+      "p25": 12781,
+      "p75": 12936,
+      "nsPerOp": 77880,
+      "samples": 10,
+      "roundMedians": [
+        12840
+      ],
+      "roundBatchSizes": [
+        625
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "invalid-order-all-errors",
+      "engine": "atscript",
+      "opsPerSec": 309110,
+      "p25": 308938,
+      "p75": 309541,
+      "nsPerOp": 3235,
+      "samples": 10,
+      "roundMedians": [
+        309110
+      ],
+      "roundBatchSizes": [
+        12532
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "invalid-order-all-errors",
+      "engine": "zod",
+      "opsPerSec": 133111,
+      "p25": 103075,
+      "p75": 134719,
+      "nsPerOp": 7513,
+      "samples": 10,
+      "roundMedians": [
+        133111
+      ],
+      "roundBatchSizes": [
+        5445
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "invalid-order-all-errors",
+      "engine": "zod-compiled",
+      "opsPerSec": 138388,
+      "p25": 130873,
+      "p75": 141490,
+      "nsPerOp": 7226,
+      "samples": 10,
+      "roundMedians": [
+        138388
+      ],
+      "roundBatchSizes": [
+        5473
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "invalid-order-all-errors",
+      "engine": "valibot",
+      "opsPerSec": 390780,
+      "p25": 364567,
+      "p75": 392970,
+      "nsPerOp": 2559,
+      "samples": 10,
+      "roundMedians": [
+        390780
+      ],
+      "roundBatchSizes": [
+        15740
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "invalid-order-all-errors",
+      "engine": "yup",
+      "opsPerSec": 4570,
+      "p25": 4280,
+      "p75": 4705,
+      "nsPerOp": 218810,
+      "samples": 10,
+      "roundMedians": [
+        4570
+      ],
+      "roundBatchSizes": [
+        189
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "invalid-order-all-errors",
+      "engine": "joi",
+      "opsPerSec": 43952,
+      "p25": 43387,
+      "p75": 44560,
+      "nsPerOp": 22752,
+      "samples": 10,
+      "roundMedians": [
+        43952
+      ],
+      "roundBatchSizes": [
+        2236
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "invalid-order-all-errors",
+      "engine": "ajv",
+      "opsPerSec": 1650932,
+      "p25": 1630491,
+      "p75": 1656101,
+      "nsPerOp": 606,
+      "samples": 10,
+      "roundMedians": [
+        1650932
+      ],
+      "roundBatchSizes": [
+        62832
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "invalid-order-all-errors",
+      "engine": "arktype",
+      "opsPerSec": 32733,
+      "p25": 32466,
+      "p75": 33045,
+      "nsPerOp": 30550,
+      "samples": 10,
+      "roundMedians": [
+        32733
+      ],
+      "roundBatchSizes": [
+        1518
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "invalid-order-all-errors",
+      "engine": "class-validator",
+      "opsPerSec": 25143,
+      "p25": 24617,
+      "p75": 25840,
+      "nsPerOp": 39773,
+      "samples": 10,
+      "roundMedians": [
+        25143
+      ],
+      "roundBatchSizes": [
+        1387
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "invalid-order-all-errors",
+      "engine": "typebox-compiled",
+      "opsPerSec": 38881,
+      "p25": 38646,
+      "p75": 39663,
+      "nsPerOp": 25719,
+      "samples": 10,
+      "roundMedians": [
+        38881
+      ],
+      "roundBatchSizes": [
+        1853
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "invalid-order-all-errors",
+      "engine": "typebox-value",
+      "opsPerSec": 35928,
+      "p25": 35629,
+      "p75": 36055,
+      "nsPerOp": 27834,
+      "samples": 10,
+      "roundMedians": [
+        35928
+      ],
+      "roundBatchSizes": [
+        1717
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "invalid-order-first-error",
+      "engine": "atscript",
+      "opsPerSec": 3696064,
+      "p25": 3690030,
+      "p75": 3698506,
+      "nsPerOp": 271,
+      "samples": 10,
+      "roundMedians": [
+        3696064
+      ],
+      "roundBatchSizes": [
+        148878
       ]
     },
     {
       "mode": "strict",
       "scenario": "invalid-order-first-error",
       "engine": "zod-compiled-validate",
-      "opsPerSec": 102660065,
-      "p25": 102223691,
-      "p75": 103136481,
+      "opsPerSec": 103299318,
+      "p25": 103115675,
+      "p75": 103439681,
       "nsPerOp": 10,
       "samples": 10,
       "roundMedians": [
-        102660065
+        103299318
       ],
       "roundBatchSizes": [
-        4119965
+        4067843
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "invalid-order-first-error",
+      "engine": "valibot",
+      "opsPerSec": 14224906,
+      "p25": 13612184,
+      "p75": 14294367,
+      "nsPerOp": 70,
+      "samples": 10,
+      "roundMedians": [
+        14224906
+      ],
+      "roundBatchSizes": [
+        550266
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "invalid-order-first-error",
+      "engine": "yup",
+      "opsPerSec": 23278,
+      "p25": 22766,
+      "p75": 23318,
+      "nsPerOp": 42959,
+      "samples": 10,
+      "roundMedians": [
+        23278
+      ],
+      "roundBatchSizes": [
+        976
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "invalid-order-first-error",
+      "engine": "joi",
+      "opsPerSec": 793593,
+      "p25": 778526,
+      "p75": 807552,
+      "nsPerOp": 1260,
+      "samples": 10,
+      "roundMedians": [
+        793593
+      ],
+      "roundBatchSizes": [
+        37351
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "invalid-order-first-error",
+      "engine": "ajv",
+      "opsPerSec": 15247172,
+      "p25": 15022040,
+      "p75": 15303720,
+      "nsPerOp": 66,
+      "samples": 10,
+      "roundMedians": [
+        15247172
+      ],
+      "roundBatchSizes": [
+        601422
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "invalid-order-first-error",
+      "engine": "arktype-allows",
+      "opsPerSec": 52127931,
+      "p25": 51919868,
+      "p75": 52879347,
+      "nsPerOp": 19,
+      "samples": 10,
+      "roundMedians": [
+        52127931
+      ],
+      "roundBatchSizes": [
+        1998120
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "invalid-order-first-error",
+      "engine": "typebox-compiled",
+      "opsPerSec": 110619,
+      "p25": 110411,
+      "p75": 111134,
+      "nsPerOp": 9040,
+      "samples": 10,
+      "roundMedians": [
+        110619
+      ],
+      "roundBatchSizes": [
+        5093
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "invalid-order-first-error",
+      "engine": "typebox-value",
+      "opsPerSec": 83753,
+      "p25": 83099,
+      "p75": 84532,
+      "nsPerOp": 11940,
+      "samples": 10,
+      "roundMedians": [
+        83753
+      ],
+      "roundBatchSizes": [
+        3805
       ]
     },
     {
       "mode": "strict",
       "scenario": "union-card",
       "engine": "atscript",
-      "opsPerSec": 4187659,
-      "p25": 4183104,
-      "p75": 4201234,
-      "nsPerOp": 239,
+      "opsPerSec": 4102975,
+      "p25": 4097567,
+      "p75": 4109826,
+      "nsPerOp": 244,
       "samples": 10,
       "roundMedians": [
-        4187659
+        4102975
       ],
       "roundBatchSizes": [
-        166649
+        163283
       ]
     },
     {
       "mode": "strict",
       "scenario": "union-card",
       "engine": "zod",
-      "opsPerSec": 7390963,
-      "p25": 7382470,
-      "p75": 7396200,
-      "nsPerOp": 135,
+      "opsPerSec": 7273525,
+      "p25": 7261520,
+      "p75": 7275017,
+      "nsPerOp": 137,
       "samples": 10,
       "roundMedians": [
-        7390963
+        7273525
       ],
       "roundBatchSizes": [
-        295939
+        290217
       ]
     },
     {
       "mode": "strict",
       "scenario": "union-card",
       "engine": "zod-compiled",
-      "opsPerSec": 20862539,
-      "p25": 20285536,
-      "p75": 21352790,
-      "nsPerOp": 48,
+      "opsPerSec": 21643759,
+      "p25": 21544805,
+      "p75": 21769458,
+      "nsPerOp": 46,
       "samples": 10,
       "roundMedians": [
-        20862539
+        21643759
       ],
       "roundBatchSizes": [
-        826088
+        852494
       ]
     },
     {
       "mode": "strict",
       "scenario": "union-card",
       "engine": "zod-compiled-validate",
-      "opsPerSec": 21172021,
-      "p25": 21135143,
-      "p75": 21256141,
-      "nsPerOp": 47,
+      "opsPerSec": 21554978,
+      "p25": 21453637,
+      "p75": 21659251,
+      "nsPerOp": 46,
       "samples": 10,
       "roundMedians": [
-        21172021
+        21554978
       ],
       "roundBatchSizes": [
-        844772
+        842158
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-card",
+      "engine": "valibot",
+      "opsPerSec": 5100620,
+      "p25": 4935576,
+      "p75": 5113376,
+      "nsPerOp": 196,
+      "samples": 10,
+      "roundMedians": [
+        5100620
+      ],
+      "roundBatchSizes": [
+        205688
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-card",
+      "engine": "yup",
+      "opsPerSec": 208361,
+      "p25": 204352,
+      "p75": 213694,
+      "nsPerOp": 4799,
+      "samples": 10,
+      "roundMedians": [
+        208361
+      ],
+      "roundBatchSizes": [
+        8785
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-card",
+      "engine": "joi",
+      "opsPerSec": 1270399,
+      "p25": 1265870,
+      "p75": 1281356,
+      "nsPerOp": 787,
+      "samples": 10,
+      "roundMedians": [
+        1270399
+      ],
+      "roundBatchSizes": [
+        54749
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-card",
+      "engine": "ajv",
+      "opsPerSec": 17209420,
+      "p25": 16925333,
+      "p75": 17325942,
+      "nsPerOp": 58,
+      "samples": 10,
+      "roundMedians": [
+        17209420
+      ],
+      "roundBatchSizes": [
+        685253
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-card",
+      "engine": "arktype",
+      "opsPerSec": 9240909,
+      "p25": 9185011,
+      "p75": 9339321,
+      "nsPerOp": 108,
+      "samples": 10,
+      "roundMedians": [
+        9240909
+      ],
+      "roundBatchSizes": [
+        370334
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-card",
+      "engine": "arktype-allows",
+      "opsPerSec": 10492133,
+      "p25": 10471795,
+      "p75": 10566798,
+      "nsPerOp": 95,
+      "samples": 10,
+      "roundMedians": [
+        10492133
+      ],
+      "roundBatchSizes": [
+        423730
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-card",
+      "engine": "class-validator",
+      "opsPerSec": 220322,
+      "p25": 219821,
+      "p75": 222373,
+      "nsPerOp": 4539,
+      "samples": 10,
+      "roundMedians": [
+        220322
+      ],
+      "roundBatchSizes": [
+        11768
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-card",
+      "engine": "typebox-compiled",
+      "opsPerSec": 22687972,
+      "p25": 22213109,
+      "p75": 22733779,
+      "nsPerOp": 44,
+      "samples": 10,
+      "roundMedians": [
+        22687972
+      ],
+      "roundBatchSizes": [
+        899623
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-card",
+      "engine": "typebox-value",
+      "opsPerSec": 315985,
+      "p25": 315063,
+      "p75": 316484,
+      "nsPerOp": 3165,
+      "samples": 10,
+      "roundMedians": [
+        315985
+      ],
+      "roundBatchSizes": [
+        12906
       ]
     },
     {
       "mode": "strict",
       "scenario": "union-paypal",
       "engine": "atscript",
-      "opsPerSec": 6161034,
-      "p25": 6102297,
-      "p75": 6189078,
-      "nsPerOp": 162,
+      "opsPerSec": 5919416,
+      "p25": 5827087,
+      "p75": 5997712,
+      "nsPerOp": 169,
       "samples": 10,
       "roundMedians": [
-        6161034
+        5919416
       ],
       "roundBatchSizes": [
-        244539
+        236768
       ]
     },
     {
       "mode": "strict",
       "scenario": "union-paypal",
       "engine": "zod",
-      "opsPerSec": 5009712,
-      "p25": 4716103,
-      "p75": 5046891,
-      "nsPerOp": 200,
+      "opsPerSec": 4968568,
+      "p25": 4758694,
+      "p75": 4992710,
+      "nsPerOp": 201,
       "samples": 10,
       "roundMedians": [
-        5009712
+        4968568
       ],
       "roundBatchSizes": [
-        197788
+        196175
       ]
     },
     {
       "mode": "strict",
       "scenario": "union-paypal",
       "engine": "zod-compiled",
-      "opsPerSec": 39507516,
-      "p25": 39190955,
-      "p75": 39879197,
+      "opsPerSec": 40924432,
+      "p25": 40026326,
+      "p75": 41062024,
+      "nsPerOp": 24,
+      "samples": 10,
+      "roundMedians": [
+        40924432
+      ],
+      "roundBatchSizes": [
+        1528178
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-paypal",
+      "engine": "zod-compiled-validate",
+      "opsPerSec": 39606506,
+      "p25": 39421154,
+      "p75": 39766888,
       "nsPerOp": 25,
       "samples": 10,
       "roundMedians": [
-        39507516
+        39606506
       ],
       "roundBatchSizes": [
-        1581110
+        1573499
       ]
     },
     {
       "mode": "strict",
       "scenario": "union-paypal",
-      "engine": "zod-compiled-validate",
-      "opsPerSec": 38252028,
-      "p25": 37696417,
-      "p75": 38691610,
-      "nsPerOp": 26,
+      "engine": "valibot",
+      "opsPerSec": 3154789,
+      "p25": 2954325,
+      "p75": 3178734,
+      "nsPerOp": 317,
       "samples": 10,
       "roundMedians": [
-        38252028
+        3154789
       ],
       "roundBatchSizes": [
-        1564536
+        128586
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-paypal",
+      "engine": "yup",
+      "opsPerSec": 82537,
+      "p25": 80894,
+      "p75": 84529,
+      "nsPerOp": 12116,
+      "samples": 10,
+      "roundMedians": [
+        82537
+      ],
+      "roundBatchSizes": [
+        3384
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-paypal",
+      "engine": "joi",
+      "opsPerSec": 866750,
+      "p25": 860669,
+      "p75": 871078,
+      "nsPerOp": 1154,
+      "samples": 10,
+      "roundMedians": [
+        866750
+      ],
+      "roundBatchSizes": [
+        40335
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-paypal",
+      "engine": "ajv",
+      "opsPerSec": 22399027,
+      "p25": 22184299,
+      "p75": 22423996,
+      "nsPerOp": 45,
+      "samples": 10,
+      "roundMedians": [
+        22399027
+      ],
+      "roundBatchSizes": [
+        871345
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-paypal",
+      "engine": "arktype",
+      "opsPerSec": 16556670,
+      "p25": 16406053,
+      "p75": 16633628,
+      "nsPerOp": 60,
+      "samples": 10,
+      "roundMedians": [
+        16556670
+      ],
+      "roundBatchSizes": [
+        656101
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-paypal",
+      "engine": "arktype-allows",
+      "opsPerSec": 22321613,
+      "p25": 22279120,
+      "p75": 22347406,
+      "nsPerOp": 45,
+      "samples": 10,
+      "roundMedians": [
+        22321613
+      ],
+      "roundBatchSizes": [
+        888654
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-paypal",
+      "engine": "class-validator",
+      "opsPerSec": 134617,
+      "p25": 133642,
+      "p75": 135884,
+      "nsPerOp": 7428,
+      "samples": 10,
+      "roundMedians": [
+        134617
+      ],
+      "roundBatchSizes": [
+        7397
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-paypal",
+      "engine": "typebox-compiled",
+      "opsPerSec": 44779386,
+      "p25": 44697735,
+      "p75": 44843334,
+      "nsPerOp": 22,
+      "samples": 10,
+      "roundMedians": [
+        44779386
+      ],
+      "roundBatchSizes": [
+        1753293
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-paypal",
+      "engine": "typebox-value",
+      "opsPerSec": 601276,
+      "p25": 596339,
+      "p75": 603290,
+      "nsPerOp": 1663,
+      "samples": 10,
+      "roundMedians": [
+        601276
+      ],
+      "roundBatchSizes": [
+        24756
       ]
     },
     {
       "mode": "strict",
       "scenario": "union-invalid",
       "engine": "atscript",
-      "opsPerSec": 1533736,
-      "p25": 1520917,
-      "p75": 1545642,
-      "nsPerOp": 652,
+      "opsPerSec": 1559802,
+      "p25": 1558721,
+      "p75": 1563240,
+      "nsPerOp": 641,
       "samples": 10,
       "roundMedians": [
-        1533736
+        1559802
       ],
       "roundBatchSizes": [
-        59502
+        60680
       ]
     },
     {
       "mode": "strict",
       "scenario": "union-invalid",
       "engine": "zod",
-      "opsPerSec": 470843,
-      "p25": 412962,
-      "p75": 476046,
-      "nsPerOp": 2124,
+      "opsPerSec": 472011,
+      "p25": 434827,
+      "p75": 477271,
+      "nsPerOp": 2119,
       "samples": 10,
       "roundMedians": [
-        470843
+        472011
       ],
       "roundBatchSizes": [
-        17837
+        18170
       ]
     },
     {
       "mode": "strict",
       "scenario": "union-invalid",
       "engine": "zod-compiled",
-      "opsPerSec": 461419,
-      "p25": 416384,
-      "p75": 466787,
-      "nsPerOp": 2167,
+      "opsPerSec": 457371,
+      "p25": 427226,
+      "p75": 462431,
+      "nsPerOp": 2186,
       "samples": 10,
       "roundMedians": [
-        461419
+        457371
       ],
       "roundBatchSizes": [
-        17494
+        17604
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-invalid",
+      "engine": "valibot",
+      "opsPerSec": 2212611,
+      "p25": 2043529,
+      "p75": 2247401,
+      "nsPerOp": 452,
+      "samples": 10,
+      "roundMedians": [
+        2212611
+      ],
+      "roundBatchSizes": [
+        89389
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-invalid",
+      "engine": "yup",
+      "opsPerSec": 23625,
+      "p25": 22534,
+      "p75": 23789,
+      "nsPerOp": 42328,
+      "samples": 10,
+      "roundMedians": [
+        23625
+      ],
+      "roundBatchSizes": [
+        960
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-invalid",
+      "engine": "joi",
+      "opsPerSec": 262654,
+      "p25": 257736,
+      "p75": 265812,
+      "nsPerOp": 3807,
+      "samples": 10,
+      "roundMedians": [
+        262654
+      ],
+      "roundBatchSizes": [
+        13033
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-invalid",
+      "engine": "ajv",
+      "opsPerSec": 23361925,
+      "p25": 23063135,
+      "p75": 23403132,
+      "nsPerOp": 43,
+      "samples": 10,
+      "roundMedians": [
+        23361925
+      ],
+      "roundBatchSizes": [
+        898739
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-invalid",
+      "engine": "arktype",
+      "opsPerSec": 309412,
+      "p25": 306579,
+      "p75": 311406,
+      "nsPerOp": 3232,
+      "samples": 10,
+      "roundMedians": [
+        309412
+      ],
+      "roundBatchSizes": [
+        13458
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-invalid",
+      "engine": "class-validator",
+      "opsPerSec": 117034,
+      "p25": 115004,
+      "p75": 119870,
+      "nsPerOp": 8545,
+      "samples": 10,
+      "roundMedians": [
+        117034
+      ],
+      "roundBatchSizes": [
+        6390
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-invalid",
+      "engine": "typebox-compiled",
+      "opsPerSec": 269537,
+      "p25": 266453,
+      "p75": 270489,
+      "nsPerOp": 3710,
+      "samples": 10,
+      "roundMedians": [
+        269537
+      ],
+      "roundBatchSizes": [
+        12041
+      ]
+    },
+    {
+      "mode": "strict",
+      "scenario": "union-invalid",
+      "engine": "typebox-value",
+      "opsPerSec": 222339,
+      "p25": 219346,
+      "p75": 223719,
+      "nsPerOp": 4498,
+      "samples": 10,
+      "roundMedians": [
+        222339
+      ],
+      "roundBatchSizes": [
+        10263
       ]
     }
   ]

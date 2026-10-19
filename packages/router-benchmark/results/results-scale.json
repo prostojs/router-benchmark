@@ -2,7 +2,7 @@
   "quick": false,
   "only": null,
   "environment": {
-    "date": "2026-10-19T11:52:46.847Z",
+    "date": "2026-10-19T19:37:53.257Z",
     "node": "v24.22.0",
     "v8": "13.6.233.17-node.57",
     "os": "Darwin 27.0.0 (darwin arm64)",
@@ -37,24 +37,24 @@
         "name": "ProstoRouter",
         "points": {
           "22": {
-            "median": 43846,
-            "min": 43846,
-            "max": 43846
+            "median": 43455,
+            "min": 43455,
+            "max": 43455
           },
           "50": {
-            "median": 13815,
-            "min": 13815,
-            "max": 13815
+            "median": 14331,
+            "min": 14331,
+            "max": 14331
           },
           "100": {
-            "median": 14018,
-            "min": 14018,
-            "max": 14018
+            "median": 13527,
+            "min": 13527,
+            "max": 13527
           },
           "200": {
-            "median": 12457,
-            "min": 12457,
-            "max": 12457
+            "median": 12312,
+            "min": 12312,
+            "max": 12312
           }
         }
       },
@@ -62,24 +62,24 @@
         "name": "FindMyWay",
         "points": {
           "22": {
-            "median": 35058,
-            "min": 35058,
-            "max": 35058
+            "median": 35071,
+            "min": 35071,
+            "max": 35071
           },
           "50": {
-            "median": 19641,
-            "min": 19641,
-            "max": 19641
+            "median": 20288,
+            "min": 20288,
+            "max": 20288
           },
           "100": {
-            "median": 19711,
-            "min": 19711,
-            "max": 19711
+            "median": 19139,
+            "min": 19139,
+            "max": 19139
           },
           "200": {
-            "median": 14889,
-            "min": 14889,
-            "max": 14889
+            "median": 15391,
+            "min": 15391,
+            "max": 15391
           }
         }
       },
@@ -87,24 +87,24 @@
         "name": "Rou3",
         "points": {
           "22": {
-            "median": 54610,
-            "min": 54610,
-            "max": 54610
+            "median": 55082,
+            "min": 55082,
+            "max": 55082
           },
           "50": {
-            "median": 19960,
-            "min": 19960,
-            "max": 19960
+            "median": 19211,
+            "min": 19211,
+            "max": 19211
           },
           "100": {
-            "median": 18345,
-            "min": 18345,
-            "max": 18345
+            "median": 18595,
+            "min": 18595,
+            "max": 18595
           },
           "200": {
-            "median": 14981,
-            "min": 14981,
-            "max": 14981
+            "median": 14864,
+            "min": 14864,
+            "max": 14864
           }
         }
       },
@@ -112,24 +112,24 @@
         "name": "Rou3 (compiled)",
         "points": {
           "22": {
-            "median": 136846,
-            "min": 136846,
-            "max": 136846
+            "median": 140539,
+            "min": 140539,
+            "max": 140539
           },
           "50": {
-            "median": 39929,
-            "min": 39929,
-            "max": 39929
+            "median": 39571,
+            "min": 39571,
+            "max": 39571
           },
           "100": {
-            "median": 39308,
-            "min": 39308,
-            "max": 39308
+            "median": 38955,
+            "min": 38955,
+            "max": 38955
           },
           "200": {
-            "median": 38184,
-            "min": 38184,
-            "max": 38184
+            "median": 38061,
+            "min": 38061,
+            "max": 38061
           }
         }
       },
@@ -137,27 +137,27 @@
         "name": "Hono",
         "points": {
           "22": {
-            "median": 56849,
-            "min": 56849,
-            "max": 56849,
+            "median": 54905,
+            "min": 54905,
+            "max": 54905,
             "backend": "RegExpRouter"
           },
           "50": {
-            "median": 13751,
-            "min": 13751,
-            "max": 13751,
+            "median": 14016,
+            "min": 14016,
+            "max": 14016,
             "backend": "RegExpRouter"
           },
           "100": {
-            "median": 11226,
-            "min": 11226,
-            "max": 11226,
+            "median": 11111,
+            "min": 11111,
+            "max": 11111,
             "backend": "RegExpRouter"
           },
           "200": {
-            "median": 6990,
-            "min": 6990,
-            "max": 6990,
+            "median": 7034,
+            "min": 7034,
+            "max": 7034,
             "backend": "RegExpRouter"
           }
         }
@@ -166,24 +166,24 @@
         "name": "Express",
         "points": {
           "22": {
-            "median": 2384,
-            "min": 2384,
-            "max": 2384
+            "median": 2332,
+            "min": 2332,
+            "max": 2332
           },
           "50": {
-            "median": 970,
-            "min": 970,
-            "max": 970
+            "median": 983,
+            "min": 983,
+            "max": 983
           },
           "100": {
-            "median": 637,
-            "min": 637,
-            "max": 637
+            "median": 607,
+            "min": 607,
+            "max": 607
           },
           "200": {
-            "median": 297,
-            "min": 297,
-            "max": 297
+            "median": 281,
+            "min": 281,
+            "max": 281
           }
         }
       }
@@ -193,24 +193,24 @@
         "name": "ProstoRouter",
         "points": {
           "22": {
-            "median": 8794,
-            "min": 8794,
-            "max": 8794
+            "median": 9303,
+            "min": 9303,
+            "max": 9303
           },
           "50": {
-            "median": 7739,
-            "min": 7739,
-            "max": 7739
+            "median": 8148,
+            "min": 8148,
+            "max": 8148
           },
           "100": {
-            "median": 6421,
-            "min": 6421,
-            "max": 6421
+            "median": 6475,
+            "min": 6475,
+            "max": 6475
           },
           "200": {
-            "median": 5167,
-            "min": 5167,
-            "max": 5167
+            "median": 5048,
+            "min": 5048,
+            "max": 5048
           }
         }
       },
@@ -218,24 +218,24 @@
         "name": "FindMyWay",
         "points": {
           "22": {
-            "median": 10816,
-            "min": 10816,
-            "max": 10816
+            "median": 10862,
+            "min": 10862,
+            "max": 10862
           },
           "50": {
-            "median": 10639,
-            "min": 10639,
-            "max": 10639
+            "median": 10638,
+            "min": 10638,
+            "max": 10638
           },
           "100": {
-            "median": 10479,
-            "min": 10479,
-            "max": 10479
+            "median": 10490,
+            "min": 10490,
+            "max": 10490
           },
           "200": {
-            "median": 10540,
-            "min": 10540,
-            "max": 10540
+            "median": 10505,
+            "min": 10505,
+            "max": 10505
           }
         }
       },
@@ -243,24 +243,24 @@
         "name": "Rou3",
         "points": {
           "22": {
-            "median": 4877,
-            "min": 4877,
-            "max": 4877
+            "median": 6857,
+            "min": 6857,
+            "max": 6857
           },
           "50": {
-            "median": 6733,
-            "min": 6733,
-            "max": 6733
+            "median": 6748,
+            "min": 6748,
+            "max": 6748
           },
           "100": {
-            "median": 4868,
-            "min": 4868,
-            "max": 4868
+            "median": 6649,
+            "min": 6649,
+            "max": 6649
           },
           "200": {
-            "median": 6738,
-            "min": 6738,
-            "max": 6738
+            "median": 6685,
+            "min": 6685,
+            "max": 6685
           }
         }
       },
@@ -268,24 +268,24 @@
         "name": "Rou3 (compiled)",
         "points": {
           "22": {
-            "median": 37150,
-            "min": 37150,
-            "max": 37150
+            "median": 36923,
+            "min": 36923,
+            "max": 36923
           },
           "50": {
-            "median": 29886,
-            "min": 29886,
-            "max": 29886
+            "median": 29845,
+            "min": 29845,
+            "max": 29845
           },
           "100": {
-            "median": 30720,
-            "min": 30720,
-            "max": 30720
+            "median": 30456,
+            "min": 30456,
+            "max": 30456
           },
           "200": {
-            "median": 30924,
-            "min": 30924,
-            "max": 30924
+            "median": 30928,
+            "min": 30928,
+            "max": 30928
           }
         }
       },
@@ -293,27 +293,27 @@
         "name": "Hono",
         "points": {
           "22": {
-            "median": 8894,
-            "min": 8894,
-            "max": 8894,
+            "median": 8704,
+            "min": 8704,
+            "max": 8704,
             "backend": "RegExpRouter"
           },
           "50": {
-            "median": 7505,
-            "min": 7505,
-            "max": 7505,
+            "median": 7580,
+            "min": 7580,
+            "max": 7580,
             "backend": "RegExpRouter"
           },
           "100": {
-            "median": 4505,
-            "min": 4505,
-            "max": 4505,
+            "median": 4465,
+            "min": 4465,
+            "max": 4465,
             "backend": "TrieRouter"
           },
           "200": {
-            "median": 4521,
-            "min": 4521,
-            "max": 4521,
+            "median": 4479,
+            "min": 4479,
+            "max": 4479,
             "backend": "TrieRouter"
           }
         }
@@ -322,24 +322,24 @@
         "name": "Express",
         "points": {
           "22": {
-            "median": 1131,
-            "min": 1131,
-            "max": 1131
+            "median": 1110,
+            "min": 1110,
+            "max": 1110
           },
           "50": {
-            "median": 1059,
-            "min": 1059,
-            "max": 1059
+            "median": 1047,
+            "min": 1047,
+            "max": 1047
           },
           "100": {
-            "median": 937,
-            "min": 937,
-            "max": 937
+            "median": 929,
+            "min": 929,
+            "max": 929
           },
           "200": {
-            "median": 697,
-            "min": 697,
-            "max": 697
+            "median": 705,
+            "min": 705,
+            "max": 705
           }
         }
       }
@@ -349,24 +349,24 @@
         "name": "ProstoRouter",
         "points": {
           "20": {
-            "median": 29220,
-            "min": 29220,
-            "max": 29220
+            "median": 28981,
+            "min": 28981,
+            "max": 28981
           },
           "48": {
-            "median": 11505,
-            "min": 11505,
-            "max": 11505
+            "median": 10864,
+            "min": 10864,
+            "max": 10864
           },
           "98": {
-            "median": 9366,
-            "min": 9366,
-            "max": 9366
+            "median": 8935,
+            "min": 8935,
+            "max": 8935
           },
           "198": {
-            "median": 9004,
-            "min": 9004,
-            "max": 9004
+            "median": 9335,
+            "min": 9335,
+            "max": 9335
           }
         }
       },
@@ -374,24 +374,24 @@
         "name": "FindMyWay",
         "points": {
           "20": {
-            "median": 28315,
-            "min": 28315,
-            "max": 28315
+            "median": 28167,
+            "min": 28167,
+            "max": 28167
           },
           "48": {
-            "median": 15967,
-            "min": 15967,
-            "max": 15967
+            "median": 15403,
+            "min": 15403,
+            "max": 15403
           },
           "98": {
-            "median": 14542,
-            "min": 14542,
-            "max": 14542
+            "median": 14580,
+            "min": 14580,
+            "max": 14580
           },
           "198": {
-            "median": 14230,
-            "min": 14230,
-            "max": 14230
+            "median": 14201,
+            "min": 14201,
+            "max": 14201
           }
         }
       },
@@ -399,24 +399,24 @@
         "name": "Rou3",
         "points": {
           "20": {
-            "median": 30839,
-            "min": 30839,
-            "max": 30839
+            "median": 30311,
+            "min": 30311,
+            "max": 30311
           },
           "48": {
-            "median": 15834,
-            "min": 15834,
-            "max": 15834
+            "median": 15324,
+            "min": 15324,
+            "max": 15324
           },
           "98": {
-            "median": 11981,
-            "min": 11981,
-            "max": 11981
+            "median": 12002,
+            "min": 12002,
+            "max": 12002
           },
           "198": {
-            "median": 10736,
-            "min": 10736,
-            "max": 10736
+            "median": 10268,
+            "min": 10268,
+            "max": 10268
           }
         }
       },
@@ -424,24 +424,24 @@
         "name": "Rou3 (compiled)",
         "points": {
           "20": {
-            "median": 57038,
-            "min": 57038,
-            "max": 57038
+            "median": 56597,
+            "min": 56597,
+            "max": 56597
           },
           "48": {
-            "median": 41001,
-            "min": 41001,
-            "max": 41001
+            "median": 40181,
+            "min": 40181,
+            "max": 40181
           },
           "98": {
-            "median": 36674,
-            "min": 36674,
-            "max": 36674
+            "median": 36171,
+            "min": 36171,
+            "max": 36171
           },
           "198": {
-            "median": 36419,
-            "min": 36419,
-            "max": 36419
+            "median": 36727,
+            "min": 36727,
+            "max": 36727
           }
         }
       },
@@ -449,27 +449,27 @@
         "name": "Hono",
         "points": {
           "20": {
-            "median": 52955,
-            "min": 52955,
-            "max": 52955,
+            "median": 53689,
+            "min": 53689,
+            "max": 53689,
             "backend": "RegExpRouter"
           },
           "48": {
-            "median": 15128,
-            "min": 15128,
-            "max": 15128,
+            "median": 15047,
+            "min": 15047,
+            "max": 15047,
             "backend": "RegExpRouter"
           },
           "98": {
-            "median": 7801,
-            "min": 7801,
-            "max": 7801,
+            "median": 7783,
+            "min": 7783,
+            "max": 7783,
             "backend": "RegExpRouter"
           },
           "198": {
-            "median": 4072,
-            "min": 4072,
-            "max": 4072,
+            "median": 4115,
+            "min": 4115,
+            "max": 4115,
             "backend": "TrieRouter"
           }
         }
@@ -478,24 +478,24 @@
         "name": "Express",
         "points": {
           "20": {
-            "median": 2206,
-            "min": 2206,
-            "max": 2206
+            "median": 2265,
+            "min": 2265,
+            "max": 2265
           },
           "48": {
-            "median": 949,
-            "min": 949,
-            "max": 949
+            "median": 1005,
+            "min": 1005,
+            "max": 1005
           },
           "98": {
-            "median": 601,
-            "min": 601,
-            "max": 601
+            "median": 595,
+            "min": 595,
+            "max": 595
           },
           "198": {
-            "median": 286,
-            "min": 286,
-            "max": 286
+            "median": 288,
+            "min": 288,
+            "max": 288
           }
         }
       }

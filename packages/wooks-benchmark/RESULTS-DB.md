@@ -1,6 +1,6 @@
 # HTTP Framework Benchmark Results (with simulated DB)
 
-Full HTTP request handling benchmark using [autocannon](https://github.com/mcollina/autocannon). Generated 2026-10-19T12:08:20.365Z.
+Full HTTP request handling benchmark using [autocannon](https://github.com/mcollina/autocannon). Generated 2026-10-19T20:43:42.055Z.
 
 ## Summary
 
@@ -8,11 +8,11 @@ Full HTTP request handling benchmark using [autocannon](https://github.com/mcoll
 
 | Framework | traffic-mix req/s | spread across rounds | relative | weighted arithmetic avg | status |
 | --- | ---: | ---: | ---: | ---: | --- |
-| Fastify | 78,315 | 78,315 – 78,315 | fastest | 95,043 | ok |
-| Wooks | 75,499 | 75,499 – 75,499 | 1.04x slower | 97,777 | ok |
-| Hono | 61,399 | 61,399 – 61,399 | 1.28x slower | 72,737 | ok |
-| h3 | 60,826 | 60,826 – 60,826 | 1.29x slower | 70,182 | ok |
-| Express | 48,914 | 48,914 – 48,914 | 1.60x slower | 55,261 | ok |
+| Fastify | 87,791 | 80,649 – 89,048 | fastest | 109,795 | ok |
+| Wooks | 82,779 | 81,913 – 83,445 | 1.06x slower | 100,527 | ok |
+| Hono | 69,204 | 66,321 – 70,115 | 1.27x slower | 84,187 | ok |
+| h3 | 67,771 | 67,439 – 68,260 | 1.30x slower | 77,978 | ok |
+| Express | 51,933 | 50,610 – 52,614 | 1.69x slower | 59,980 | ok |
 
 "traffic-mix req/s" = weighted harmonic mean of the per-test medians, using the traffic weights below (the throughput of a server receiving that request mix). "weighted arithmetic avg" is shown for comparison only.
 
@@ -20,57 +20,57 @@ Full HTTP request handling benchmark using [autocannon](https://github.com/mcoll
 
 | Test | weight | Wooks | Fastify | h3 | Hono | Express |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Short static | 3 | 193,610 | 144,539 | 168,856 | 144,290 | 85,159 |
-| Login (set-cookie) | 2 | 70,011 | 71,777 | 70,486 | 52,780 | 48,413 |
-| Wildcard + cache | 3 | 175,425 | 157,000 | 133,345 | 111,027 | 89,409 |
-| Wildcard deep | 2 | 171,452 | 154,725 | 123,805 | 110,894 | 82,505 |
-| Header-auth static | 4 | 107,629 | 107,265 | 88,267 | 79,751 | 65,929 |
-| Header-auth param | 6 | 90,191 | 106,834 | 87,547 | 67,916 | 63,852 |
-| Header-auth long static + cache | 3 | 105,273 | 104,271 | 84,814 | 66,753 | 60,638 |
-| Header-auth POST small body | 3 | 78,792 | 74,456 | 66,239 | 60,826 | 51,773 |
-| Header-auth FAIL (401) | 2 | 149,709 | 158,029 | 80,667 | 132,749 | 91,693 |
-| Cookie-auth param+suffix | 14 | 89,573 | 87,433 | 65,835 | 62,272 | 48,089 |
-| Cookie-auth two params | 20 | 87,548 | 89,545 | 58,967 | 63,433 | 48,311 |
-| Cookie-auth four params | 8 | 88,530 | 87,750 | 61,180 | 62,913 | 46,758 |
-| Cookie-auth POST small body | 8 | 68,343 | 63,209 | 51,403 | 49,236 | 39,479 |
-| Cookie-auth PUT small body | 8 | 68,507 | 63,494 | 52,794 | 51,064 | 40,725 |
-| Cookie-auth POST large body | 2 | 8,025 | 10,921 | 13,142 | 12,273 | 11,027 |
-| Cookie-auth FAIL (401) | 3 | 142,119 | 142,228 | 76,521 | 133,573 | 80,870 |
-| 404 short | 3 | 171,828 | 154,165 | 74,425 | 141,535 | 86,466 |
-| 404 deep | 2 | 163,903 | 150,575 | 76,627 | 140,223 | 91,168 |
-| POST large body + bad header-auth | 2 | 68,341 | 67,533 | 45,900 | 58,385 | 55,364 |
-| POST large body + bad cookie-auth | 2 | 66,985 | 73,300 | 40,976 | 56,211 | 50,406 |
+| Short static | 3 | 190,585 ±3% | 192,967 ±12% | 172,741 ±2% | 177,976 ±1% | 106,964 ±1% |
+| Login (set-cookie) | 2 | 73,015 ±2% | 82,479 ±9% | 72,544 ±2% | 59,592 ±1% | 53,939 ±3% |
+| Wildcard + cache | 3 | 173,362 ±2% | 189,943 ±11% | 137,942 ±2% | 134,316 ±2% | 99,895 ±2% |
+| Wildcard deep | 2 | 167,299 ±2% | 188,734 ±11% | 136,762 ±2% | 130,705 ±0% | 96,316 ±2% |
+| Header-auth static | 4 | 107,381 ±3% | 125,401 ±8% | 98,115 ±2% | 85,737 ±11% | 70,156 ±3% |
+| Header-auth param | 6 | 101,721 ±4% | 124,647 ±8% | 91,381 ±3% | 85,688 ±6% | 69,997 ±1% |
+| Header-auth long static + cache | 3 | 102,012 ±3% | 121,226 ±7% | 89,697 ±2% | 75,878 ±2% | 67,834 ±2% |
+| Header-auth POST small body | 3 | 75,695 ±1% | 84,181 ±6% | 77,649 ±0% | 68,327 ±2% | 55,226 ±2% |
+| Header-auth FAIL (401) | 2 | 146,805 ±1% | 189,145 ±11% | 79,054 ±1% | 156,855 ±2% | 102,116 ±3% |
+| Cookie-auth param+suffix | 14 | 95,263 ±2% | 99,171 ±6% | 73,411 ±0% | 71,148 ±4% | 52,446 ±2% |
+| Cookie-auth two params | 20 | 94,975 ±2% | 97,556 ±6% | 73,519 ±1% | 72,856 ±8% | 51,254 ±3% |
+| Cookie-auth four params | 8 | 92,629 ±2% | 98,047 ±6% | 70,418 ±2% | 71,488 ±3% | 49,699 ±3% |
+| Cookie-auth POST small body | 8 | 67,799 ±1% | 71,232 ±6% | 56,382 ±2% | 56,311 ±2% | 40,296 ±3% |
+| Cookie-auth PUT small body | 8 | 68,287 ±2% | 70,419 ±5% | 58,100 ±2% | 56,441 ±2% | 39,015 ±2% |
+| Cookie-auth POST large body | 2 | 12,045 ±0% | 11,551 ±2% | 13,153 ±2% | 12,123 ±4% | 11,654 ±0% |
+| Cookie-auth FAIL (401) | 3 | 142,250 ±1% | 193,404 ±12% | 79,667 ±1% | 158,459 ±1% | 93,325 ±2% |
+| 404 short | 3 | 170,972 ±2% | 176,631 ±10% | 83,665 ±0% | 164,402 ±2% | 97,269 ±1% |
+| 404 deep | 2 | 161,528 ±2% | 169,443 ±10% | 81,470 ±0% | 160,957 ±3% | 96,530 ±1% |
+| POST large body + bad header-auth | 2 | 66,788 ±2% | 78,339 ±7% | 48,276 ±2% | 64,584 ±4% | 57,959 ±2% |
+| POST large body + bad cookie-auth | 2 | 65,192 ±2% | 79,261 ±6% | 46,562 ±1% | 63,428 ±2% | 53,698 ±1% |
 
 ## Latency p99 (ms, median over rounds)
 
 | Test | Wooks | Fastify | h3 | Hono | Express |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Short static | 10 | 15 | 12 | 13 | 24 |
-| Login (set-cookie) | 26 | 22 | 22 | 31 | 33 |
-| Wildcard + cache | 11 | 12 | 13 | 14 | 16 |
-| Wildcard deep | 11 | 12 | 14 | 15 | 20 |
-| Header-auth static | 17 | 16 | 23 | 19 | 24 |
-| Header-auth param | 24 | 19 | 18 | 33 | 24 |
-| Header-auth long static + cache | 19 | 19 | 20 | 27 | 26 |
-| Header-auth POST small body | 22 | 21 | 34 | 25 | 31 |
-| Header-auth FAIL (401) | 11 | 12 | 18 | 13 | 18 |
-| Cookie-auth param+suffix | 21 | 21 | 26 | 29 | 33 |
-| Cookie-auth two params | 21 | 18 | 36 | 30 | 32 |
-| Cookie-auth four params | 18 | 19 | 31 | 26 | 34 |
-| Cookie-auth POST small body | 25 | 25 | 35 | 39 | 39 |
-| Cookie-auth PUT small body | 26 | 24 | 31 | 35 | 41 |
-| Cookie-auth POST large body | 119 | 90 | 81 | 90 | 97 |
-| Cookie-auth FAIL (401) | 12 | 16 | 19 | 13 | 26 |
-| 404 short | 11 | 12 | 20 | 12 | 26 |
-| 404 deep | 11 | 12 | 19 | 12 | 19 |
-| POST large body + bad header-auth | 90 | 65 | 132 | 101 | 107 |
-| POST large body + bad cookie-auth | 88 | 79 | 158 | 107 | 120 |
+| Short static | 8 | 8 | 9 | 8 | 14 |
+| Login (set-cookie) | 21 | 18 | 22 | 26 | 34 |
+| Wildcard + cache | 7 | 7 | 10 | 10 | 14 |
+| Wildcard deep | 8 | 7 | 10 | 10 | 15 |
+| Header-auth static | 18 | 16 | 16 | 20 | 23 |
+| Header-auth param | 17 | 14 | 17 | 21 | 22 |
+| Header-auth long static + cache | 19 | 16 | 18 | 23 | 24 |
+| Header-auth POST small body | 20 | 18 | 19 | 23 | 32 |
+| Header-auth FAIL (401) | 9 | 7 | 18 | 8 | 14 |
+| Cookie-auth param+suffix | 17 | 17 | 21 | 25 | 32 |
+| Cookie-auth two params | 17 | 17 | 21 | 21 | 33 |
+| Cookie-auth four params | 16 | 17 | 24 | 24 | 35 |
+| Cookie-auth POST small body | 26 | 24 | 27 | 28 | 47 |
+| Cookie-auth PUT small body | 26 | 21 | 26 | 28 | 48 |
+| Cookie-auth POST large body | 93 | 104 | 80 | 95 | 90 |
+| Cookie-auth FAIL (401) | 9 | 7 | 18 | 8 | 15 |
+| 404 short | 8 | 9 | 16 | 8 | 16 |
+| 404 deep | 8 | 10 | 17 | 8 | 16 |
+| POST large body + bad header-auth | 87 | 71 | 125 | 93 | 109 |
+| POST large body + bad cookie-auth | 86 | 70 | 136 | 96 | 111 |
 
 ## Environment
 
 |  |  |
 | --- | --- |
-| Date | 2026-10-19T12:08:20.365Z |
+| Date | 2026-10-19T20:43:42.055Z |
 | Node.js | v24.22.0 (V8 13.6.233.17-node.57) |
 | OS | Darwin 27.0.0 (darwin arm64) |
 | CPU | Apple M4 (10 logical cores) |
@@ -83,7 +83,7 @@ Full HTTP request handling benchmark using [autocannon](https://github.com/mcoll
 | Mode | simulated DB (one Redis round-trip per authenticated request) |
 | Warmup per test | 1s (discarded) |
 | Measured per test | 1s |
-| Rounds | 1 (fresh server process per round, framework order rotated; per-test value = median) |
+| Rounds | 3 (fresh server process per round, framework order rotated; per-test value = median) |
 | Load generator | autocannon, 100 connections, pipelining 10, in orchestrator process |
 | Server process | one child process per framework (`node <entry>`, no loaders), NODE_ENV=production, logging disabled, 127.0.0.1 |
 | Between runs | wait until the server reports all client connections closed (abort after 5s) |
@@ -96,9 +96,9 @@ Full HTTP request handling benchmark using [autocannon](https://github.com/mcoll
 | --- | --- |
 | autocannon | 8.0.0 |
 | ioredis | 6.0.0 |
-| wooks | 0.7.30 |
-| @wooksjs/event-http | 0.7.30 |
-| @wooksjs/http-body | 0.7.30 |
+| wooks | 0.7.31 |
+| @wooksjs/event-http | 0.7.31 |
+| @wooksjs/http-body | 0.7.31 |
 | @prostojs/router | 0.3.6 |
 | fastify | 5.12.7 |
 | @fastify/cookie | 11.1.3 |

@@ -4,7 +4,7 @@
   "quick": false,
   "only": null,
   "environment": {
-    "date": "2026-10-19T12:10:43.899Z",
+    "date": "2026-10-19T19:54:30.789Z",
     "node": "v24.22.0",
     "v8": "13.6.233.17-node.57",
     "os": "Darwin 27.0.0 (darwin arm64)",
@@ -16,10 +16,10 @@
   "versions": {
     "autocannon": "8.0.0",
     "ioredis": "6.0.0",
-    "moost": "0.6.52",
-    "@moostjs/event-http": "0.6.52",
-    "@wooksjs/event-http": "0.7.30",
-    "wooks": "0.7.30",
+    "moost": "0.6.53",
+    "@moostjs/event-http": "0.6.53",
+    "@wooksjs/event-http": "0.7.31",
+    "wooks": "0.7.31",
     "@prostojs/router": "0.3.6",
     "@nestjs/core": "12.1.3",
     "@nestjs/common": "12.1.3",
@@ -45,32 +45,32 @@
   },
   "summary": {
     "Moost": {
-      "mixRps": 68346,
-      "weightedArithmeticRps": 86242,
-      "roundMinRps": 68346,
-      "roundMaxRps": 68346,
+      "mixRps": 73910,
+      "weightedArithmeticRps": 88903,
+      "roundMinRps": 73910,
+      "roundMaxRps": 73910,
       "roundCv": 0,
       "relative": "fastest",
       "valid": true,
       "invalidTests": []
     },
     "NestJS (Fastify)": {
-      "mixRps": 59632,
-      "weightedArithmeticRps": 82723,
-      "roundMinRps": 59632,
-      "roundMaxRps": 59632,
+      "mixRps": 60518,
+      "weightedArithmeticRps": 84216,
+      "roundMinRps": 60518,
+      "roundMaxRps": 60518,
       "roundCv": 0,
-      "relative": "1.15x slower",
+      "relative": "1.22x slower",
       "valid": true,
       "invalidTests": []
     },
     "NestJS (Express)": {
-      "mixRps": 42168,
-      "weightedArithmeticRps": 51155,
-      "roundMinRps": 42168,
-      "roundMaxRps": 42168,
+      "mixRps": 42691,
+      "weightedArithmeticRps": 52414,
+      "roundMinRps": 42691,
+      "roundMaxRps": 42691,
       "roundCv": 0,
-      "relative": "1.62x slower",
+      "relative": "1.73x slower",
       "valid": true,
       "invalidTests": []
     }
@@ -81,27 +81,27 @@
       "expectStatus": 200,
       "frameworks": {
         "Moost": {
-          "medianRps": 162051,
-          "minRps": 162051,
-          "maxRps": 162051,
+          "medianRps": 178798,
+          "minRps": 178798,
+          "maxRps": 178798,
           "cv": 0,
           "rounds": [
-            162051
+            178798
           ],
           "latencyP50ms": 6,
-          "latencyP99ms": 14,
+          "latencyP99ms": 9,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Fastify)": {
-          "medianRps": 168958,
-          "minRps": 168958,
-          "maxRps": 168958,
+          "medianRps": 169445,
+          "minRps": 169445,
+          "maxRps": 169445,
           "cv": 0,
           "rounds": [
-            168958
+            169445
           ],
           "latencyP50ms": 6,
           "latencyP99ms": 10,
@@ -111,15 +111,15 @@
           "valid": true
         },
         "NestJS (Express)": {
-          "medianRps": 97602,
-          "minRps": 97602,
-          "maxRps": 97602,
+          "medianRps": 96877,
+          "minRps": 96877,
+          "maxRps": 96877,
           "cv": 0,
           "rounds": [
-            97602
+            96877
           ],
           "latencyP50ms": 7,
-          "latencyP99ms": 15,
+          "latencyP99ms": 14,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -132,12 +132,12 @@
       "expectStatus": 201,
       "frameworks": {
         "Moost": {
-          "medianRps": 65342,
-          "minRps": 65342,
-          "maxRps": 65342,
+          "medianRps": 66411,
+          "minRps": 66411,
+          "maxRps": 66411,
           "cv": 0,
           "rounds": [
-            65342
+            66411
           ],
           "latencyP50ms": 12,
           "latencyP99ms": 28,
@@ -147,30 +147,30 @@
           "valid": true
         },
         "NestJS (Fastify)": {
-          "medianRps": 71902,
-          "minRps": 71902,
-          "maxRps": 71902,
+          "medianRps": 71868,
+          "minRps": 71868,
+          "maxRps": 71868,
           "cv": 0,
           "rounds": [
-            71902
+            71868
           ],
-          "latencyP50ms": 12,
-          "latencyP99ms": 22,
+          "latencyP50ms": 11,
+          "latencyP99ms": 21,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Express)": {
-          "medianRps": 46584,
-          "minRps": 46584,
-          "maxRps": 46584,
+          "medianRps": 47802,
+          "minRps": 47802,
+          "maxRps": 47802,
           "cv": 0,
           "rounds": [
-            46584
+            47802
           ],
-          "latencyP50ms": 16,
-          "latencyP99ms": 112,
+          "latencyP50ms": 17,
+          "latencyP99ms": 32,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -183,12 +183,12 @@
       "expectStatus": 200,
       "frameworks": {
         "Moost": {
-          "medianRps": 152038,
-          "minRps": 152038,
-          "maxRps": 152038,
+          "medianRps": 157036,
+          "minRps": 157036,
+          "maxRps": 157036,
           "cv": 0,
           "rounds": [
-            152038
+            157036
           ],
           "latencyP50ms": 7,
           "latencyP99ms": 10,
@@ -198,14 +198,14 @@
           "valid": true
         },
         "NestJS (Fastify)": {
-          "medianRps": 165359,
-          "minRps": 165359,
-          "maxRps": 165359,
+          "medianRps": 166690,
+          "minRps": 166690,
+          "maxRps": 166690,
           "cv": 0,
           "rounds": [
-            165359
+            166690
           ],
-          "latencyP50ms": 4,
+          "latencyP50ms": 5,
           "latencyP99ms": 8,
           "errorRate": 0,
           "unexpectedResponses": 0,
@@ -213,12 +213,12 @@
           "valid": true
         },
         "NestJS (Express)": {
-          "medianRps": 89414,
-          "minRps": 89414,
-          "maxRps": 89414,
+          "medianRps": 89617,
+          "minRps": 89617,
+          "maxRps": 89617,
           "cv": 0,
           "rounds": [
-            89414
+            89617
           ],
           "latencyP50ms": 8,
           "latencyP99ms": 16,
@@ -234,14 +234,14 @@
       "expectStatus": 200,
       "frameworks": {
         "Moost": {
-          "medianRps": 149548,
-          "minRps": 149548,
-          "maxRps": 149548,
+          "medianRps": 153742,
+          "minRps": 153742,
+          "maxRps": 153742,
           "cv": 0,
           "rounds": [
-            149548
+            153742
           ],
-          "latencyP50ms": 8,
+          "latencyP50ms": 7,
           "latencyP99ms": 10,
           "errorRate": 0,
           "unexpectedResponses": 0,
@@ -249,14 +249,14 @@
           "valid": true
         },
         "NestJS (Fastify)": {
-          "medianRps": 165772,
-          "minRps": 165772,
-          "maxRps": 165772,
+          "medianRps": 166657,
+          "minRps": 166657,
+          "maxRps": 166657,
           "cv": 0,
           "rounds": [
-            165772
+            166657
           ],
-          "latencyP50ms": 4,
+          "latencyP50ms": 5,
           "latencyP99ms": 8,
           "errorRate": 0,
           "unexpectedResponses": 0,
@@ -264,12 +264,12 @@
           "valid": true
         },
         "NestJS (Express)": {
-          "medianRps": 87174,
-          "minRps": 87174,
-          "maxRps": 87174,
+          "medianRps": 87677,
+          "minRps": 87677,
+          "maxRps": 87677,
           "cv": 0,
           "rounds": [
-            87174
+            87677
           ],
           "latencyP50ms": 8,
           "latencyP99ms": 16,
@@ -285,42 +285,42 @@
       "expectStatus": 200,
       "frameworks": {
         "Moost": {
-          "medianRps": 79161,
-          "minRps": 79161,
-          "maxRps": 79161,
+          "medianRps": 88420,
+          "minRps": 88420,
+          "maxRps": 88420,
           "cv": 0,
           "rounds": [
-            79161
+            88420
           ],
-          "latencyP50ms": 11,
-          "latencyP99ms": 22,
+          "latencyP50ms": 9,
+          "latencyP99ms": 19,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Fastify)": {
-          "medianRps": 102806,
-          "minRps": 102806,
-          "maxRps": 102806,
+          "medianRps": 103954,
+          "minRps": 103954,
+          "maxRps": 103954,
           "cv": 0,
           "rounds": [
-            102806
+            103954
           ],
           "latencyP50ms": 8,
-          "latencyP99ms": 15,
+          "latencyP99ms": 20,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Express)": {
-          "medianRps": 69979,
-          "minRps": 69979,
-          "maxRps": 69979,
+          "medianRps": 71061,
+          "minRps": 71061,
+          "maxRps": 71061,
           "cv": 0,
           "rounds": [
-            69979
+            71061
           ],
           "latencyP50ms": 12,
           "latencyP99ms": 22,
@@ -336,27 +336,27 @@
       "expectStatus": 200,
       "frameworks": {
         "Moost": {
-          "medianRps": 74627,
-          "minRps": 74627,
-          "maxRps": 74627,
+          "medianRps": 87525,
+          "minRps": 87525,
+          "maxRps": 87525,
           "cv": 0,
           "rounds": [
-            74627
+            87525
           ],
-          "latencyP50ms": 11,
-          "latencyP99ms": 25,
+          "latencyP50ms": 10,
+          "latencyP99ms": 20,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Fastify)": {
-          "medianRps": 96921,
-          "minRps": 96921,
-          "maxRps": 96921,
+          "medianRps": 100084,
+          "minRps": 100084,
+          "maxRps": 100084,
           "cv": 0,
           "rounds": [
-            96921
+            100084
           ],
           "latencyP50ms": 9,
           "latencyP99ms": 16,
@@ -366,14 +366,14 @@
           "valid": true
         },
         "NestJS (Express)": {
-          "medianRps": 66988,
-          "minRps": 66988,
-          "maxRps": 66988,
+          "medianRps": 68587,
+          "minRps": 68587,
+          "maxRps": 68587,
           "cv": 0,
           "rounds": [
-            66988
+            68587
           ],
-          "latencyP50ms": 13,
+          "latencyP50ms": 12,
           "latencyP99ms": 23,
           "errorRate": 0,
           "unexpectedResponses": 0,
@@ -387,45 +387,45 @@
       "expectStatus": 200,
       "frameworks": {
         "Moost": {
-          "medianRps": 76104,
-          "minRps": 76104,
-          "maxRps": 76104,
+          "medianRps": 84951,
+          "minRps": 84951,
+          "maxRps": 84951,
           "cv": 0,
           "rounds": [
-            76104
+            84951
           ],
-          "latencyP50ms": 11,
-          "latencyP99ms": 24,
+          "latencyP50ms": 10,
+          "latencyP99ms": 21,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Fastify)": {
-          "medianRps": 99462,
-          "minRps": 99462,
-          "maxRps": 99462,
+          "medianRps": 100152,
+          "minRps": 100152,
+          "maxRps": 100152,
           "cv": 0,
           "rounds": [
-            99462
+            100152
           ],
-          "latencyP50ms": 9,
-          "latencyP99ms": 16,
+          "latencyP50ms": 8,
+          "latencyP99ms": 21,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Express)": {
-          "medianRps": 65064,
-          "minRps": 65064,
-          "maxRps": 65064,
+          "medianRps": 66514,
+          "minRps": 66514,
+          "maxRps": 66514,
           "cv": 0,
           "rounds": [
-            65064
+            66514
           ],
           "latencyP50ms": 13,
-          "latencyP99ms": 24,
+          "latencyP99ms": 33,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -438,27 +438,27 @@
       "expectStatus": 201,
       "frameworks": {
         "Moost": {
-          "medianRps": 57854,
-          "minRps": 57854,
-          "maxRps": 57854,
+          "medianRps": 66167,
+          "minRps": 66167,
+          "maxRps": 66167,
           "cv": 0,
           "rounds": [
-            57854
+            66167
           ],
-          "latencyP50ms": 15,
-          "latencyP99ms": 32,
+          "latencyP50ms": 12,
+          "latencyP99ms": 23,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Fastify)": {
-          "medianRps": 71546,
-          "minRps": 71546,
-          "maxRps": 71546,
+          "medianRps": 70439.60396039604,
+          "minRps": 70439.60396039604,
+          "maxRps": 70439.60396039604,
           "cv": 0,
           "rounds": [
-            71546
+            70440
           ],
           "latencyP50ms": 12,
           "latencyP99ms": 21,
@@ -468,15 +468,15 @@
           "valid": true
         },
         "NestJS (Express)": {
-          "medianRps": 45305,
-          "minRps": 45305,
-          "maxRps": 45305,
+          "medianRps": 47130,
+          "minRps": 47130,
+          "maxRps": 47130,
           "cv": 0,
           "rounds": [
-            45305
+            47130
           ],
-          "latencyP50ms": 18,
-          "latencyP99ms": 40,
+          "latencyP50ms": 17,
+          "latencyP99ms": 34,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -489,45 +489,45 @@
       "expectStatus": 401,
       "frameworks": {
         "Moost": {
-          "medianRps": 90191,
-          "minRps": 90191,
-          "maxRps": 90191,
+          "medianRps": 92573,
+          "minRps": 92573,
+          "maxRps": 92573,
           "cv": 0,
           "rounds": [
-            90191
+            92573
           ],
           "latencyP50ms": 12,
-          "latencyP99ms": 17,
+          "latencyP99ms": 13,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Fastify)": {
-          "medianRps": 75311,
-          "minRps": 75311,
-          "maxRps": 75311,
+          "medianRps": 75778,
+          "minRps": 75778,
+          "maxRps": 75778,
           "cv": 0,
           "rounds": [
-            75311
+            75778
           ],
           "latencyP50ms": 15,
-          "latencyP99ms": 18,
+          "latencyP99ms": 17,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Express)": {
-          "medianRps": 53354,
-          "minRps": 53354,
-          "maxRps": 53354,
+          "medianRps": 53556,
+          "minRps": 53556,
+          "maxRps": 53556,
           "cv": 0,
           "rounds": [
-            53354
+            53556
           ],
           "latencyP50ms": 13,
-          "latencyP99ms": 28,
+          "latencyP99ms": 27,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -540,27 +540,27 @@
       "expectStatus": 200,
       "frameworks": {
         "Moost": {
-          "medianRps": 85981,
-          "minRps": 85981,
-          "maxRps": 85981,
+          "medianRps": 84897,
+          "minRps": 84897,
+          "maxRps": 84897,
           "cv": 0,
           "rounds": [
-            85981
+            84897
           ],
           "latencyP50ms": 10,
-          "latencyP99ms": 18,
+          "latencyP99ms": 20,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Fastify)": {
-          "medianRps": 85988,
-          "minRps": 85988,
-          "maxRps": 85988,
+          "medianRps": 86672,
+          "minRps": 86672,
+          "maxRps": 86672,
           "cv": 0,
           "rounds": [
-            85988
+            86672
           ],
           "latencyP50ms": 10,
           "latencyP99ms": 18,
@@ -570,15 +570,15 @@
           "valid": true
         },
         "NestJS (Express)": {
-          "medianRps": 51498,
-          "minRps": 51498,
-          "maxRps": 51498,
+          "medianRps": 53890,
+          "minRps": 53890,
+          "maxRps": 53890,
           "cv": 0,
           "rounds": [
-            51498
+            53890
           ],
           "latencyP50ms": 16,
-          "latencyP99ms": 34,
+          "latencyP99ms": 29,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -591,12 +591,27 @@
       "expectStatus": 200,
       "frameworks": {
         "Moost": {
-          "medianRps": 86689,
-          "minRps": 86689,
-          "maxRps": 86689,
+          "medianRps": 86162.37623762376,
+          "minRps": 86162.37623762376,
+          "maxRps": 86162.37623762376,
           "cv": 0,
           "rounds": [
-            86689
+            86162
+          ],
+          "latencyP50ms": 10,
+          "latencyP99ms": 18,
+          "errorRate": 0,
+          "unexpectedResponses": 0,
+          "socketErrors": 0,
+          "valid": true
+        },
+        "NestJS (Fastify)": {
+          "medianRps": 84420,
+          "minRps": 84420,
+          "maxRps": 84420,
+          "cv": 0,
+          "rounds": [
+            84420
           ],
           "latencyP50ms": 10,
           "latencyP99ms": 19,
@@ -605,31 +620,16 @@
           "socketErrors": 0,
           "valid": true
         },
-        "NestJS (Fastify)": {
-          "medianRps": 79590,
-          "minRps": 79590,
-          "maxRps": 79590,
-          "cv": 0,
-          "rounds": [
-            79590
-          ],
-          "latencyP50ms": 10,
-          "latencyP99ms": 25,
-          "errorRate": 0,
-          "unexpectedResponses": 0,
-          "socketErrors": 0,
-          "valid": true
-        },
         "NestJS (Express)": {
-          "medianRps": 50787,
-          "minRps": 50787,
-          "maxRps": 50787,
+          "medianRps": 52745,
+          "minRps": 52745,
+          "maxRps": 52745,
           "cv": 0,
           "rounds": [
-            50787
+            52745
           ],
-          "latencyP50ms": 17,
-          "latencyP99ms": 34,
+          "latencyP50ms": 16,
+          "latencyP99ms": 29,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -642,45 +642,45 @@
       "expectStatus": 200,
       "frameworks": {
         "Moost": {
-          "medianRps": 83240,
-          "minRps": 83240,
-          "maxRps": 83240,
+          "medianRps": 85918,
+          "minRps": 85918,
+          "maxRps": 85918,
           "cv": 0,
           "rounds": [
-            83240
+            85918
           ],
           "latencyP50ms": 10,
-          "latencyP99ms": 20,
+          "latencyP99ms": 18,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Fastify)": {
-          "medianRps": 82975,
-          "minRps": 82975,
-          "maxRps": 82975,
+          "medianRps": 85726,
+          "minRps": 85726,
+          "maxRps": 85726,
           "cv": 0,
           "rounds": [
-            82975
+            85726
           ],
           "latencyP50ms": 10,
-          "latencyP99ms": 19,
+          "latencyP99ms": 18,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Express)": {
-          "medianRps": 49355,
-          "minRps": 49355,
-          "maxRps": 49355,
+          "medianRps": 51189,
+          "minRps": 51189,
+          "maxRps": 51189,
           "cv": 0,
           "rounds": [
-            49355
+            51189
           ],
-          "latencyP50ms": 17,
-          "latencyP99ms": 37,
+          "latencyP50ms": 16,
+          "latencyP99ms": 31,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -693,45 +693,45 @@
       "expectStatus": 201,
       "frameworks": {
         "Moost": {
-          "medianRps": 60406,
-          "minRps": 60406,
-          "maxRps": 60406,
+          "medianRps": 60990,
+          "minRps": 60990,
+          "maxRps": 60990,
           "cv": 0,
           "rounds": [
-            60406
+            60990
           ],
           "latencyP50ms": 13,
-          "latencyP99ms": 25,
+          "latencyP99ms": 28,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Fastify)": {
-          "medianRps": 58818,
-          "minRps": 58818,
-          "maxRps": 58818,
+          "medianRps": 59444,
+          "minRps": 59444,
+          "maxRps": 59444,
           "cv": 0,
           "rounds": [
-            58818
+            59444
           ],
           "latencyP50ms": 14,
-          "latencyP99ms": 27,
+          "latencyP99ms": 25,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Express)": {
-          "medianRps": 33322.77227722772,
-          "minRps": 33322.77227722772,
-          "maxRps": 33322.77227722772,
+          "medianRps": 34945,
+          "minRps": 34945,
+          "maxRps": 34945,
           "cv": 0,
           "rounds": [
-            33323
+            34945
           ],
-          "latencyP50ms": 24,
-          "latencyP99ms": 56,
+          "latencyP50ms": 23,
+          "latencyP99ms": 45,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -744,12 +744,12 @@
       "expectStatus": 201,
       "frameworks": {
         "Moost": {
-          "medianRps": 60879,
-          "minRps": 60879,
-          "maxRps": 60879,
+          "medianRps": 61432,
+          "minRps": 61432,
+          "maxRps": 61432,
           "cv": 0,
           "rounds": [
-            60879
+            61432
           ],
           "latencyP50ms": 13,
           "latencyP99ms": 25,
@@ -759,12 +759,12 @@
           "valid": true
         },
         "NestJS (Fastify)": {
-          "medianRps": 59815,
-          "minRps": 59815,
-          "maxRps": 59815,
+          "medianRps": 59233,
+          "minRps": 59233,
+          "maxRps": 59233,
           "cv": 0,
           "rounds": [
-            59815
+            59233
           ],
           "latencyP50ms": 14,
           "latencyP99ms": 26,
@@ -774,15 +774,15 @@
           "valid": true
         },
         "NestJS (Express)": {
-          "medianRps": 34418,
-          "minRps": 34418,
-          "maxRps": 34418,
+          "medianRps": 34741.58415841584,
+          "minRps": 34741.58415841584,
+          "maxRps": 34741.58415841584,
           "cv": 0,
           "rounds": [
-            34418
+            34742
           ],
-          "latencyP50ms": 24,
-          "latencyP99ms": 54,
+          "latencyP50ms": 23,
+          "latencyP99ms": 44,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -795,45 +795,45 @@
       "expectStatus": 201,
       "frameworks": {
         "Moost": {
-          "medianRps": 8029.702970297029,
-          "minRps": 8029.702970297029,
-          "maxRps": 8029.702970297029,
+          "medianRps": 11359,
+          "minRps": 11359,
+          "maxRps": 11359,
           "cv": 0,
           "rounds": [
-            8030
+            11359
           ],
-          "latencyP50ms": 118,
-          "latencyP99ms": 126,
+          "latencyP50ms": 88,
+          "latencyP99ms": 105,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Fastify)": {
-          "medianRps": 11195.049504950495,
-          "minRps": 11195.049504950495,
-          "maxRps": 11195.049504950495,
+          "medianRps": 11457.425742574258,
+          "minRps": 11457.425742574258,
+          "maxRps": 11457.425742574258,
           "cv": 0,
           "rounds": [
-            11195
+            11457
           ],
-          "latencyP50ms": 88,
-          "latencyP99ms": 96,
+          "latencyP50ms": 41,
+          "latencyP99ms": 692,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Express)": {
-          "medianRps": 11739.60396039604,
-          "minRps": 11739.60396039604,
-          "maxRps": 11739.60396039604,
+          "medianRps": 10820.79207920792,
+          "minRps": 10820.79207920792,
+          "maxRps": 10820.79207920792,
           "cv": 0,
           "rounds": [
-            11740
+            10821
           ],
-          "latencyP50ms": 42,
-          "latencyP99ms": 701,
+          "latencyP50ms": 93,
+          "latencyP99ms": 109,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -846,45 +846,45 @@
       "expectStatus": 401,
       "frameworks": {
         "Moost": {
-          "medianRps": 95265,
-          "minRps": 95265,
-          "maxRps": 95265,
+          "medianRps": 97191,
+          "minRps": 97191,
+          "maxRps": 97191,
           "cv": 0,
           "rounds": [
-            95265
+            97191
           ],
-          "latencyP50ms": 11,
-          "latencyP99ms": 19,
+          "latencyP50ms": 12,
+          "latencyP99ms": 13,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Fastify)": {
-          "medianRps": 79198,
-          "minRps": 79198,
-          "maxRps": 79198,
+          "medianRps": 76428,
+          "minRps": 76428,
+          "maxRps": 76428,
           "cv": 0,
           "rounds": [
-            79198
+            76428
           ],
           "latencyP50ms": 15,
-          "latencyP99ms": 16,
+          "latencyP99ms": 26,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Express)": {
-          "medianRps": 52520,
-          "minRps": 52520,
-          "maxRps": 52520,
+          "medianRps": 53104,
+          "minRps": 53104,
+          "maxRps": 53104,
           "cv": 0,
           "rounds": [
-            52520
+            53104
           ],
           "latencyP50ms": 13,
-          "latencyP99ms": 27,
+          "latencyP99ms": 26,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -897,12 +897,12 @@
       "expectStatus": 404,
       "frameworks": {
         "Moost": {
-          "medianRps": 164069,
-          "minRps": 164069,
-          "maxRps": 164069,
+          "medianRps": 161069,
+          "minRps": 161069,
+          "maxRps": 161069,
           "cv": 0,
           "rounds": [
-            164069
+            161069
           ],
           "latencyP50ms": 7,
           "latencyP99ms": 8,
@@ -912,29 +912,29 @@
           "valid": true
         },
         "NestJS (Fastify)": {
-          "medianRps": 84708,
-          "minRps": 84708,
-          "maxRps": 84708,
+          "medianRps": 84316,
+          "minRps": 84316,
+          "maxRps": 84316,
           "cv": 0,
           "rounds": [
-            84708
+            84316
           ],
-          "latencyP50ms": 13,
-          "latencyP99ms": 16,
+          "latencyP50ms": 14,
+          "latencyP99ms": 15,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Express)": {
-          "medianRps": 52808,
-          "minRps": 52808,
-          "maxRps": 52808,
+          "medianRps": 52441,
+          "minRps": 52441,
+          "maxRps": 52441,
           "cv": 0,
           "rounds": [
-            52808
+            52441
           ],
-          "latencyP50ms": 23,
+          "latencyP50ms": 18,
           "latencyP99ms": 27,
           "errorRate": 0,
           "unexpectedResponses": 0,
@@ -948,45 +948,45 @@
       "expectStatus": 404,
       "frameworks": {
         "Moost": {
-          "medianRps": 156920,
-          "minRps": 156920,
-          "maxRps": 156920,
+          "medianRps": 157081,
+          "minRps": 157081,
+          "maxRps": 157081,
           "cv": 0,
           "rounds": [
-            156920
+            157081
           ],
           "latencyP50ms": 7,
-          "latencyP99ms": 9,
+          "latencyP99ms": 8,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Fastify)": {
-          "medianRps": 84359,
-          "minRps": 84359,
-          "maxRps": 84359,
+          "medianRps": 83966,
+          "minRps": 83966,
+          "maxRps": 83966,
           "cv": 0,
           "rounds": [
-            84359
+            83966
           ],
           "latencyP50ms": 14,
-          "latencyP99ms": 16,
+          "latencyP99ms": 15,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Express)": {
-          "medianRps": 52287,
-          "minRps": 52287,
-          "maxRps": 52287,
+          "medianRps": 52162,
+          "minRps": 52162,
+          "maxRps": 52162,
           "cv": 0,
           "rounds": [
-            52287
+            52162
           ],
-          "latencyP50ms": 23,
-          "latencyP99ms": 28,
+          "latencyP50ms": 18,
+          "latencyP99ms": 26,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -999,45 +999,45 @@
       "expectStatus": 401,
       "frameworks": {
         "Moost": {
-          "medianRps": 56386,
-          "minRps": 56386,
-          "maxRps": 56386,
+          "medianRps": 59894,
+          "minRps": 59894,
+          "maxRps": 59894,
           "cv": 0,
           "rounds": [
-            56386
+            59894
           ],
           "latencyP50ms": 0,
-          "latencyP99ms": 106,
+          "latencyP99ms": 99,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Fastify)": {
-          "medianRps": 11625,
-          "minRps": 11625,
-          "maxRps": 11625,
+          "medianRps": 11594,
+          "minRps": 11594,
+          "maxRps": 11594,
           "cv": 0,
           "rounds": [
-            11625
+            11594
           ],
           "latencyP50ms": 0,
-          "latencyP99ms": 904,
+          "latencyP99ms": 781,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Express)": {
-          "medianRps": 12665,
-          "minRps": 12665,
-          "maxRps": 12665,
+          "medianRps": 12110,
+          "minRps": 12110,
+          "maxRps": 12110,
           "cv": 0,
           "rounds": [
-            12665
+            12110
           ],
           "latencyP50ms": 0,
-          "latencyP99ms": 737,
+          "latencyP99ms": 572,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
@@ -1050,45 +1050,45 @@
       "expectStatus": 401,
       "frameworks": {
         "Moost": {
-          "medianRps": 55568,
-          "minRps": 55568,
-          "maxRps": 55568,
+          "medianRps": 57601,
+          "minRps": 57601,
+          "maxRps": 57601,
           "cv": 0,
           "rounds": [
-            55568
+            57601
           ],
           "latencyP50ms": 0,
-          "latencyP99ms": 108,
+          "latencyP99ms": 103,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Fastify)": {
-          "medianRps": 11511,
-          "minRps": 11511,
-          "maxRps": 11511,
+          "medianRps": 11602,
+          "minRps": 11602,
+          "maxRps": 11602,
           "cv": 0,
           "rounds": [
-            11511
+            11602
           ],
           "latencyP50ms": 0,
-          "latencyP99ms": 191,
+          "latencyP99ms": 723,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,
           "valid": true
         },
         "NestJS (Express)": {
-          "medianRps": 12192,
-          "minRps": 12192,
-          "maxRps": 12192,
+          "medianRps": 11978,
+          "minRps": 11978,
+          "maxRps": 11978,
           "cv": 0,
           "rounds": [
-            12192
+            11978
           ],
           "latencyP50ms": 0,
-          "latencyP99ms": 494,
+          "latencyP99ms": 634,
           "errorRate": 0,
           "unexpectedResponses": 0,
           "socketErrors": 0,

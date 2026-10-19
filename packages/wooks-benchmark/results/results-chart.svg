@@ -4,22 +4,22 @@
 <text x="350" y="48" text-anchor="middle" font-size="10" fill="#999">v24.22.0 · Apple M4 · 1×(1s+2s)/test · c100 p10 · whiskers = min–max across rounds</text>
 <text x="178" y="87" text-anchor="end" fill="#bbb" font-size="13">Fastify</text>
 <rect x="190" y="64" width="410.0" height="36" fill="#5dade2" rx="4" opacity="0.85"/>
-<text x="608" y="87" fill="#ccc" font-size="12" font-weight="600">115.9k req/s</text>
+<text x="608" y="87" fill="#ccc" font-size="12" font-weight="600">116.4k req/s</text>
 <text x="608" y="100" fill="#777" font-size="10">fastest</text>
 <text x="178" y="135" text-anchor="end" fill="#bbb" font-size="13">Wooks</text>
-<rect x="190" y="112" width="381.2" height="36" fill="#58d68d" rx="4" opacity="0.85"/>
-<text x="579.230199506149" y="135" fill="#ccc" font-size="12" font-weight="600">107.7k req/s</text>
-<text x="579.230199506149" y="148" fill="#777" font-size="10">1.08x slower</text>
+<rect x="190" y="112" width="400.2" height="36" fill="#58d68d" rx="4" opacity="0.85"/>
+<text x="598.2229518768629" y="135" fill="#ccc" font-size="12" font-weight="600">113.7k req/s</text>
+<text x="598.2229518768629" y="148" fill="#777" font-size="10">1.02x slower</text>
 <text x="178" y="183" text-anchor="end" fill="#bbb" font-size="13">Hono</text>
-<rect x="190" y="160" width="348.0" height="36" fill="#eb984e" rx="4" opacity="0.85"/>
-<text x="546.0265451267404" y="183" fill="#ccc" font-size="12" font-weight="600">98.4k req/s</text>
-<text x="546.0265451267404" y="196" fill="#777" font-size="10">1.18x slower</text>
+<rect x="190" y="160" width="336.5" height="36" fill="#eb984e" rx="4" opacity="0.85"/>
+<text x="534.524738741119" y="183" fill="#ccc" font-size="12" font-weight="600">95.6k req/s</text>
+<text x="534.524738741119" y="196" fill="#777" font-size="10">1.22x slower</text>
 <text x="178" y="231" text-anchor="end" fill="#bbb" font-size="13">h3</text>
-<rect x="190" y="208" width="304.9" height="36" fill="#f4d03f" rx="4" opacity="0.85"/>
-<text x="502.8642051236269" y="231" fill="#ccc" font-size="12" font-weight="600">86.2k req/s</text>
-<text x="502.8642051236269" y="244" fill="#777" font-size="10">1.34x slower</text>
+<rect x="190" y="208" width="297.9" height="36" fill="#f4d03f" rx="4" opacity="0.85"/>
+<text x="495.8691543407065" y="231" fill="#ccc" font-size="12" font-weight="600">84.6k req/s</text>
+<text x="495.8691543407065" y="244" fill="#777" font-size="10">1.38x slower</text>
 <text x="178" y="279" text-anchor="end" fill="#bbb" font-size="13">Express</text>
-<rect x="190" y="256" width="223.1" height="36" fill="#bb8fce" rx="4" opacity="0.85"/>
-<text x="421.1151317114379" y="279" fill="#ccc" font-size="12" font-weight="600">63.1k req/s</text>
-<text x="421.1151317114379" y="292" fill="#777" font-size="10">1.84x slower</text>
+<rect x="190" y="256" width="208.0" height="36" fill="#bb8fce" rx="4" opacity="0.85"/>
+<text x="405.96403522289097" y="279" fill="#ccc" font-size="12" font-weight="600">59.1k req/s</text>
+<text x="405.96403522289097" y="292" fill="#777" font-size="10">1.97x slower</text>
 </svg>

@@ -1,25 +1,40 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 332" font-family="system-ui,-apple-system,sans-serif" font-size="12">
 <rect width="700" height="332" fill="#2b2d30" rx="8"/>
 <text x="350" y="30" text-anchor="middle" font-size="15" font-weight="600" fill="#e0e0e0">HTTP Framework Benchmark (with simulated DB) — traffic-mix req/s</text>
-<text x="350" y="48" text-anchor="middle" font-size="10" fill="#999">v24.22.0 · Apple M4 · 1×(1s+1s)/test · c100 p10 · whiskers = min–max across rounds</text>
+<text x="350" y="48" text-anchor="middle" font-size="10" fill="#999">v24.22.0 · Apple M4 · 3×(1s+1s)/test · c100 p10 · whiskers = min–max across rounds</text>
 <text x="178" y="87" text-anchor="end" fill="#bbb" font-size="13">Fastify</text>
-<rect x="190" y="64" width="410.0" height="36" fill="#5dade2" rx="4" opacity="0.85"/>
-<text x="608" y="87" fill="#ccc" font-size="12" font-weight="600">78.3k req/s</text>
+<rect x="190" y="64" width="404.2" height="36" fill="#5dade2" rx="4" opacity="0.85"/>
+<line x1="561.3" y1="82" x2="600.0" y2="82" stroke="#222" stroke-width="1.5"/>
+<line x1="561.3" y1="77" x2="561.3" y2="87" stroke="#222" stroke-width="1.5"/>
+<line x1="600.0" y1="77" x2="600.0" y2="87" stroke="#222" stroke-width="1.5"/>
+<text x="608" y="87" fill="#ccc" font-size="12" font-weight="600">87.8k req/s</text>
 <text x="608" y="100" fill="#777" font-size="10">fastest</text>
 <text x="178" y="135" text-anchor="end" fill="#bbb" font-size="13">Wooks</text>
-<rect x="190" y="112" width="395.3" height="36" fill="#58d68d" rx="4" opacity="0.85"/>
-<text x="593.2615063729276" y="135" fill="#ccc" font-size="12" font-weight="600">75.5k req/s</text>
-<text x="593.2615063729276" y="148" fill="#777" font-size="10">1.04x slower</text>
+<rect x="190" y="112" width="381.1" height="36" fill="#58d68d" rx="4" opacity="0.85"/>
+<line x1="567.1" y1="130" x2="574.2" y2="130" stroke="#222" stroke-width="1.5"/>
+<line x1="567.1" y1="125" x2="567.1" y2="135" stroke="#222" stroke-width="1.5"/>
+<line x1="574.2" y1="125" x2="574.2" y2="135" stroke="#222" stroke-width="1.5"/>
+<text x="582.2010997335483" y="135" fill="#ccc" font-size="12" font-weight="600">82.8k req/s</text>
+<text x="582.2010997335483" y="148" fill="#777" font-size="10">1.06x slower</text>
 <text x="178" y="183" text-anchor="end" fill="#bbb" font-size="13">Hono</text>
-<rect x="190" y="160" width="321.4" height="36" fill="#eb984e" rx="4" opacity="0.85"/>
-<text x="519.4397861979626" y="183" fill="#ccc" font-size="12" font-weight="600">61.4k req/s</text>
-<text x="519.4397861979626" y="196" fill="#777" font-size="10">1.28x slower</text>
+<rect x="190" y="160" width="318.6" height="36" fill="#eb984e" rx="4" opacity="0.85"/>
+<line x1="495.4" y1="178" x2="512.8" y2="178" stroke="#222" stroke-width="1.5"/>
+<line x1="495.4" y1="173" x2="495.4" y2="183" stroke="#222" stroke-width="1.5"/>
+<line x1="512.8" y1="173" x2="512.8" y2="183" stroke="#222" stroke-width="1.5"/>
+<text x="520.8252485838102" y="183" fill="#ccc" font-size="12" font-weight="600">69.2k req/s</text>
+<text x="520.8252485838102" y="196" fill="#777" font-size="10">1.27x slower</text>
 <text x="178" y="231" text-anchor="end" fill="#bbb" font-size="13">h3</text>
-<rect x="190" y="208" width="318.4" height="36" fill="#f4d03f" rx="4" opacity="0.85"/>
-<text x="516.4420575947785" y="231" fill="#ccc" font-size="12" font-weight="600">60.8k req/s</text>
-<text x="516.4420575947785" y="244" fill="#777" font-size="10">1.29x slower</text>
+<rect x="190" y="208" width="312.0" height="36" fill="#f4d03f" rx="4" opacity="0.85"/>
+<line x1="500.5" y1="226" x2="504.3" y2="226" stroke="#222" stroke-width="1.5"/>
+<line x1="500.5" y1="221" x2="500.5" y2="231" stroke="#222" stroke-width="1.5"/>
+<line x1="504.3" y1="221" x2="504.3" y2="231" stroke="#222" stroke-width="1.5"/>
+<text x="512.2832526295542" y="231" fill="#ccc" font-size="12" font-weight="600">67.8k req/s</text>
+<text x="512.2832526295542" y="244" fill="#777" font-size="10">1.30x slower</text>
 <text x="178" y="279" text-anchor="end" fill="#bbb" font-size="13">Express</text>
-<rect x="190" y="256" width="256.1" height="36" fill="#bb8fce" rx="4" opacity="0.85"/>
-<text x="454.08017365514314" y="279" fill="#ccc" font-size="12" font-weight="600">48.9k req/s</text>
-<text x="454.08017365514314" y="292" fill="#777" font-size="10">1.60x slower</text>
+<rect x="190" y="256" width="239.1" height="36" fill="#bb8fce" rx="4" opacity="0.85"/>
+<line x1="423.0" y1="274" x2="432.2" y2="274" stroke="#222" stroke-width="1.5"/>
+<line x1="423.0" y1="269" x2="423.0" y2="279" stroke="#222" stroke-width="1.5"/>
+<line x1="432.2" y1="269" x2="432.2" y2="279" stroke="#222" stroke-width="1.5"/>
+<text x="440.24671721953763" y="279" fill="#ccc" font-size="12" font-weight="600">51.9k req/s</text>
+<text x="440.24671721953763" y="292" fill="#777" font-size="10">1.69x slower</text>
 </svg>

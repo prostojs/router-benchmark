@@ -71,16 +71,16 @@ Indicative estimate, single round on a laptop: the published results were produc
 
 | Variant | Rou3 (compiled) | Hono RegExpRouter | Rou3 | ProstoRouter | FindMyWay | Express |
 |---------|---:|---:|---:|---:|---:|---:|
-| Short routes | **135,452** | 56,638 | 56,277 | 43,488 | 34,096 | 2,438 |
-| Long routes | **39,335** | 8,906 | 6,537 | 9,604 | 11,090 | 1,144 |
-| Mixed routes | **56,940** | 53,412 | 30,704 | 29,171 | 28,068 | 2,177 |
+| Short routes | **142,365** | 50,887 | 56,232 | 41,838 | 34,643 | 2,295 |
+| Long routes | **38,823** | 9,157 | 6,555 | 9,446 | 11,262 | 1,107 |
+| Mixed routes | **56,319** | 53,178 | 30,250 | 29,905 | 27,079 | 2,243 |
 
 op/ms, higher is better.
 
-- **Rou3 (compiled)** is the fastest on every shape, by 2.4x (short), 3.5x (long) and 1.07x (mixed) over the runner-up, and in every per-test row of the long-route breakdown except short static paths, where plain rou3 is faster.
-- **ProstoRouter** is mid-pack: 4th on short routes (3.1x behind the leader), 3rd on long routes (4.1x behind; find-my-way is 15% ahead of it) and 4th on mixed routes (2.0x behind, level with plain rou3 and find-my-way).
-- On the long-route parametric tests (1–4 params), find-my-way is ahead of ProstoRouter in every row; ProstoRouter is ahead of Hono and plain rou3 in most of them. ProstoRouter's static lookups (47–63k op/ms) are much faster than its parametric ones (6–11k op/ms).
-- **Express** is 26–56x behind the leader.
+- **Rou3 (compiled)** is the fastest on every shape, by 2.5x (short), 3.4x (long) and 1.06x (mixed) over the runner-up, and in every per-test row of the long-route breakdown except short static paths, where plain rou3 is faster.
+- **ProstoRouter** is mid-pack: 4th on short routes (3.4x behind the leader), 3rd on long routes (4.1x behind; find-my-way is 19% ahead of it) and 4th on mixed routes (1.9x behind, level with plain rou3 and 10% ahead of find-my-way).
+- On the long-route parametric tests (1–4 params), find-my-way is ahead of ProstoRouter in every row; ProstoRouter is ahead of Hono and plain rou3 in most of them. ProstoRouter's static lookups (44–60k op/ms) are much faster than its parametric ones (6–11k op/ms).
+- **Express** is 25–62x behind the leader.
 
 ### Scaling (22 → 200 routes)
 
@@ -88,18 +88,18 @@ op/ms, higher is better.
 
 | Router | Short 22→200 | Long 22→200 | Mixed 20→198 |
 |--------|-------------|------------|--------------|
-| Rou3 (compiled) | 137k → 38k (3.6x) | 37k → 31k (1.2x) | 57k → 36k (1.6x) |
-| FindMyWay | 35k → 15k (2.4x) | 10.8k → 10.5k (1.0x) | 28k → 14k (2.0x) |
-| Rou3 | 55k → 15k (3.6x) | 4.9k → 6.7k (noisy, 4.9–6.7k at every size) | 31k → 11k (2.9x) |
-| ProstoRouter | 44k → 12k (3.5x) | 8.8k → 5.2k (1.7x) | 29k → 9k (3.2x) |
-| Hono | 57k → 7k (8.1x) | 8.9k → 4.5k* (2.0x) | 53k → 4k* (13x) |
-| Express | 2.4k → 0.3k (8.0x) | 1.1k → 0.7k (1.6x) | 2.2k → 0.3k (7.7x) |
+| Rou3 (compiled) | 141k → 38k (3.7x) | 37k → 31k (1.2x) | 57k → 37k (1.5x) |
+| FindMyWay | 35k → 15k (2.3x) | 10.9k → 10.5k (1.0x) | 28k → 14k (2.0x) |
+| Rou3 | 55k → 15k (3.7x) | 6.9k → 6.7k (1.0x) | 30k → 10k (3.0x) |
+| ProstoRouter | 43k → 12k (3.5x) | 9.3k → 5.0k (1.8x) | 29k → 9k (3.1x) |
+| Hono | 55k → 7k (7.8x) | 8.7k → 4.5k* (1.9x) | 54k → 4k* (13x) |
+| Express | 2.3k → 0.3k (8.3x) | 1.1k → 0.7k (1.6x) | 2.3k → 0.3k (7.9x) |
 
 \* Hono's SmartRouter uses RegExpRouter while it can compile the route set, and TrieRouter otherwise; here it switched to TrieRouter from 100 long routes and at 198 mixed routes. The backend is labelled per point in [RESULTS-SCALE.md](RESULTS-SCALE.md).
 
-- ProstoRouter's short-route throughput drops most between 22 and 50 routes (44k → 14k op/ms) and stays about flat after that; the other routers show a similar step on short and mixed routes.
-- On long routes, find-my-way and both rou3 variants change little as routes are added; ProstoRouter loses 1.7x from 22 to 200 routes.
-- Hono's throughput falls the most as routes are added (8x on short, 13x on mixed). Express is far behind at every size.
+- ProstoRouter's short-route throughput drops most between 22 and 50 routes (43k → 14k op/ms) and stays about flat after that; the other routers show a similar step on short and mixed routes.
+- On long routes, find-my-way and both rou3 variants change little as routes are added; ProstoRouter loses 1.8x from 22 to 200 routes.
+- Hono and Express lose the most as routes are added (Hono 7.8x on short and 13x on mixed routes, Express 8.3x and 7.9x). Express is far behind at every size.
 - At 200 routes ProstoRouter is behind find-my-way and both rou3 variants on all three shapes, and ahead of Hono and Express.
 
 ## Conclusion

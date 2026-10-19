@@ -1,6 +1,6 @@
 # Router Scaling Benchmark
 
-Lookup throughput (route match + param extraction, op/ms) as the number of registered routes grows. All routers are verified to return identical matches/params before measuring. Generated 2026-10-19T11:52:46.847Z.
+Lookup throughput (route match + param extraction, op/ms) as the number of registered routes grows. All routers are verified to return identical matches/params before measuring. Generated 2026-10-19T19:37:53.257Z.
 
 ---
 
@@ -12,12 +12,12 @@ Shallow paths like `/users/:id`, `/posts/:id/comments`.
 
 | Router | 22 routes | 50 routes | 100 routes | 200 routes | first → last |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| ProstoRouter | 43,846 | 13,815 | 14,018 | 12,457 | 3.5x |
-| FindMyWay | 35,058 | 19,641 | 19,711 | 14,889 | 2.4x |
-| Rou3 | 54,610 | 19,960 | 18,345 | 14,981 | 3.6x |
-| Rou3 (compiled) | 136,846 | 39,929 | 39,308 | 38,184 | 3.6x |
-| Hono | 56,849 (RegExpRouter) | 13,751 (RegExpRouter) | 11,226 (RegExpRouter) | 6,990 (RegExpRouter) | 8.1x |
-| Express | 2,384 | 970 | 637 | 297 | 8.0x |
+| ProstoRouter | 43,455 | 14,331 | 13,527 | 12,312 | 3.5x |
+| FindMyWay | 35,071 | 20,288 | 19,139 | 15,391 | 2.3x |
+| Rou3 | 55,082 | 19,211 | 18,595 | 14,864 | 3.7x |
+| Rou3 (compiled) | 140,539 | 39,571 | 38,955 | 38,061 | 3.7x |
+| Hono | 54,905 (RegExpRouter) | 14,016 (RegExpRouter) | 11,111 (RegExpRouter) | 7,034 (RegExpRouter) | 7.8x |
+| Express | 2,332 | 983 | 607 | 281 | 8.3x |
 
 ---
 
@@ -29,12 +29,12 @@ Deep paths like `/api/v1/organizations/:orgId/workspaces/:wsId/projects/:project
 
 | Router | 22 routes | 50 routes | 100 routes | 200 routes | first → last |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| ProstoRouter | 8,794 | 7,739 | 6,421 | 5,167 | 1.7x |
-| FindMyWay | 10,816 | 10,639 | 10,479 | 10,540 | 1.0x |
-| Rou3 | 4,877 | 6,733 | 4,868 | 6,738 | 0.7x |
-| Rou3 (compiled) | 37,150 | 29,886 | 30,720 | 30,924 | 1.2x |
-| Hono | 8,894 (RegExpRouter) | 7,505 (RegExpRouter) | 4,505 (TrieRouter) | 4,521 (TrieRouter) | 2.0x |
-| Express | 1,131 | 1,059 | 937 | 697 | 1.6x |
+| ProstoRouter | 9,303 | 8,148 | 6,475 | 5,048 | 1.8x |
+| FindMyWay | 10,862 | 10,638 | 10,490 | 10,505 | 1.0x |
+| Rou3 | 6,857 | 6,748 | 6,649 | 6,685 | 1.0x |
+| Rou3 (compiled) | 36,923 | 29,845 | 30,456 | 30,928 | 1.2x |
+| Hono | 8,704 (RegExpRouter) | 7,580 (RegExpRouter) | 4,465 (TrieRouter) | 4,479 (TrieRouter) | 1.9x |
+| Express | 1,110 | 1,047 | 929 | 705 | 1.6x |
 
 ---
 
@@ -46,12 +46,12 @@ Half short (2–5 segments) + half long (deep enterprise API) routes.
 
 | Router | 20 routes | 48 routes | 98 routes | 198 routes | first → last |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| ProstoRouter | 29,220 | 11,505 | 9,366 | 9,004 | 3.2x |
-| FindMyWay | 28,315 | 15,967 | 14,542 | 14,230 | 2.0x |
-| Rou3 | 30,839 | 15,834 | 11,981 | 10,736 | 2.9x |
-| Rou3 (compiled) | 57,038 | 41,001 | 36,674 | 36,419 | 1.6x |
-| Hono | 52,955 (RegExpRouter) | 15,128 (RegExpRouter) | 7,801 (RegExpRouter) | 4,072 (TrieRouter) | 13.0x |
-| Express | 2,206 | 949 | 601 | 286 | 7.7x |
+| ProstoRouter | 28,981 | 10,864 | 8,935 | 9,335 | 3.1x |
+| FindMyWay | 28,167 | 15,403 | 14,580 | 14,201 | 2.0x |
+| Rou3 | 30,311 | 15,324 | 12,002 | 10,268 | 3.0x |
+| Rou3 (compiled) | 56,597 | 40,181 | 36,171 | 36,727 | 1.5x |
+| Hono | 53,689 (RegExpRouter) | 15,047 (RegExpRouter) | 7,783 (RegExpRouter) | 4,115 (TrieRouter) | 13.0x |
+| Express | 2,265 | 1,005 | 595 | 288 | 7.9x |
 
 ---
 
@@ -59,7 +59,7 @@ Half short (2–5 segments) + half long (deep enterprise API) routes.
 
 |  |  |
 | --- | --- |
-| Date | 2026-10-19T11:52:46.847Z |
+| Date | 2026-10-19T19:37:53.257Z |
 | Node.js | v24.22.0 (V8 13.6.233.17-node.57) |
 | OS | Darwin 27.0.0 (darwin arm64) |
 | CPU | Apple M4 (10 logical cores) |
