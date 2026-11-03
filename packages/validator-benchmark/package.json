@@ -4,16 +4,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "compile": "asc -f js",
+    "compile": "asc -f js && asc -c atscript.compiled.config.mts -f js && pnpm -C ../atscript-baseline compile",
     "start": "pnpm compile && node ./src/index.js",
     "quick": "pnpm compile && node ./src/index.js --quick",
     "preflight": "pnpm compile && node ./src/preflight.js"
   },
   "dependencies": {
-    "@atscript/core": "0.1.109",
-    "@atscript/typescript": "0.1.109",
+    "@atscript/core": "0.2.1",
+    "@atscript/typescript": "0.2.1",
     "ajv": "8.20.0",
     "arktype": "2.2.8",
+    "atscript-baseline": "workspace:*",
     "bench-utils": "workspace:*",
     "class-transformer": "0.5.1",
     "class-validator": "0.15.1",

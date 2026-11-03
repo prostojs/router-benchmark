@@ -86,7 +86,8 @@ const typeboxStripInvalid = (s, mode) =>
 
 /**
  * Engines (library + API). `lib` names the module in ./engines/ that builds the runner (so a
- * worker loads only its own library) and the MODES entry; `pkg` (default `lib`) is the npm
+ * worker loads only its own library and model) and the MODES entry (the `atscript-*` engines share
+ * `atscript`'s); `pkg` (default `lib`) is the npm
  * package, `pkgs` lists every package the engine loads. `run(input)` returns a number the
  * harness consumes: 1 when valid; for invalid input, minus the number of reported errors (so
  * the error report is materialized), or -1 for boolean-only APIs. `call`/`returns`/`setup`
@@ -106,6 +107,26 @@ export const ENGINES = {
     call: '`validator.validate(input, true)`',
     returns: 'boolean (+ `validator.errors`); validates in place, no copy',
     setup: '`new Validator(type, { unknownProps, errorLimit })`',
+  },
+  'atscript-compiled': {
+    label: 'atscript validate() [compiled]',
+    color: '#8cbcf2',
+    lib: 'atscript-compiled',
+    pkg: '@atscript/typescript',
+    pkgs: ['@atscript/typescript', '@atscript/core'],
+    call: '`validator.validate(input, true)`',
+    returns: 'same as above',
+    setup: 'same as above, on the model built with `tsPlugin({ compileValidators: true })`: checks compiled at build time by the atscript plugin, no `new Function`/`eval` at runtime',
+  },
+  'atscript-baseline': {
+    label: 'atscript 0.1.109 validate() [baseline]',
+    color: '#c7dcf5',
+    lib: 'atscript-baseline',
+    pkg: '@atscript/typescript',
+    pkgs: [['atscript-baseline', '@atscript/typescript'], ['atscript-baseline', '@atscript/core']],
+    call: 'same as above',
+    returns: 'same as above',
+    setup: 'same as `atscript validate()`, on atscript 0.1.109 — the last release before compiled validators (the `atscript-baseline` workspace package)',
   },
   zod: {
     label: 'zod safeParse()',

@@ -1,11 +1,11 @@
 # Validator Benchmark Results
 
-Throughput of validating the same `Order` model with an [atscript](https://atscript.dev) validator and the equivalent schema in 12 other engines of popular validation libraries. See [README.md](README.md) for what is measured and how the schemas were made equivalent.
+Throughput of validating the same `Order` model with an [atscript](https://atscript.dev) validator (interpreted, and compiled at build time) and the equivalent schema in 12 other engines of popular validation libraries. See [README.md](README.md) for what is measured and how the schemas were made equivalent.
 
-- @atscript/typescript **0.1.109**, @atscript/core **0.1.109**, zod **4.6.7**, valibot **1.5.0**, yup **1.7.1**, joi **18.3.0**, ajv **8.20.0**, arktype **2.2.8**, class-validator **0.15.1**, class-transformer **0.5.1**, reflect-metadata **0.2.2**, typebox **1.4.2**
-- 1 round(s) × 10 samples of ~40 ms per job, 1000 ms warmup, one child process per job; total 8 min
-- Pre-flight: 2488 equivalence checks passed (every benchmark job, 57 edge cases × every engine × every mode it supports, unknown-props output, same-violation and first-error checks)
-- Generated: 2026-10-19T20:02:07.474Z
+- @atscript/typescript **0.2.1**, @atscript/core **0.2.1**, @atscript/typescript (via atscript-baseline) **0.1.109**, @atscript/core (via atscript-baseline) **0.1.109**, zod **4.6.7**, valibot **1.5.0**, yup **1.7.1**, joi **18.3.0**, ajv **8.20.0**, arktype **2.2.8**, class-validator **0.15.1**, class-transformer **0.5.1**, reflect-metadata **0.2.2**, typebox **1.4.2**
+- 3 round(s) × 25 samples of ~40 ms per job, 1000 ms warmup, one child process per job; total 39 min
+- Pre-flight: 2916 equivalence checks passed (every benchmark job, 57 edge cases × every engine × every mode it supports, unknown-props output, same-violation and first-error checks)
+- Generated: 2026-11-03T13:22:31.930Z
 - Chart data: [results/summary.json](results/summary.json) (`results[mode][scenario][engine]` = median ops/s)
 
 Values are the **median ops/s** over all samples; the bracket is the p25–p75 range. "Relative" is versus the fastest engine in the same row group.
@@ -15,6 +15,8 @@ Values are the **median ops/s** over all samples; the bracket is the p25–p75 r
 | Engine | Call | Setup | Returns |
 | --- | --- | --- | --- |
 | atscript validate() | `validator.validate(input, true)` | `new Validator(type, { unknownProps, errorLimit })` | boolean (+ `validator.errors`); validates in place, no copy |
+| atscript validate() [compiled] | `validator.validate(input, true)` | same as above, on the model built with `tsPlugin({ compileValidators: true })`: checks compiled at build time by the atscript plugin, no `new Function`/`eval` at runtime | same as above |
+| atscript 0.1.109 validate() [baseline] | same as above | same as `atscript validate()`, on atscript 0.1.109 — the last release before compiled validators (the `atscript-baseline` workspace package) | same as above |
 | zod safeParse() | `schema.safeParse(input)` | object JIT on (default) | `{ success, data \| error }`; `data` is a new object |
 | zod z.compile() + safeParse() | `z.compile(schema).safeParse(input)` | `z.compile(schema, { strict: true })` | same as above, ahead-of-time compiled fast path |
 | zod z.compile() + validate() [boolean only] | `z.compile(schema).validate(input)` | `z.compile(schema, { strict: true })` | boolean only, no output object, no error details |
@@ -36,85 +38,103 @@ atscript `unknownProps: 'strip'` · zod `z.object()` · valibot `v.object()` · 
 
 | Scenario | Engine | ops/s (median) | p25–p75 | ns/op | Relative |
 | --- | --- | ---: | ---: | ---: | ---: |
-| valid-order | zod z.compile() + validate() [boolean only] | 3,724,760 | 3,282,029–3,747,163 | 268 | fastest |
-|  | zod z.compile() + safeParse() | 3,519,617 | 3,078,219–3,582,501 | 284 | 1.06x slower |
-|  | zod safeParse() | 433,236 | 348,065–438,644 | 2,308 | 8.60x slower |
-|  | atscript validate() | 375,049 | 374,695–376,341 | 2,666 | 9.93x slower |
-|  | valibot safeParse() | 353,651 | 350,440–361,749 | 2,828 | 10.53x slower |
-|  | joi validate() | 54,898 | 54,696–55,109 | 18,216 | 67.85x slower |
-|  | yup validateSync() | 19,323 | 17,667–19,373 | 51,751 | 192.76x slower |
-|  | class-validator validateSync() | 17,205 | 17,051–17,470 | 58,122 | 216.49x slower |
-|  | typebox Compile() + Check() | 8,434 | 8,107–8,566 | 118,569 | 441.64x slower |
-|  | typebox Value.Check() | 6,547 | 6,229–6,705 | 152,743 | 568.93x slower |
-| valid-order-paypal | zod z.compile() + validate() [boolean only] | 4,047,537 | 3,609,424–4,089,635 | 247 | fastest |
-|  | zod z.compile() + safeParse() | 3,632,478 | 3,216,503–3,704,244 | 275 | 1.11x slower |
-|  | zod safeParse() | 433,064 | 341,628–435,230 | 2,309 | 9.35x slower |
-|  | atscript validate() | 417,211 | 414,497–417,648 | 2,397 | 9.70x slower |
-|  | valibot safeParse() | 353,073 | 342,636–353,861 | 2,832 | 11.46x slower |
-|  | joi validate() | 52,125 | 51,968–52,739 | 19,185 | 77.65x slower |
-|  | class-validator validateSync() | 16,461 | 16,199–16,690 | 60,749 | 245.89x slower |
-|  | yup validateSync() | 13,779 | 13,751–14,109 | 72,575 | 293.75x slower |
-|  | typebox Compile() + Check() | 8,620 | 8,232–8,748 | 116,009 | 469.55x slower |
-|  | typebox Value.Check() | 6,748 | 6,347–6,865 | 148,183 | 599.81x slower |
-| large-order-50-items | zod z.compile() + validate() [boolean only] | 643,149 | 560,190–655,383 | 1,555 | fastest |
-|  | zod z.compile() + safeParse() | 629,388 | 528,278–634,998 | 1,589 | 1.02x slower |
-|  | atscript validate() | 70,428 | 70,249–70,860 | 14,199 | 9.13x slower |
-|  | zod safeParse() | 49,187 | 44,509–50,590 | 20,331 | 13.08x slower |
-|  | valibot safeParse() | 37,695 | 36,553–37,908 | 26,528 | 17.06x slower |
-|  | joi validate() | 4,529 | 4,497–4,557 | 220,818 | 142.01x slower |
-|  | yup validateSync() | 1,936 | 1,739–1,962 | 516,580 | 332.21x slower |
-|  | class-validator validateSync() | 1,770 | 1,730–1,842 | 564,859 | 363.36x slower |
-|  | typebox Compile() + Check() | 1,599 | 1,517–1,623 | 625,215 | 402.22x slower |
-|  | typebox Value.Check() | 888 | 854–910 | 1,126,172 | 724.27x slower |
-| unknown-props-order | zod z.compile() + validate() [boolean only] | 2,772,667 | 2,624,604–2,948,527 | 361 | fastest |
-|  | zod z.compile() + safeParse() | 2,696,672 | 2,551,390–2,796,823 | 371 | 1.03x slower |
-|  | zod safeParse() | 442,130 | 352,285–447,338 | 2,262 | 6.27x slower |
-|  | valibot safeParse() | 360,185 | 345,724–366,500 | 2,776 | 7.70x slower |
-|  | atscript validate() | 181,246 | 180,210–181,855 | 5,517 | 15.30x slower |
-|  | joi validate() | 50,708 | 50,111–50,966 | 19,721 | 54.68x slower |
-|  | yup validateSync() | 19,146 | 17,446–19,380 | 52,231 | 144.82x slower |
-|  | class-validator validateSync() | 16,338 | 16,033–16,465 | 61,207 | 169.71x slower |
-|  | typebox Compile() + Check() | 8,625 | 8,377–8,724 | 115,943 | 321.47x slower |
-|  | typebox Value.Check() | 6,464 | 6,414–6,494 | 154,692 | 428.94x slower |
-| invalid-order-all-errors | valibot safeParse() | 434,193 | 404,085–435,969 | 2,303 | fastest |
-|  | atscript validate() | 326,562 | 316,950–327,763 | 3,062 | 1.33x slower |
-|  | zod z.compile() + safeParse() | 143,172 | 136,633–146,771 | 6,985 | 3.03x slower |
-|  | zod safeParse() | 139,207 | 108,699–144,792 | 7,184 | 3.12x slower |
-|  | joi validate() | 48,966 | 48,398–49,086 | 20,422 | 8.87x slower |
-|  | class-validator validateSync() | 24,948 | 24,820–25,292 | 40,084 | 17.40x slower |
-|  | yup validateSync() | 4,942 | 4,767–5,300 | 202,339 | 87.86x slower |
-| invalid-order-first-error | zod z.compile() + validate() [boolean only] | 103,533,696 | 101,166,739–104,551,167 | 10 | fastest |
-|  | valibot safeParse() | 14,624,712 | 14,035,532–14,634,677 | 68 | 7.08x slower |
-|  | atscript validate() | 4,651,024 | 4,639,028–4,655,251 | 215 | 22.26x slower |
-|  | joi validate() | 806,859 | 799,210–814,820 | 1,239 | 128.32x slower |
-|  | yup validateSync() | 23,233 | 22,938–23,770 | 43,042 | 4456.32x slower |
-| union-card | zod z.compile() + safeParse() | 23,453,830 | 23,350,041–23,465,493 | 43 | fastest |
-|  | zod z.compile() + validate() [boolean only] | 23,361,976 | 23,294,088–23,385,081 | 43 | 1.00x slower |
-|  | zod safeParse() | 8,769,705 | 8,752,495–8,790,577 | 114 | 2.67x slower |
-|  | valibot safeParse() | 5,759,469 | 5,622,761–5,778,242 | 174 | 4.07x slower |
-|  | atscript validate() | 3,788,153 | 3,734,026–3,805,471 | 264 | 6.19x slower |
-|  | joi validate() | 1,279,273 | 1,275,547–1,282,489 | 782 | 18.33x slower |
-|  | yup validateSync() | 236,641 | 230,561–242,564 | 4,226 | 99.11x slower |
-|  | class-validator validateSync() | 219,370 | 213,560–220,142 | 4,559 | 106.91x slower |
-|  | typebox Compile() + Check() | 88,106 | 80,882–91,709 | 11,350 | 266.20x slower |
-|  | typebox Value.Check() | 69,871 | 65,189–70,708 | 14,312 | 335.67x slower |
-| union-paypal | zod z.compile() + validate() [boolean only] | 45,106,639 | 44,995,096–45,326,814 | 22 | fastest |
-|  | zod z.compile() + safeParse() | 43,996,917 | 43,802,580–44,052,708 | 23 | 1.03x slower |
-|  | zod safeParse() | 5,889,737 | 5,520,988–5,949,881 | 170 | 7.66x slower |
-|  | atscript validate() | 5,356,234 | 5,350,828–5,363,469 | 187 | 8.42x slower |
-|  | valibot safeParse() | 3,791,221 | 3,380,428–4,010,750 | 264 | 11.90x slower |
-|  | joi validate() | 850,613 | 845,359–857,113 | 1,176 | 53.03x slower |
-|  | class-validator validateSync() | 132,530 | 131,959–133,788 | 7,545 | 340.35x slower |
-|  | typebox Compile() + Check() | 100,268 | 90,943–103,032 | 9,973 | 449.86x slower |
-|  | typebox Value.Check() | 89,123 | 86,837–89,676 | 11,221 | 506.12x slower |
-|  | yup validateSync() | 78,545 | 76,826–79,780 | 12,731 | 574.28x slower |
-| union-invalid | valibot safeParse() | 2,867,544 | 2,799,533–2,948,429 | 349 | fastest |
-|  | atscript validate() | 1,578,764 | 1,570,486–1,586,709 | 633 | 1.82x slower |
-|  | zod safeParse() | 611,982 | 556,532–616,800 | 1,634 | 4.69x slower |
-|  | zod z.compile() + safeParse() | 609,466 | 543,466–615,185 | 1,641 | 4.71x slower |
-|  | joi validate() | 293,283 | 288,961–297,261 | 3,410 | 9.78x slower |
-|  | class-validator validateSync() | 111,118 | 110,406–111,946 | 8,999 | 25.81x slower |
-|  | yup validateSync() | 31,580 | 31,436–32,003 | 31,666 | 90.80x slower |
+| valid-order | zod z.compile() + validate() [boolean only] | 3,678,727 | 3,143,761–3,809,923 | 272 | fastest |
+|  | zod z.compile() + safeParse() | 3,230,818 | 2,731,285–3,464,940 | 310 | 1.14x slower |
+|  | atscript validate() [compiled] | 3,102,958 | 2,906,093–3,229,061 | 322 | 1.19x slower |
+|  | atscript validate() | 450,444 | 435,384–455,707 | 2,220 | 8.17x slower |
+|  | zod safeParse() | 427,804 | 296,997–449,783 | 2,338 | 8.60x slower |
+|  | atscript 0.1.109 validate() [baseline] | 399,163 | 384,310–413,634 | 2,505 | 9.22x slower |
+|  | valibot safeParse() | 347,123 | 332,145–353,055 | 2,881 | 10.60x slower |
+|  | joi validate() | 43,133 | 41,817–48,017 | 23,184 | 85.29x slower |
+|  | yup validateSync() | 18,812 | 16,763–19,275 | 53,157 | 195.55x slower |
+|  | class-validator validateSync() | 13,375 | 12,531–15,048 | 74,768 | 275.05x slower |
+|  | typebox Compile() + Check() | 8,518 | 7,656–8,796 | 117,392 | 431.88x slower |
+|  | typebox Value.Check() | 6,345 | 5,915–6,652 | 157,605 | 579.78x slower |
+| valid-order-paypal | zod z.compile() + validate() [boolean only] | 3,802,943 | 3,449,340–4,240,391 | 263 | fastest |
+|  | zod z.compile() + safeParse() | 3,734,500 | 3,012,716–3,830,086 | 268 | 1.02x slower |
+|  | atscript validate() [compiled] | 3,469,362 | 3,137,309–3,523,110 | 288 | 1.10x slower |
+|  | atscript validate() | 476,644 | 460,194–490,527 | 2,098 | 7.98x slower |
+|  | atscript 0.1.109 validate() [baseline] | 429,536 | 424,978–433,617 | 2,328 | 8.85x slower |
+|  | zod safeParse() | 418,927 | 264,750–438,882 | 2,387 | 9.08x slower |
+|  | valibot safeParse() | 314,379 | 299,082–343,420 | 3,181 | 12.10x slower |
+|  | joi validate() | 49,822 | 49,060–50,688 | 20,072 | 76.33x slower |
+|  | yup validateSync() | 16,118 | 14,205–16,742 | 62,043 | 235.94x slower |
+|  | class-validator validateSync() | 14,480 | 13,414–14,953 | 69,061 | 262.63x slower |
+|  | typebox Compile() + Check() | 8,813 | 8,394–9,007 | 113,466 | 431.52x slower |
+|  | typebox Value.Check() | 6,483 | 6,061–6,750 | 154,251 | 586.60x slower |
+| large-order-50-items | zod z.compile() + validate() [boolean only] | 656,045 | 521,233–669,417 | 1,524 | fastest |
+|  | zod z.compile() + safeParse() | 635,282 | 487,126–649,190 | 1,574 | 1.03x slower |
+|  | atscript validate() [compiled] | 605,623 | 588,488–623,347 | 1,651 | 1.08x slower |
+|  | atscript validate() | 71,198 | 68,571–72,575 | 14,045 | 9.21x slower |
+|  | atscript 0.1.109 validate() [baseline] | 58,968 | 53,631–66,070 | 16,958 | 11.13x slower |
+|  | zod safeParse() | 41,115 | 37,715–44,090 | 24,322 | 15.96x slower |
+|  | valibot safeParse() | 37,083 | 36,152–37,580 | 26,966 | 17.69x slower |
+|  | joi validate() | 4,276 | 4,121–4,325 | 233,864 | 153.42x slower |
+|  | yup validateSync() | 1,949 | 1,909–1,991 | 513,038 | 336.61x slower |
+|  | typebox Compile() + Check() | 1,592 | 1,467–1,651 | 628,094 | 412.09x slower |
+|  | class-validator validateSync() | 1,358 | 1,270–1,658 | 736,206 | 483.10x slower |
+|  | typebox Value.Check() | 945 | 859–979 | 1,057,702 | 694.23x slower |
+| unknown-props-order | zod z.compile() + validate() [boolean only] | 2,641,076 | 2,253,610–2,781,056 | 379 | fastest |
+|  | zod z.compile() + safeParse() | 2,545,924 | 2,063,828–2,665,863 | 393 | 1.04x slower |
+|  | atscript validate() [compiled] | 614,109 | 591,548–646,467 | 1,628 | 4.30x slower |
+|  | zod safeParse() | 401,378 | 281,948–422,436 | 2,491 | 6.58x slower |
+|  | valibot safeParse() | 349,378 | 331,943–360,844 | 2,862 | 7.56x slower |
+|  | atscript validate() | 285,375 | 278,174–288,396 | 3,504 | 9.25x slower |
+|  | atscript 0.1.109 validate() [baseline] | 175,530 | 161,054–179,021 | 5,697 | 15.05x slower |
+|  | joi validate() | 46,875 | 44,368–48,844 | 21,333 | 56.34x slower |
+|  | yup validateSync() | 18,570 | 16,456–19,355 | 53,852 | 142.22x slower |
+|  | class-validator validateSync() | 14,299 | 13,479–14,630 | 69,933 | 184.70x slower |
+|  | typebox Compile() + Check() | 8,005 | 7,512–8,511 | 124,925 | 329.93x slower |
+|  | typebox Value.Check() | 5,941 | 5,598–6,329 | 168,313 | 444.55x slower |
+| invalid-order-all-errors | valibot safeParse() | 443,815 | 404,879–446,790 | 2,253 | fastest |
+|  | atscript validate() | 348,475 | 331,184–352,786 | 2,870 | 1.27x slower |
+|  | atscript validate() [compiled] | 343,918 | 332,725–358,040 | 2,908 | 1.29x slower |
+|  | atscript 0.1.109 validate() [baseline] | 303,148 | 282,086–339,079 | 3,299 | 1.46x slower |
+|  | zod safeParse() | 114,276 | 91,424–133,315 | 8,751 | 3.88x slower |
+|  | zod z.compile() + safeParse() | 114,212 | 104,266–138,117 | 8,756 | 3.89x slower |
+|  | joi validate() | 49,216 | 47,683–50,697 | 20,319 | 9.02x slower |
+|  | class-validator validateSync() | 25,148 | 23,623–26,023 | 39,765 | 17.65x slower |
+|  | yup validateSync() | 9,324 | 9,086–9,449 | 107,251 | 47.60x slower |
+| invalid-order-first-error | zod z.compile() + validate() [boolean only] | 100,328,402 | 76,425,195–101,416,760 | 10 | fastest |
+|  | valibot safeParse() | 14,175,908 | 13,147,137–14,837,619 | 71 | 7.08x slower |
+|  | atscript validate() [compiled] | 5,611,020 | 5,309,076–5,816,961 | 178 | 17.88x slower |
+|  | atscript validate() | 4,965,011 | 4,878,938–5,258,265 | 201 | 20.21x slower |
+|  | atscript 0.1.109 validate() [baseline] | 4,808,721 | 4,728,981–4,897,970 | 208 | 20.86x slower |
+|  | joi validate() | 744,055 | 722,027–770,772 | 1,344 | 134.84x slower |
+|  | yup validateSync() | 38,312 | 32,751–38,810 | 26,101 | 2618.72x slower |
+| union-card | zod z.compile() + validate() [boolean only] | 23,983,877 | 22,612,513–24,203,277 | 42 | fastest |
+|  | zod z.compile() + safeParse() | 23,845,672 | 22,031,742–24,418,996 | 42 | 1.01x slower |
+|  | atscript validate() [compiled] | 11,653,170 | 11,508,308–11,705,626 | 86 | 2.06x slower |
+|  | zod safeParse() | 8,086,985 | 7,976,550–8,173,382 | 124 | 2.97x slower |
+|  | valibot safeParse() | 5,720,948 | 5,518,507–5,772,203 | 175 | 4.19x slower |
+|  | atscript 0.1.109 validate() [baseline] | 4,018,550 | 3,949,607–4,054,579 | 249 | 5.97x slower |
+|  | atscript validate() | 3,965,303 | 3,690,107–3,992,086 | 252 | 6.05x slower |
+|  | joi validate() | 1,286,141 | 1,153,769–1,295,247 | 778 | 18.65x slower |
+|  | yup validateSync() | 225,704 | 211,705–239,204 | 4,431 | 106.26x slower |
+|  | class-validator validateSync() | 201,752 | 197,356–204,526 | 4,957 | 118.88x slower |
+|  | typebox Compile() + Check() | 88,311 | 80,202–90,439 | 11,324 | 271.58x slower |
+|  | typebox Value.Check() | 71,112 | 69,145–72,635 | 14,062 | 337.27x slower |
+| union-paypal | zod z.compile() + safeParse() | 44,473,590 | 40,124,817–45,421,398 | 22 | fastest |
+|  | zod z.compile() + validate() [boolean only] | 43,479,868 | 39,555,768–44,311,821 | 23 | 1.02x slower |
+|  | atscript validate() [compiled] | 14,405,059 | 11,706,427–14,803,275 | 69 | 3.09x slower |
+|  | zod safeParse() | 5,755,480 | 5,207,280–5,956,846 | 174 | 7.73x slower |
+|  | atscript validate() | 5,529,006 | 5,400,346–5,589,873 | 181 | 8.04x slower |
+|  | atscript 0.1.109 validate() [baseline] | 5,474,782 | 5,277,949–5,601,543 | 183 | 8.12x slower |
+|  | valibot safeParse() | 3,342,303 | 3,118,251–3,712,534 | 299 | 13.31x slower |
+|  | joi validate() | 868,356 | 836,805–882,416 | 1,152 | 51.22x slower |
+|  | class-validator validateSync() | 134,306 | 121,924–144,046 | 7,446 | 331.14x slower |
+|  | yup validateSync() | 133,898 | 123,951–139,836 | 7,468 | 332.15x slower |
+|  | typebox Compile() + Check() | 94,187 | 89,763–99,444 | 10,617 | 472.18x slower |
+|  | typebox Value.Check() | 86,287 | 77,051–87,802 | 11,589 | 515.41x slower |
+| union-invalid | valibot safeParse() | 2,544,932 | 2,409,172–2,654,433 | 393 | fastest |
+|  | atscript validate() [compiled] | 1,777,620 | 1,625,491–1,859,015 | 563 | 1.43x slower |
+|  | atscript validate() | 1,602,324 | 1,560,621–1,612,468 | 624 | 1.59x slower |
+|  | atscript 0.1.109 validate() [baseline] | 1,505,309 | 1,375,076–1,654,002 | 664 | 1.69x slower |
+|  | zod z.compile() + safeParse() | 541,839 | 490,985–580,512 | 1,846 | 4.70x slower |
+|  | zod safeParse() | 538,390 | 455,746–599,164 | 1,857 | 4.73x slower |
+|  | joi validate() | 230,686 | 219,992–248,572 | 4,335 | 11.03x slower |
+|  | class-validator validateSync() | 103,292 | 92,925–111,349 | 9,681 | 24.64x slower |
+|  | yup validateSync() | 49,285 | 44,181–54,690 | 20,290 | 51.64x slower |
 
 ## Unknown props: passthrough
 
@@ -124,115 +144,133 @@ atscript `unknownProps: 'ignore'` · zod `z.looseObject()` · valibot `v.looseOb
 
 | Scenario | Engine | ops/s (median) | p25–p75 | ns/op | Relative |
 | --- | --- | ---: | ---: | ---: | ---: |
-| valid-order | typebox Compile() + Check() | 4,633,019 | 4,592,997–4,637,472 | 216 | fastest |
-|  | arktype T.allows() [boolean only] | 3,775,921 | 3,750,322–3,823,564 | 265 | 1.23x slower |
-|  | arktype T(input) | 3,602,102 | 3,593,751–3,604,278 | 278 | 1.29x slower |
-|  | zod z.compile() + validate() [boolean only] | 2,391,635 | 2,154,997–2,412,957 | 418 | 1.94x slower |
-|  | ajv compiled validate() | 2,326,338 | 2,314,466–2,339,308 | 430 | 1.99x slower |
-|  | zod z.compile() + safeParse() | 1,836,148 | 1,586,950–1,870,151 | 545 | 2.52x slower |
-|  | atscript validate() | 465,739 | 460,949–470,559 | 2,147 | 9.95x slower |
-|  | zod safeParse() | 397,722 | 329,646–403,472 | 2,514 | 11.65x slower |
-|  | valibot safeParse() | 317,934 | 306,059–320,416 | 3,145 | 14.57x slower |
-|  | joi validate() | 54,848 | 54,605–55,020 | 18,232 | 84.47x slower |
-|  | typebox Value.Check() | 27,054 | 26,770–27,133 | 36,964 | 171.25x slower |
-|  | yup validateSync() | 19,458 | 17,653–19,577 | 51,393 | 238.10x slower |
-|  | class-validator validateSync() | 17,308 | 17,208–17,665 | 57,778 | 267.68x slower |
-| valid-order-paypal | typebox Compile() + Check() | 5,199,552 | 5,166,761–5,234,396 | 192 | fastest |
-|  | arktype T.allows() [boolean only] | 4,217,727 | 4,200,376–4,231,014 | 237 | 1.23x slower |
-|  | arktype T(input) | 3,975,095 | 3,963,399–3,976,654 | 252 | 1.31x slower |
-|  | zod z.compile() + validate() [boolean only] | 2,594,367 | 2,310,602–2,616,300 | 385 | 2.00x slower |
-|  | ajv compiled validate() | 2,328,330 | 2,325,640–2,340,118 | 429 | 2.23x slower |
-|  | zod z.compile() + safeParse() | 2,015,681 | 1,722,349–2,019,448 | 496 | 2.58x slower |
-|  | atscript validate() | 505,353 | 503,846–517,667 | 1,979 | 10.29x slower |
-|  | zod safeParse() | 384,815 | 374,041–385,234 | 2,599 | 13.51x slower |
-|  | valibot safeParse() | 316,037 | 299,594–318,970 | 3,164 | 16.45x slower |
-|  | joi validate() | 53,000 | 52,776–53,148 | 18,868 | 98.10x slower |
-|  | typebox Value.Check() | 28,926 | 28,678–28,992 | 34,571 | 179.75x slower |
-|  | class-validator validateSync() | 16,900 | 16,708–17,098 | 59,170 | 307.67x slower |
-|  | yup validateSync() | 13,795 | 13,549–13,974 | 72,490 | 376.92x slower |
-| large-order-50-items | typebox Compile() + Check() | 1,221,992 | 1,210,630–1,235,705 | 818 | fastest |
-|  | arktype T(input) | 677,872 | 676,807–678,162 | 1,475 | 1.80x slower |
-|  | arktype T.allows() [boolean only] | 672,338 | 665,651–674,155 | 1,487 | 1.82x slower |
-|  | ajv compiled validate() | 372,028 | 371,411–372,390 | 2,688 | 3.28x slower |
-|  | zod z.compile() + validate() [boolean only] | 250,761 | 221,476–253,668 | 3,988 | 4.87x slower |
-|  | zod z.compile() + safeParse() | 241,759 | 209,681–244,702 | 4,136 | 5.05x slower |
-|  | atscript validate() | 95,128 | 94,179–95,760 | 10,512 | 12.85x slower |
-|  | zod safeParse() | 43,269 | 39,597–44,627 | 23,111 | 28.24x slower |
-|  | valibot safeParse() | 33,419 | 32,542–33,518 | 29,923 | 36.57x slower |
-|  | joi validate() | 4,486 | 4,458–4,492 | 222,924 | 272.40x slower |
-|  | typebox Value.Check() | 2,285 | 2,271–2,290 | 437,732 | 534.79x slower |
-|  | class-validator validateSync() | 1,946 | 1,790–1,999 | 513,940 | 627.95x slower |
-|  | yup validateSync() | 1,936 | 1,726–1,943 | 516,439 | 631.19x slower |
-| unknown-props-order | typebox Compile() + Check() | 3,325,143 | 3,308,574–3,348,027 | 301 | fastest |
-|  | arktype T.allows() [boolean only] | 3,300,945 | 3,145,727–3,365,370 | 303 | 1.01x slower |
-|  | arktype T(input) | 3,249,681 | 3,180,728–3,313,132 | 308 | 1.02x slower |
-|  | ajv compiled validate() | 2,259,134 | 2,237,655–2,267,220 | 443 | 1.47x slower |
-|  | zod z.compile() + validate() [boolean only] | 2,004,970 | 1,821,870–2,039,756 | 499 | 1.66x slower |
-|  | zod z.compile() + safeParse() | 1,592,754 | 1,349,209–1,619,889 | 628 | 2.09x slower |
-|  | atscript validate() | 468,046 | 465,321–471,650 | 2,137 | 7.10x slower |
-|  | zod safeParse() | 348,131 | 286,370–354,291 | 2,872 | 9.55x slower |
-|  | valibot safeParse() | 311,019 | 296,871–312,033 | 3,215 | 10.69x slower |
-|  | joi validate() | 54,321 | 54,004–54,643 | 18,409 | 61.21x slower |
-|  | typebox Value.Check() | 27,739 | 27,541–27,951 | 36,050 | 119.87x slower |
-|  | yup validateSync() | 19,301 | 17,626–19,472 | 51,811 | 172.28x slower |
-|  | class-validator validateSync() | 17,312 | 17,079–17,421 | 57,762 | 192.07x slower |
-| invalid-order-all-errors | ajv compiled validate() | 1,897,593 | 1,894,750–1,898,965 | 527 | fastest |
-|  | valibot safeParse() | 394,022 | 357,526–398,246 | 2,538 | 4.82x slower |
-|  | atscript validate() | 360,701 | 359,144–367,757 | 2,772 | 5.26x slower |
-|  | zod safeParse() | 129,734 | 101,429–136,237 | 7,708 | 14.63x slower |
-|  | zod z.compile() + safeParse() | 129,102 | 126,676–134,803 | 7,746 | 14.70x slower |
-|  | typebox Compile() + Check() | 58,597 | 57,638–58,720 | 17,066 | 32.38x slower |
-|  | typebox Value.Check() | 53,974 | 53,210–54,684 | 18,527 | 35.16x slower |
-|  | joi validate() | 49,381 | 48,417–50,345 | 20,251 | 38.43x slower |
-|  | arktype T(input) | 32,415 | 32,082–32,720 | 30,850 | 58.54x slower |
-|  | class-validator validateSync() | 25,834 | 25,688–26,200 | 38,708 | 73.45x slower |
-|  | yup validateSync() | 5,091 | 4,769–5,255 | 196,408 | 372.73x slower |
-| invalid-order-first-error | zod z.compile() + validate() [boolean only] | 101,885,488 | 100,903,595–103,295,099 | 10 | fastest |
-|  | arktype T.allows() [boolean only] | 52,924,536 | 52,702,615–53,299,107 | 19 | 1.93x slower |
-|  | ajv compiled validate() | 52,505,799 | 52,448,439–52,637,848 | 19 | 1.94x slower |
-|  | valibot safeParse() | 14,366,685 | 13,746,699–14,441,013 | 70 | 7.09x slower |
-|  | atscript validate() | 5,166,955 | 5,154,480–5,170,523 | 194 | 19.72x slower |
-|  | joi validate() | 760,624 | 758,468–772,233 | 1,315 | 133.95x slower |
-|  | typebox Compile() + Check() | 168,945 | 165,227–177,510 | 5,919 | 603.07x slower |
-|  | typebox Value.Check() | 135,602 | 132,099–137,716 | 7,375 | 751.36x slower |
-|  | yup validateSync() | 23,931 | 23,167–24,193 | 41,787 | 4257.47x slower |
-| union-card | arktype T.allows() [boolean only] | 24,549,247 | 24,500,025–24,741,040 | 41 | fastest |
-|  | typebox Compile() + Check() | 24,412,503 | 24,392,624–24,542,187 | 41 | 1.01x slower |
-|  | ajv compiled validate() | 18,724,563 | 18,391,721–18,876,054 | 53 | 1.31x slower |
-|  | arktype T(input) | 18,159,428 | 18,114,678–18,226,457 | 55 | 1.35x slower |
-|  | zod z.compile() + validate() [boolean only] | 17,424,917 | 17,321,822–17,454,634 | 57 | 1.41x slower |
-|  | zod z.compile() + safeParse() | 16,937,344 | 16,923,424–16,953,710 | 59 | 1.45x slower |
-|  | zod safeParse() | 7,402,533 | 7,395,370–7,410,593 | 135 | 3.32x slower |
-|  | valibot safeParse() | 5,114,988 | 4,939,727–5,129,632 | 196 | 4.80x slower |
-|  | atscript validate() | 4,675,581 | 4,657,321–4,683,622 | 214 | 5.25x slower |
-|  | joi validate() | 1,254,260 | 1,118,927–1,255,690 | 797 | 19.57x slower |
-|  | typebox Value.Check() | 399,819 | 397,511–400,566 | 2,501 | 61.40x slower |
-|  | yup validateSync() | 238,965 | 231,958–243,799 | 4,185 | 102.73x slower |
-|  | class-validator validateSync() | 224,003 | 223,332–227,560 | 4,464 | 109.59x slower |
-| union-paypal | arktype T.allows() [boolean only] | 53,292,635 | 53,057,507–53,381,742 | 19 | fastest |
-|  | typebox Compile() + Check() | 53,227,782 | 52,601,155–53,648,185 | 19 | 1.00x slower |
-|  | zod z.compile() + validate() [boolean only] | 36,472,171 | 36,356,385–36,549,842 | 27 | 1.46x slower |
-|  | zod z.compile() + safeParse() | 36,369,125 | 34,774,066–36,644,208 | 27 | 1.47x slower |
-|  | arktype T(input) | 31,291,816 | 31,079,500–31,625,271 | 32 | 1.70x slower |
-|  | ajv compiled validate() | 29,877,607 | 29,828,903–29,926,382 | 33 | 1.78x slower |
-|  | atscript validate() | 6,255,411 | 6,236,809–6,278,690 | 160 | 8.52x slower |
-|  | zod safeParse() | 5,099,578 | 4,804,731–5,165,417 | 196 | 10.45x slower |
-|  | valibot safeParse() | 3,651,240 | 3,396,854–3,714,780 | 274 | 14.60x slower |
-|  | joi validate() | 899,419 | 866,841–905,054 | 1,112 | 59.25x slower |
-|  | typebox Value.Check() | 729,934 | 723,631–731,096 | 1,370 | 73.01x slower |
-|  | class-validator validateSync() | 136,961 | 133,463–138,601 | 7,301 | 389.11x slower |
-|  | yup validateSync() | 77,796 | 76,822–78,683 | 12,854 | 685.03x slower |
-| union-invalid | ajv compiled validate() | 31,712,219 | 31,488,812–31,844,235 | 32 | fastest |
-|  | valibot safeParse() | 2,757,403 | 2,611,033–2,797,973 | 363 | 11.50x slower |
-|  | atscript validate() | 1,733,895 | 1,729,513–1,738,383 | 577 | 18.29x slower |
-|  | zod safeParse() | 593,055 | 534,526–597,707 | 1,686 | 53.47x slower |
-|  | zod z.compile() + safeParse() | 584,413 | 522,251–591,277 | 1,711 | 54.26x slower |
-|  | typebox Compile() + Check() | 401,779 | 396,597–405,699 | 2,489 | 78.93x slower |
-|  | joi validate() | 320,291 | 318,135–322,758 | 3,122 | 99.01x slower |
-|  | typebox Value.Check() | 310,206 | 309,482–312,343 | 3,224 | 102.23x slower |
-|  | arktype T(input) | 310,001 | 305,666–311,797 | 3,226 | 102.30x slower |
-|  | class-validator validateSync() | 118,288 | 117,689–121,203 | 8,454 | 268.09x slower |
-|  | yup validateSync() | 32,032 | 31,694–32,297 | 31,218 | 990.02x slower |
+| valid-order | typebox Compile() + Check() | 4,785,558 | 4,698,010–4,834,197 | 209 | fastest |
+|  | atscript validate() [compiled] | 4,413,564 | 3,672,232–4,507,407 | 227 | 1.08x slower |
+|  | zod z.compile() + validate() [boolean only] | 2,336,689 | 2,076,368–2,514,804 | 428 | 2.05x slower |
+|  | ajv compiled validate() | 2,265,284 | 2,214,357–2,331,040 | 441 | 2.11x slower |
+|  | zod z.compile() + safeParse() | 1,762,421 | 1,551,998–1,875,026 | 567 | 2.72x slower |
+|  | arktype T.allows() [boolean only] | 988,423 | 941,421–1,015,873 | 1,012 | 4.84x slower |
+|  | arktype T(input) | 941,412 | 916,310–958,172 | 1,062 | 5.08x slower |
+|  | atscript validate() | 525,176 | 489,063–555,525 | 1,904 | 9.11x slower |
+|  | atscript 0.1.109 validate() [baseline] | 473,359 | 452,348–478,526 | 2,113 | 10.11x slower |
+|  | zod safeParse() | 342,399 | 279,292–380,142 | 2,921 | 13.98x slower |
+|  | valibot safeParse() | 304,530 | 290,824–315,052 | 3,284 | 15.71x slower |
+|  | joi validate() | 51,374 | 43,145–52,283 | 19,465 | 93.15x slower |
+|  | typebox Value.Check() | 26,460 | 24,804–27,205 | 37,792 | 180.86x slower |
+|  | yup validateSync() | 18,416 | 16,104–19,348 | 54,300 | 259.86x slower |
+|  | class-validator validateSync() | 16,245 | 14,058–16,738 | 61,556 | 294.59x slower |
+| valid-order-paypal | typebox Compile() + Check() | 5,267,483 | 5,191,632–5,320,754 | 190 | fastest |
+|  | atscript validate() [compiled] | 4,811,428 | 4,778,192–4,884,256 | 208 | 1.09x slower |
+|  | zod z.compile() + validate() [boolean only] | 2,480,077 | 2,259,712–2,737,019 | 403 | 2.12x slower |
+|  | ajv compiled validate() | 2,360,585 | 2,314,598–2,454,301 | 424 | 2.23x slower |
+|  | zod z.compile() + safeParse() | 1,984,438 | 1,706,766–2,208,736 | 504 | 2.65x slower |
+|  | arktype T(input) | 1,030,910 | 1,013,393–1,084,631 | 970 | 5.11x slower |
+|  | arktype T.allows() [boolean only] | 1,016,911 | 967,310–1,032,894 | 983 | 5.18x slower |
+|  | atscript validate() | 592,810 | 586,259–595,249 | 1,687 | 8.89x slower |
+|  | atscript 0.1.109 validate() [baseline] | 495,782 | 485,243–503,540 | 2,017 | 10.62x slower |
+|  | zod safeParse() | 345,284 | 222,701–364,887 | 2,896 | 15.26x slower |
+|  | valibot safeParse() | 307,788 | 289,142–312,280 | 3,249 | 17.11x slower |
+|  | joi validate() | 51,105 | 50,565–51,488 | 19,568 | 103.07x slower |
+|  | typebox Value.Check() | 25,802 | 25,525–27,505 | 38,756 | 204.15x slower |
+|  | class-validator validateSync() | 14,918 | 13,589–15,623 | 67,035 | 353.10x slower |
+|  | yup validateSync() | 14,142 | 12,876–15,507 | 70,712 | 372.47x slower |
+| large-order-50-items | typebox Compile() + Check() | 1,291,540 | 1,281,182–1,300,037 | 774 | fastest |
+|  | atscript validate() [compiled] | 1,077,703 | 1,068,172–1,083,762 | 928 | 1.20x slower |
+|  | ajv compiled validate() | 394,874 | 382,433–407,591 | 2,532 | 3.27x slower |
+|  | zod z.compile() + safeParse() | 248,967 | 200,405–261,385 | 4,017 | 5.19x slower |
+|  | zod z.compile() + validate() [boolean only] | 248,300 | 215,868–262,430 | 4,027 | 5.20x slower |
+|  | arktype T(input) | 106,248 | 101,438–109,872 | 9,412 | 12.16x slower |
+|  | arktype T.allows() [boolean only] | 102,321 | 90,638–107,426 | 9,773 | 12.62x slower |
+|  | atscript validate() | 93,516 | 92,190–95,272 | 10,693 | 13.81x slower |
+|  | atscript 0.1.109 validate() [baseline] | 91,339 | 82,616–94,323 | 10,948 | 14.14x slower |
+|  | zod safeParse() | 40,784 | 35,954–42,605 | 24,519 | 31.67x slower |
+|  | valibot safeParse() | 30,729 | 29,045–32,400 | 32,543 | 42.03x slower |
+|  | joi validate() | 4,319 | 4,253–4,360 | 231,515 | 299.04x slower |
+|  | typebox Value.Check() | 2,160 | 2,111–2,169 | 462,899 | 597.94x slower |
+|  | yup validateSync() | 1,915 | 1,578–1,957 | 522,150 | 674.43x slower |
+|  | class-validator validateSync() | 1,625 | 1,512–1,697 | 615,415 | 794.79x slower |
+| unknown-props-order | atscript validate() [compiled] | 3,393,344 | 3,172,937–3,600,030 | 295 | fastest |
+|  | typebox Compile() + Check() | 3,163,810 | 3,052,989–3,255,991 | 316 | 1.07x slower |
+|  | ajv compiled validate() | 1,995,851 | 1,907,001–2,071,220 | 501 | 1.70x slower |
+|  | zod z.compile() + validate() [boolean only] | 1,774,447 | 1,505,211–1,882,691 | 564 | 1.91x slower |
+|  | zod z.compile() + safeParse() | 1,548,537 | 1,217,004–1,637,622 | 646 | 2.19x slower |
+|  | arktype T.allows() [boolean only] | 903,155 | 762,016–956,844 | 1,107 | 3.76x slower |
+|  | arktype T(input) | 887,570 | 834,418–914,291 | 1,127 | 3.82x slower |
+|  | atscript validate() | 539,519 | 527,760–550,685 | 1,854 | 6.29x slower |
+|  | atscript 0.1.109 validate() [baseline] | 470,177 | 432,146–476,252 | 2,127 | 7.22x slower |
+|  | zod safeParse() | 311,406 | 267,641–347,315 | 3,211 | 10.90x slower |
+|  | valibot safeParse() | 283,183 | 265,282–302,226 | 3,531 | 11.98x slower |
+|  | joi validate() | 52,646 | 49,820–53,634 | 18,995 | 64.46x slower |
+|  | typebox Value.Check() | 24,258 | 23,112–25,517 | 41,223 | 139.89x slower |
+|  | yup validateSync() | 17,054 | 15,680–18,873 | 58,637 | 198.98x slower |
+|  | class-validator validateSync() | 12,490 | 12,131–15,834 | 80,063 | 271.68x slower |
+| invalid-order-all-errors | ajv compiled validate() | 1,757,491 | 1,652,809–1,873,499 | 569 | fastest |
+|  | atscript validate() | 394,192 | 378,452–404,700 | 2,537 | 4.46x slower |
+|  | atscript validate() [compiled] | 390,698 | 315,207–400,096 | 2,560 | 4.50x slower |
+|  | atscript 0.1.109 validate() [baseline] | 366,969 | 364,487–368,489 | 2,725 | 4.79x slower |
+|  | valibot safeParse() | 358,588 | 330,775–399,680 | 2,789 | 4.90x slower |
+|  | zod z.compile() + safeParse() | 106,842 | 92,079–122,998 | 9,360 | 16.45x slower |
+|  | zod safeParse() | 105,405 | 90,111–129,731 | 9,487 | 16.67x slower |
+|  | typebox Compile() + Check() | 53,344 | 51,655–54,256 | 18,746 | 32.95x slower |
+|  | typebox Value.Check() | 51,824 | 50,348–52,180 | 19,296 | 33.91x slower |
+|  | joi validate() | 46,670 | 42,154–48,796 | 21,427 | 37.66x slower |
+|  | arktype T(input) | 32,826 | 26,605–33,302 | 30,464 | 53.54x slower |
+|  | class-validator validateSync() | 23,752 | 22,107–25,270 | 42,101 | 73.99x slower |
+|  | yup validateSync() | 9,311 | 8,824–9,418 | 107,399 | 188.75x slower |
+| invalid-order-first-error | zod z.compile() + validate() [boolean only] | 100,290,756 | 97,296,863–101,146,859 | 10 | fastest |
+|  | ajv compiled validate() | 52,973,520 | 51,775,203–53,392,988 | 19 | 1.89x slower |
+|  | arktype T.allows() [boolean only] | 17,299,659 | 16,417,831–20,207,313 | 58 | 5.80x slower |
+|  | valibot safeParse() | 13,572,831 | 12,119,717–14,369,368 | 74 | 7.39x slower |
+|  | atscript validate() [compiled] | 6,357,529 | 6,181,150–6,489,839 | 157 | 15.78x slower |
+|  | atscript validate() | 5,493,080 | 5,404,067–5,555,331 | 182 | 18.26x slower |
+|  | atscript 0.1.109 validate() [baseline] | 5,150,801 | 5,037,839–5,248,983 | 194 | 19.47x slower |
+|  | joi validate() | 764,878 | 746,265–775,059 | 1,307 | 131.12x slower |
+|  | typebox Value.Check() | 158,441 | 122,990–164,067 | 6,311 | 632.98x slower |
+|  | typebox Compile() + Check() | 157,752 | 117,916–179,221 | 6,339 | 635.75x slower |
+|  | yup validateSync() | 33,987 | 29,753–38,507 | 29,423 | 2950.86x slower |
+| union-card | typebox Compile() + Check() | 24,340,658 | 23,283,962–24,912,658 | 41 | fastest |
+|  | arktype T.allows() [boolean only] | 23,482,408 | 22,640,646–24,011,060 | 43 | 1.04x slower |
+|  | ajv compiled validate() | 19,180,530 | 18,562,510–19,570,135 | 52 | 1.27x slower |
+|  | zod z.compile() + safeParse() | 18,450,437 | 11,777,380–18,591,244 | 54 | 1.32x slower |
+|  | arktype T(input) | 17,061,730 | 16,392,045–17,778,638 | 59 | 1.43x slower |
+|  | zod z.compile() + validate() [boolean only] | 16,748,235 | 13,081,228–17,369,038 | 60 | 1.45x slower |
+|  | atscript validate() [compiled] | 14,366,789 | 8,667,623–14,865,697 | 70 | 1.69x slower |
+|  | zod safeParse() | 6,982,560 | 4,648,775–7,116,265 | 143 | 3.49x slower |
+|  | atscript validate() | 4,824,394 | 3,838,360–4,859,858 | 207 | 5.05x slower |
+|  | atscript 0.1.109 validate() [baseline] | 4,814,060 | 3,308,757–4,868,277 | 208 | 5.06x slower |
+|  | valibot safeParse() | 4,552,126 | 4,211,364–4,893,182 | 220 | 5.35x slower |
+|  | joi validate() | 1,175,591 | 1,112,576–1,245,621 | 851 | 20.71x slower |
+|  | typebox Value.Check() | 352,771 | 299,068–374,893 | 2,835 | 69.00x slower |
+|  | yup validateSync() | 219,731 | 212,867–228,014 | 4,551 | 110.77x slower |
+|  | class-validator validateSync() | 195,544 | 179,735–204,720 | 5,114 | 124.48x slower |
+| union-paypal | arktype T.allows() [boolean only] | 52,424,028 | 45,379,867–54,638,695 | 19 | fastest |
+|  | typebox Compile() + Check() | 41,781,872 | 40,044,190–51,957,430 | 24 | 1.25x slower |
+|  | zod z.compile() + validate() [boolean only] | 33,594,823 | 29,692,689–37,259,503 | 30 | 1.56x slower |
+|  | zod z.compile() + safeParse() | 32,644,103 | 31,184,961–37,384,752 | 31 | 1.61x slower |
+|  | ajv compiled validate() | 29,428,386 | 26,221,434–29,861,012 | 34 | 1.78x slower |
+|  | arktype T(input) | 27,715,864 | 25,946,187–29,858,560 | 36 | 1.89x slower |
+|  | atscript validate() [compiled] | 18,908,310 | 17,743,570–20,035,816 | 53 | 2.77x slower |
+|  | atscript validate() | 6,561,718 | 5,479,085–6,764,446 | 152 | 7.99x slower |
+|  | atscript 0.1.109 validate() [baseline] | 5,904,264 | 5,396,983–6,692,879 | 169 | 8.88x slower |
+|  | zod safeParse() | 4,711,330 | 4,318,000–5,258,321 | 212 | 11.13x slower |
+|  | valibot safeParse() | 3,363,302 | 2,970,529–3,713,749 | 297 | 15.59x slower |
+|  | joi validate() | 883,948 | 783,656–927,633 | 1,131 | 59.31x slower |
+|  | typebox Value.Check() | 524,433 | 474,937–674,043 | 1,907 | 99.96x slower |
+|  | yup validateSync() | 137,040 | 123,626–141,327 | 7,297 | 382.55x slower |
+|  | class-validator validateSync() | 122,853 | 108,967–140,717 | 8,140 | 426.72x slower |
+| union-invalid | ajv compiled validate() | 30,004,128 | 24,597,913–31,541,139 | 33 | fastest |
+|  | valibot safeParse() | 2,409,340 | 2,234,124–2,565,387 | 415 | 12.45x slower |
+|  | atscript validate() [compiled] | 1,785,946 | 1,452,837–1,971,554 | 560 | 16.80x slower |
+|  | atscript 0.1.109 validate() [baseline] | 1,565,487 | 1,462,381–1,792,876 | 639 | 19.17x slower |
+|  | atscript validate() | 1,441,255 | 1,246,965–1,666,120 | 694 | 20.82x slower |
+|  | zod z.compile() + safeParse() | 555,736 | 489,648–587,947 | 1,799 | 53.99x slower |
+|  | zod safeParse() | 513,312 | 474,346–573,723 | 1,948 | 58.45x slower |
+|  | typebox Compile() + Check() | 358,384 | 340,270–380,872 | 2,790 | 83.72x slower |
+|  | typebox Value.Check() | 286,029 | 266,208–298,610 | 3,496 | 104.90x slower |
+|  | arktype T(input) | 278,042 | 259,350–299,917 | 3,597 | 107.91x slower |
+|  | joi validate() | 261,288 | 245,800–279,210 | 3,827 | 114.83x slower |
+|  | class-validator validateSync() | 112,147 | 103,751–131,851 | 8,917 | 267.54x slower |
+|  | yup validateSync() | 52,112 | 47,710–54,313 | 19,190 | 575.76x slower |
 
 ## Unknown props: strict
 
@@ -242,113 +280,131 @@ atscript `unknownProps: 'error'` · zod `z.strictObject()` · valibot `v.strictO
 
 | Scenario | Engine | ops/s (median) | p25–p75 | ns/op | Relative |
 | --- | --- | ---: | ---: | ---: | ---: |
-| valid-order | zod z.compile() + validate() [boolean only] | 2,916,522 | 2,558,181–2,926,681 | 343 | fastest |
-|  | zod z.compile() + safeParse() | 2,794,374 | 2,406,473–2,831,161 | 358 | 1.04x slower |
-|  | ajv compiled validate() | 1,731,596 | 1,700,498–1,787,250 | 578 | 1.68x slower |
-|  | typebox Compile() + Check() | 1,199,014 | 1,198,371–1,205,349 | 834 | 2.43x slower |
-|  | arktype T(input) | 920,494 | 919,769–924,385 | 1,086 | 3.17x slower |
-|  | arktype T.allows() [boolean only] | 915,653 | 912,307–918,432 | 1,092 | 3.19x slower |
-|  | atscript validate() | 408,515 | 407,957–409,242 | 2,448 | 7.14x slower |
-|  | zod safeParse() | 389,196 | 313,831–398,729 | 2,569 | 7.49x slower |
-|  | valibot safeParse() | 312,315 | 304,912–318,163 | 3,202 | 9.34x slower |
-|  | joi validate() | 54,910 | 54,702–55,025 | 18,212 | 53.11x slower |
-|  | typebox Value.Check() | 20,906 | 20,811–21,084 | 47,833 | 139.51x slower |
-|  | yup validateSync() | 18,720 | 17,111–19,036 | 53,418 | 155.80x slower |
-|  | class-validator validateSync() | 17,452 | 17,118–17,620 | 57,302 | 167.12x slower |
-| valid-order-paypal | zod z.compile() + validate() [boolean only] | 2,989,883 | 2,705,947–3,034,899 | 334 | fastest |
-|  | zod z.compile() + safeParse() | 2,934,507 | 2,564,137–2,976,054 | 341 | 1.02x slower |
-|  | ajv compiled validate() | 1,784,650 | 1,776,636–1,789,174 | 560 | 1.68x slower |
-|  | typebox Compile() + Check() | 1,260,637 | 1,255,716–1,280,113 | 793 | 2.37x slower |
-|  | arktype T(input) | 1,011,801 | 1,005,609–1,015,048 | 988 | 2.96x slower |
-|  | arktype T.allows() [boolean only] | 983,912 | 982,526–985,129 | 1,016 | 3.04x slower |
-|  | atscript validate() | 418,689 | 416,665–419,748 | 2,388 | 7.14x slower |
-|  | zod safeParse() | 379,544 | 369,496–380,017 | 2,635 | 7.88x slower |
-|  | valibot safeParse() | 314,737 | 303,462–320,495 | 3,177 | 9.50x slower |
-|  | joi validate() | 51,761 | 51,629–52,320 | 19,319 | 57.76x slower |
-|  | typebox Value.Check() | 21,781 | 21,745–21,918 | 45,912 | 137.27x slower |
-|  | class-validator validateSync() | 15,985 | 15,820–16,272 | 62,560 | 187.04x slower |
-|  | yup validateSync() | 13,791 | 13,545–14,133 | 72,513 | 216.80x slower |
-| large-order-50-items | zod z.compile() + validate() [boolean only] | 405,978 | 353,551–410,176 | 2,463 | fastest |
-|  | zod z.compile() + safeParse() | 397,790 | 340,871–402,917 | 2,514 | 1.02x slower |
-|  | ajv compiled validate() | 292,587 | 277,726–298,461 | 3,418 | 1.39x slower |
-|  | typebox Compile() + Check() | 144,851 | 144,442–145,452 | 6,904 | 2.80x slower |
-|  | arktype T.allows() [boolean only] | 101,977 | 101,211–102,284 | 9,806 | 3.98x slower |
-|  | arktype T(input) | 99,465 | 99,131–99,610 | 10,054 | 4.08x slower |
-|  | atscript validate() | 69,496 | 69,133–69,674 | 14,389 | 5.84x slower |
-|  | zod safeParse() | 42,769 | 39,123–44,026 | 23,381 | 9.49x slower |
-|  | valibot safeParse() | 34,403 | 33,596–34,471 | 29,067 | 11.80x slower |
-|  | joi validate() | 4,548 | 4,495–4,558 | 219,876 | 89.27x slower |
-|  | yup validateSync() | 1,855 | 1,673–1,874 | 539,057 | 218.86x slower |
-|  | typebox Value.Check() | 1,799 | 1,786–1,809 | 555,760 | 225.67x slower |
-|  | class-validator validateSync() | 1,783 | 1,768–1,801 | 560,905 | 227.69x slower |
-| unknown-props-order | ajv compiled validate() | 1,469,757 | 1,465,301–1,490,960 | 680 | fastest |
-|  | valibot safeParse() | 240,060 | 229,227–242,473 | 4,166 | 6.12x slower |
-|  | atscript validate() | 193,381 | 193,252–193,701 | 5,171 | 7.60x slower |
-|  | zod safeParse() | 173,737 | 135,573–180,362 | 5,756 | 8.46x slower |
-|  | zod z.compile() + safeParse() | 171,355 | 159,457–172,713 | 5,836 | 8.58x slower |
-|  | arktype T(input) | 41,443 | 40,389–41,556 | 24,129 | 35.46x slower |
-|  | joi validate() | 32,821 | 32,142–33,468 | 30,468 | 44.78x slower |
-|  | class-validator validateSync() | 15,279 | 15,104–15,376 | 65,449 | 96.19x slower |
-|  | typebox Compile() + Check() | 13,331 | 13,158–13,379 | 75,012 | 110.25x slower |
-|  | typebox Value.Check() | 12,840 | 12,781–12,936 | 77,880 | 114.47x slower |
-|  | yup validateSync() | 5,728 | 5,411–5,933 | 174,591 | 256.59x slower |
-| invalid-order-all-errors | ajv compiled validate() | 1,650,932 | 1,630,491–1,656,101 | 606 | fastest |
-|  | valibot safeParse() | 390,780 | 364,567–392,970 | 2,559 | 4.22x slower |
-|  | atscript validate() | 309,110 | 308,938–309,541 | 3,235 | 5.34x slower |
-|  | zod z.compile() + safeParse() | 138,388 | 130,873–141,490 | 7,226 | 11.93x slower |
-|  | zod safeParse() | 133,111 | 103,075–134,719 | 7,513 | 12.40x slower |
-|  | joi validate() | 43,952 | 43,387–44,560 | 22,752 | 37.56x slower |
-|  | typebox Compile() + Check() | 38,881 | 38,646–39,663 | 25,719 | 42.46x slower |
-|  | typebox Value.Check() | 35,928 | 35,629–36,055 | 27,834 | 45.95x slower |
-|  | arktype T(input) | 32,733 | 32,466–33,045 | 30,550 | 50.44x slower |
-|  | class-validator validateSync() | 25,143 | 24,617–25,840 | 39,773 | 65.66x slower |
-|  | yup validateSync() | 4,570 | 4,280–4,705 | 218,810 | 361.25x slower |
-| invalid-order-first-error | zod z.compile() + validate() [boolean only] | 103,299,318 | 103,115,675–103,439,681 | 10 | fastest |
-|  | arktype T.allows() [boolean only] | 52,127,931 | 51,919,868–52,879,347 | 19 | 1.98x slower |
-|  | ajv compiled validate() | 15,247,172 | 15,022,040–15,303,720 | 66 | 6.77x slower |
-|  | valibot safeParse() | 14,224,906 | 13,612,184–14,294,367 | 70 | 7.26x slower |
-|  | atscript validate() | 3,696,064 | 3,690,030–3,698,506 | 271 | 27.95x slower |
-|  | joi validate() | 793,593 | 778,526–807,552 | 1,260 | 130.17x slower |
-|  | typebox Compile() + Check() | 110,619 | 110,411–111,134 | 9,040 | 933.83x slower |
-|  | typebox Value.Check() | 83,753 | 83,099–84,532 | 11,940 | 1233.38x slower |
-|  | yup validateSync() | 23,278 | 22,766–23,318 | 42,959 | 4437.64x slower |
-| union-card | typebox Compile() + Check() | 22,687,972 | 22,213,109–22,733,779 | 44 | fastest |
-|  | zod z.compile() + safeParse() | 21,643,759 | 21,544,805–21,769,458 | 46 | 1.05x slower |
-|  | zod z.compile() + validate() [boolean only] | 21,554,978 | 21,453,637–21,659,251 | 46 | 1.05x slower |
-|  | ajv compiled validate() | 17,209,420 | 16,925,333–17,325,942 | 58 | 1.32x slower |
-|  | arktype T.allows() [boolean only] | 10,492,133 | 10,471,795–10,566,798 | 95 | 2.16x slower |
-|  | arktype T(input) | 9,240,909 | 9,185,011–9,339,321 | 108 | 2.46x slower |
-|  | zod safeParse() | 7,273,525 | 7,261,520–7,275,017 | 137 | 3.12x slower |
-|  | valibot safeParse() | 5,100,620 | 4,935,576–5,113,376 | 196 | 4.45x slower |
-|  | atscript validate() | 4,102,975 | 4,097,567–4,109,826 | 244 | 5.53x slower |
-|  | joi validate() | 1,270,399 | 1,265,870–1,281,356 | 787 | 17.86x slower |
-|  | typebox Value.Check() | 315,985 | 315,063–316,484 | 3,165 | 71.80x slower |
-|  | class-validator validateSync() | 220,322 | 219,821–222,373 | 4,539 | 102.98x slower |
-|  | yup validateSync() | 208,361 | 204,352–213,694 | 4,799 | 108.89x slower |
-| union-paypal | typebox Compile() + Check() | 44,779,386 | 44,697,735–44,843,334 | 22 | fastest |
-|  | zod z.compile() + safeParse() | 40,924,432 | 40,026,326–41,062,024 | 24 | 1.09x slower |
-|  | zod z.compile() + validate() [boolean only] | 39,606,506 | 39,421,154–39,766,888 | 25 | 1.13x slower |
-|  | ajv compiled validate() | 22,399,027 | 22,184,299–22,423,996 | 45 | 2.00x slower |
-|  | arktype T.allows() [boolean only] | 22,321,613 | 22,279,120–22,347,406 | 45 | 2.01x slower |
-|  | arktype T(input) | 16,556,670 | 16,406,053–16,633,628 | 60 | 2.70x slower |
-|  | atscript validate() | 5,919,416 | 5,827,087–5,997,712 | 169 | 7.56x slower |
-|  | zod safeParse() | 4,968,568 | 4,758,694–4,992,710 | 201 | 9.01x slower |
-|  | valibot safeParse() | 3,154,789 | 2,954,325–3,178,734 | 317 | 14.19x slower |
-|  | joi validate() | 866,750 | 860,669–871,078 | 1,154 | 51.66x slower |
-|  | typebox Value.Check() | 601,276 | 596,339–603,290 | 1,663 | 74.47x slower |
-|  | class-validator validateSync() | 134,617 | 133,642–135,884 | 7,428 | 332.64x slower |
-|  | yup validateSync() | 82,537 | 80,894–84,529 | 12,116 | 542.54x slower |
-| union-invalid | ajv compiled validate() | 23,361,925 | 23,063,135–23,403,132 | 43 | fastest |
-|  | valibot safeParse() | 2,212,611 | 2,043,529–2,247,401 | 452 | 10.56x slower |
-|  | atscript validate() | 1,559,802 | 1,558,721–1,563,240 | 641 | 14.98x slower |
-|  | zod safeParse() | 472,011 | 434,827–477,271 | 2,119 | 49.49x slower |
-|  | zod z.compile() + safeParse() | 457,371 | 427,226–462,431 | 2,186 | 51.08x slower |
-|  | arktype T(input) | 309,412 | 306,579–311,406 | 3,232 | 75.50x slower |
-|  | typebox Compile() + Check() | 269,537 | 266,453–270,489 | 3,710 | 86.67x slower |
-|  | joi validate() | 262,654 | 257,736–265,812 | 3,807 | 88.95x slower |
-|  | typebox Value.Check() | 222,339 | 219,346–223,719 | 4,498 | 105.07x slower |
-|  | class-validator validateSync() | 117,034 | 115,004–119,870 | 8,545 | 199.62x slower |
-|  | yup validateSync() | 23,625 | 22,534–23,789 | 42,328 | 988.86x slower |
+| valid-order | atscript validate() [compiled] | 3,408,769 | 3,339,169–3,459,349 | 293 | fastest |
+|  | zod z.compile() + validate() [boolean only] | 2,866,082 | 2,438,793–2,992,713 | 349 | 1.19x slower |
+|  | zod z.compile() + safeParse() | 2,657,913 | 2,214,342–2,788,092 | 376 | 1.28x slower |
+|  | ajv compiled validate() | 1,716,545 | 1,542,101–1,779,064 | 583 | 1.99x slower |
+|  | typebox Compile() + Check() | 1,172,215 | 1,036,251–1,225,013 | 853 | 2.91x slower |
+|  | arktype T(input) | 509,879 | 487,448–532,766 | 1,961 | 6.69x slower |
+|  | arktype T.allows() [boolean only] | 493,643 | 424,405–521,841 | 2,026 | 6.91x slower |
+|  | atscript validate() | 459,027 | 446,599–466,743 | 2,179 | 7.43x slower |
+|  | atscript 0.1.109 validate() [baseline] | 415,486 | 402,323–425,565 | 2,407 | 8.20x slower |
+|  | zod safeParse() | 337,987 | 261,507–369,733 | 2,959 | 10.09x slower |
+|  | valibot safeParse() | 269,822 | 257,555–281,036 | 3,706 | 12.63x slower |
+|  | joi validate() | 46,305 | 43,204–48,167 | 21,596 | 73.62x slower |
+|  | typebox Value.Check() | 21,755 | 21,380–22,115 | 45,966 | 156.69x slower |
+|  | yup validateSync() | 16,286 | 15,084–18,282 | 61,404 | 209.31x slower |
+|  | class-validator validateSync() | 13,035 | 12,602–15,931 | 76,716 | 261.51x slower |
+| valid-order-paypal | atscript validate() [compiled] | 3,701,686 | 3,643,524–3,738,757 | 270 | fastest |
+|  | zod z.compile() + validate() [boolean only] | 3,085,868 | 2,585,601–3,129,136 | 324 | 1.20x slower |
+|  | zod z.compile() + safeParse() | 2,942,500 | 2,352,382–3,010,740 | 340 | 1.26x slower |
+|  | ajv compiled validate() | 1,770,415 | 1,601,890–1,841,073 | 565 | 2.09x slower |
+|  | typebox Compile() + Check() | 1,251,106 | 1,176,298–1,283,560 | 799 | 2.96x slower |
+|  | arktype T.allows() [boolean only] | 560,588 | 539,687–613,501 | 1,784 | 6.60x slower |
+|  | arktype T(input) | 560,236 | 467,901–575,245 | 1,785 | 6.61x slower |
+|  | atscript validate() | 491,753 | 485,087–497,281 | 2,034 | 7.53x slower |
+|  | atscript 0.1.109 validate() [baseline] | 428,983 | 425,260–432,582 | 2,331 | 8.63x slower |
+|  | zod safeParse() | 332,261 | 223,987–352,717 | 3,010 | 11.14x slower |
+|  | valibot safeParse() | 298,001 | 287,219–305,701 | 3,356 | 12.42x slower |
+|  | joi validate() | 48,412 | 46,067–49,630 | 20,656 | 76.46x slower |
+|  | typebox Value.Check() | 19,377 | 18,370–21,408 | 51,607 | 191.04x slower |
+|  | yup validateSync() | 16,339 | 14,648–16,824 | 61,203 | 226.56x slower |
+|  | class-validator validateSync() | 14,482 | 14,000–15,186 | 69,052 | 255.61x slower |
+| large-order-50-items | atscript validate() [compiled] | 616,211 | 558,318–619,220 | 1,623 | fastest |
+|  | zod z.compile() + validate() [boolean only] | 393,066 | 325,703–407,754 | 2,544 | 1.57x slower |
+|  | zod z.compile() + safeParse() | 305,250 | 292,837–393,194 | 3,276 | 2.02x slower |
+|  | ajv compiled validate() | 285,133 | 271,896–295,467 | 3,507 | 2.16x slower |
+|  | typebox Compile() + Check() | 128,751 | 112,216–136,032 | 7,767 | 4.79x slower |
+|  | atscript validate() | 71,623 | 70,071–72,614 | 13,962 | 8.60x slower |
+|  | atscript 0.1.109 validate() [baseline] | 69,036 | 50,807–71,371 | 14,485 | 8.93x slower |
+|  | arktype T(input) | 52,952 | 45,006–56,089 | 18,885 | 11.64x slower |
+|  | arktype T.allows() [boolean only] | 50,026 | 47,479–55,668 | 19,990 | 12.32x slower |
+|  | zod safeParse() | 34,880 | 24,181–41,735 | 28,670 | 17.67x slower |
+|  | valibot safeParse() | 31,271 | 29,692–33,055 | 31,979 | 19.71x slower |
+|  | joi validate() | 4,132 | 3,125–4,322 | 242,019 | 149.13x slower |
+|  | typebox Value.Check() | 1,721 | 1,124–1,753 | 581,186 | 358.05x slower |
+|  | yup validateSync() | 1,696 | 1,328–1,885 | 589,740 | 363.33x slower |
+|  | class-validator validateSync() | 1,488 | 1,080–1,624 | 672,193 | 414.12x slower |
+| unknown-props-order | ajv compiled validate() | 1,382,902 | 1,310,272–1,487,724 | 723 | fastest |
+|  | atscript validate() [compiled] | 231,935 | 199,067–236,670 | 4,312 | 5.96x slower |
+|  | valibot safeParse() | 230,998 | 216,249–240,760 | 4,329 | 5.99x slower |
+|  | atscript validate() | 205,771 | 200,097–217,415 | 4,860 | 6.72x slower |
+|  | atscript 0.1.109 validate() [baseline] | 199,394 | 156,305–206,798 | 5,015 | 6.94x slower |
+|  | zod safeParse() | 133,794 | 115,108–146,998 | 7,474 | 10.34x slower |
+|  | zod z.compile() + safeParse() | 126,074 | 109,440–151,911 | 7,932 | 10.97x slower |
+|  | arktype T(input) | 37,670 | 35,806–39,433 | 26,547 | 36.71x slower |
+|  | joi validate() | 31,156 | 28,067–33,691 | 32,096 | 44.39x slower |
+|  | class-validator validateSync() | 12,996 | 12,529–13,624 | 76,947 | 106.41x slower |
+|  | typebox Compile() + Check() | 12,103 | 11,811–12,350 | 82,624 | 114.26x slower |
+|  | typebox Value.Check() | 11,836 | 11,662–12,251 | 84,490 | 116.84x slower |
+|  | yup validateSync() | 9,070 | 8,350–9,414 | 110,254 | 152.47x slower |
+| invalid-order-all-errors | ajv compiled validate() | 1,572,572 | 1,135,058–1,598,549 | 636 | fastest |
+|  | valibot safeParse() | 371,741 | 357,253–396,767 | 2,690 | 4.23x slower |
+|  | atscript validate() | 326,924 | 317,582–333,720 | 3,059 | 4.81x slower |
+|  | atscript validate() [compiled] | 323,021 | 304,871–334,635 | 3,096 | 4.87x slower |
+|  | atscript 0.1.109 validate() [baseline] | 312,330 | 235,756–319,290 | 3,202 | 5.03x slower |
+|  | zod z.compile() + safeParse() | 112,403 | 97,123–132,537 | 8,897 | 13.99x slower |
+|  | zod safeParse() | 89,818 | 76,561–111,720 | 11,134 | 17.51x slower |
+|  | joi validate() | 38,137 | 20,649–41,929 | 26,221 | 41.23x slower |
+|  | typebox Compile() + Check() | 36,288 | 21,514–37,982 | 27,557 | 43.34x slower |
+|  | arktype T(input) | 31,526 | 23,041–32,209 | 31,720 | 49.88x slower |
+|  | typebox Value.Check() | 28,629 | 22,391–33,686 | 34,930 | 54.93x slower |
+|  | class-validator validateSync() | 19,227 | 15,206–22,662 | 52,010 | 81.79x slower |
+|  | yup validateSync() | 8,162 | 7,638–8,482 | 122,515 | 192.67x slower |
+| invalid-order-first-error | zod z.compile() + validate() [boolean only] | 94,761,774 | 85,724,457–100,035,338 | 11 | fastest |
+|  | arktype T.allows() [boolean only] | 19,088,735 | 18,179,638–19,452,448 | 52 | 4.96x slower |
+|  | ajv compiled validate() | 15,047,906 | 14,928,364–15,389,109 | 66 | 6.30x slower |
+|  | valibot safeParse() | 13,523,359 | 12,235,752–14,283,867 | 74 | 7.01x slower |
+|  | atscript validate() [compiled] | 6,362,681 | 5,835,551–6,464,654 | 157 | 14.89x slower |
+|  | atscript validate() | 3,964,455 | 2,964,793–4,201,343 | 252 | 23.90x slower |
+|  | atscript 0.1.109 validate() [baseline] | 3,914,099 | 3,857,923–4,032,782 | 255 | 24.21x slower |
+|  | joi validate() | 736,751 | 675,759–760,753 | 1,357 | 128.62x slower |
+|  | typebox Compile() + Check() | 132,757 | 123,111–137,725 | 7,533 | 713.80x slower |
+|  | typebox Value.Check() | 97,025 | 85,497–99,303 | 10,307 | 976.67x slower |
+|  | yup validateSync() | 31,762 | 29,738–35,400 | 31,485 | 2983.50x slower |
+| union-card | typebox Compile() + Check() | 22,719,133 | 20,968,836–23,164,708 | 44 | fastest |
+|  | zod z.compile() + safeParse() | 20,548,176 | 16,507,227–22,021,245 | 49 | 1.11x slower |
+|  | zod z.compile() + validate() [boolean only] | 20,488,544 | 16,518,539–21,793,204 | 49 | 1.11x slower |
+|  | ajv compiled validate() | 17,354,322 | 15,847,585–18,298,997 | 58 | 1.31x slower |
+|  | atscript validate() [compiled] | 13,155,240 | 12,045,916–14,015,696 | 76 | 1.73x slower |
+|  | arktype T.allows() [boolean only] | 10,502,114 | 10,206,103–10,743,746 | 95 | 2.16x slower |
+|  | arktype T(input) | 8,191,255 | 7,838,256–8,678,184 | 122 | 2.77x slower |
+|  | zod safeParse() | 6,921,775 | 6,775,260–7,026,832 | 144 | 3.28x slower |
+|  | valibot safeParse() | 4,836,073 | 4,412,974–5,099,824 | 207 | 4.70x slower |
+|  | atscript validate() | 4,195,636 | 3,778,422–4,351,950 | 238 | 5.41x slower |
+|  | atscript 0.1.109 validate() [baseline] | 4,094,993 | 3,928,624–4,268,921 | 244 | 5.55x slower |
+|  | joi validate() | 1,264,801 | 1,217,060–1,289,296 | 791 | 17.96x slower |
+|  | typebox Value.Check() | 295,263 | 266,977–300,830 | 3,387 | 76.95x slower |
+|  | class-validator validateSync() | 194,760 | 186,482–200,397 | 5,135 | 116.65x slower |
+|  | yup validateSync() | 181,036 | 162,515–201,445 | 5,524 | 125.50x slower |
+| union-paypal | typebox Compile() + Check() | 45,275,218 | 44,160,048–46,023,493 | 22 | fastest |
+|  | zod z.compile() + safeParse() | 40,471,304 | 39,863,224–40,931,446 | 25 | 1.12x slower |
+|  | zod z.compile() + validate() [boolean only] | 40,378,117 | 39,053,572–41,066,901 | 25 | 1.12x slower |
+|  | ajv compiled validate() | 22,870,597 | 21,215,944–23,227,401 | 44 | 1.98x slower |
+|  | arktype T.allows() [boolean only] | 22,654,213 | 22,127,691–22,920,549 | 44 | 2.00x slower |
+|  | atscript validate() [compiled] | 18,333,328 | 17,018,438–19,431,899 | 55 | 2.47x slower |
+|  | arktype T(input) | 16,929,811 | 16,095,418–17,096,936 | 59 | 2.67x slower |
+|  | atscript validate() | 6,242,748 | 6,190,993–6,340,518 | 160 | 7.25x slower |
+|  | atscript 0.1.109 validate() [baseline] | 6,200,410 | 6,145,250–6,287,141 | 161 | 7.30x slower |
+|  | zod safeParse() | 4,818,749 | 4,383,880–4,982,960 | 208 | 9.40x slower |
+|  | valibot safeParse() | 3,197,322 | 2,968,945–3,277,348 | 313 | 14.16x slower |
+|  | joi validate() | 857,252 | 817,385–872,739 | 1,167 | 52.81x slower |
+|  | typebox Value.Check() | 581,055 | 566,505–588,659 | 1,721 | 77.92x slower |
+|  | yup validateSync() | 153,618 | 146,391–161,494 | 6,510 | 294.73x slower |
+|  | class-validator validateSync() | 124,759 | 117,669–129,241 | 8,015 | 362.90x slower |
+| union-invalid | ajv compiled validate() | 22,769,149 | 22,006,669–23,286,185 | 44 | fastest |
+|  | valibot safeParse() | 2,129,611 | 1,920,263–2,200,409 | 470 | 10.69x slower |
+|  | atscript validate() [compiled] | 1,722,221 | 1,698,090–1,732,049 | 581 | 13.22x slower |
+|  | atscript 0.1.109 validate() [baseline] | 1,518,658 | 1,439,779–1,560,122 | 658 | 14.99x slower |
+|  | atscript validate() | 1,497,595 | 1,422,386–1,526,157 | 668 | 15.20x slower |
+|  | zod z.compile() + safeParse() | 441,624 | 373,121–456,800 | 2,264 | 51.56x slower |
+|  | zod safeParse() | 398,516 | 367,784–457,100 | 2,509 | 57.13x slower |
+|  | arktype T(input) | 295,113 | 272,584–300,352 | 3,389 | 77.15x slower |
+|  | typebox Compile() + Check() | 251,553 | 243,029–256,954 | 3,975 | 90.51x slower |
+|  | joi validate() | 227,531 | 222,950–232,036 | 4,395 | 100.07x slower |
+|  | typebox Value.Check() | 201,553 | 189,849–211,320 | 4,961 | 112.97x slower |
+|  | class-validator validateSync() | 112,977 | 107,063–135,202 | 8,851 | 201.54x slower |
+|  | yup validateSync() | 40,589 | 38,517–43,060 | 24,637 | 560.97x slower |
 
 ## Not run
 
@@ -371,19 +427,19 @@ Cells an engine skips, and why (see README for details):
 ## Notes
 
 - Invalid-input scenarios: every engine runs with its library's default error reporting, and the pre-flight confirmed they all catch the same violations (same paths, and the failed `payment` union). Raw error counts differ by how each library reports a failed union and nested failures. Errors reported for `invalid-order-all-errors`:
-  - strip: atscript 15, zod 18, zod-compiled 18, valibot 18, yup 15, joi 15, class-validator 16
-  - passthrough: atscript 15, zod 18, zod-compiled 18, valibot 18, yup 15, joi 15, ajv 20, arktype 15, class-validator 16, typebox-compiled 22, typebox-value 22
-  - strict: atscript 15, zod 18, zod-compiled 18, valibot 18, yup 16, joi 15, ajv 24, arktype 15, class-validator 20, typebox-compiled 27, typebox-value 27
+  - strip: atscript 15, atscript-compiled 15, atscript-baseline 15, zod 18, zod-compiled 18, valibot 18, yup 15, joi 15, class-validator 16
+  - passthrough: atscript 15, atscript-compiled 15, atscript-baseline 15, zod 18, zod-compiled 18, valibot 18, yup 15, joi 15, ajv 20, arktype 15, class-validator 16, typebox-compiled 22, typebox-value 22
+  - strict: atscript 15, atscript-compiled 15, atscript-baseline 15, zod 18, zod-compiled 18, valibot 18, yup 16, joi 15, ajv 24, arktype 15, class-validator 20, typebox-compiled 27, typebox-value 27
 - `invalid-order-first-error`: engines with a stop-at-first-error option run it and report exactly 1 error; boolean-only engines (zod z.compile() + validate() [boolean only], arktype T.allows() [boolean only]) return `false` at the first failure. Engines without such an option skip it.
 - Boolean-only engines run only where a yes/no answer is comparable: valid inputs and the first-error scenario.
-- `unknown-props-order` gets a freshly built input for every call (built outside the timed region) because some engines strip unknown keys from the input in place (atscript validate(), typebox Compile() + Check(), typebox Value.Check()); all engines use the same fresh inputs in all modes.
+- `unknown-props-order` gets a freshly built input for every call (built outside the timed region) because some engines strip unknown keys from the input in place (atscript validate(), atscript validate() [compiled], atscript 0.1.109 validate() [baseline], typebox Compile() + Check(), typebox Value.Check()); all engines use the same fresh inputs in all modes.
 
 ## Environment
 
 |  |  |
 | --- | --- |
-| Date | 2026-10-19T20:02:07.474Z |
-| Node.js | v24.22.0 (V8 13.6.233.17-node.57) |
+| Date | 2026-11-03T13:22:31.930Z |
+| Node.js | v26.13.0 (V8 14.6.202.34-node.40) |
 | OS | Darwin 27.0.0 (darwin arm64) |
 | CPU | Apple M4 (10 logical cores) |
 | Memory | 24 GB |
@@ -392,9 +448,9 @@ Cells an engine skips, and why (see README for details):
 
 | Setting | Value |
 | --- | --- |
-| Rounds | 1 (forward, reversed, then seeded shuffle; fresh process per job × round) |
+| Rounds | 3 (forward, reversed, then seeded shuffle; fresh process per job × round) |
 | Warmup | 1000 ms per job (time-based; also calibrates batch size) |
-| Samples | 10 per job per round, ~40 ms each (process.hrtime.bigint) |
+| Samples | 25 per job per round, ~40 ms each (process.hrtime.bigint) |
 | Reported value | median ops/s over all pooled samples; p25–p75 range |
 | Node flags | --expose-gc (untimed gc() before every sample) |
 
@@ -402,8 +458,10 @@ Cells an engine skips, and why (see README for details):
 
 | Package | Version |
 | --- | --- |
-| @atscript/typescript | 0.1.109 |
-| @atscript/core | 0.1.109 |
+| @atscript/typescript | 0.2.1 |
+| @atscript/core | 0.2.1 |
+| @atscript/typescript (via atscript-baseline) | 0.1.109 |
+| @atscript/core (via atscript-baseline) | 0.1.109 |
 | zod | 4.6.7 |
 | valibot | 1.5.0 |
 | yup | 1.7.1 |

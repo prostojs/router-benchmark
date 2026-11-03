@@ -148,7 +148,7 @@ function summarize(report, groups) {
     engines: engineMeta((e, k) => ({
       label: e.label,
       library: pkgOf(k),
-      version: report.versions[pkgOf(k)],
+      version: report.versions[versionKey(pkgsOf(k)[0])],
       color: e.color,
       booleanOnly: !!e.booleanOnly,
     })),
@@ -157,6 +157,11 @@ function summarize(report, groups) {
     results,
     skipped: listSkipped(),
   }
+}
+
+/** The `versions` key of a `pkgs` entry: `pkg`, or `child (via parent)` for [parent, child]. */
+function versionKey(p) {
+  return Array.isArray(p) ? `${p[1]} (via ${p[0]})` : p
 }
 
 /** Round r runs the jobs forward, then reversed, then in a seeded shuffle. */

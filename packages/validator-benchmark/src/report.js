@@ -1,5 +1,5 @@
 import { mdTable, fmtInt, quickNotes, environmentMarkdown, rankRelative } from 'bench-utils'
-import { MODES, SCENARIOS, ENGINES, listSkipped } from './setup.js'
+import { MODES, SCENARIOS, ENGINES, listSkipped, pkgOf } from './setup.js'
 import { formatErrorCounts } from './preflight.js'
 
 /**
@@ -27,7 +27,7 @@ export function renderMarkdown(report, groups, opts) {
   const { versions: v, settings: s, environment: env, preflight } = report
   const engines = Object.entries(ENGINES)
   let md = `# Validator Benchmark Results\n\n` + quickNotes(opts).md
-  md += `Throughput of validating the same \`Order\` model with an [atscript](https://atscript.dev) validator and the equivalent schema in ${engines.length - 1} other engines of popular validation libraries. See [README.md](README.md) for what is measured and how the schemas were made equivalent.\n\n`
+  md += `Throughput of validating the same \`Order\` model with an [atscript](https://atscript.dev) validator (interpreted, and compiled at build time) and the equivalent schema in ${engines.filter(([k]) => pkgOf(k) !== pkgOf('atscript')).length} other engines of popular validation libraries. See [README.md](README.md) for what is measured and how the schemas were made equivalent.\n\n`
   md += `- ${Object.entries(v).map(([p, ver]) => `${p} **${ver}**`).join(', ')}\n`
   md += `- ${s.rounds} round(s) × ${s.samples} samples of ~${s.sampleMs} ms per job, ${s.warmupMs} ms warmup, one child process per job; total ${report.elapsedSec < 120 ? `${report.elapsedSec} s` : `${Math.round(report.elapsedSec / 60)} min`}\n`
   md += `- Pre-flight: ${preflight.checks} equivalence checks passed (every benchmark job, ${preflight.edgeCases} edge cases × every engine × every mode it supports, unknown-props output, same-violation and first-error checks)\n`

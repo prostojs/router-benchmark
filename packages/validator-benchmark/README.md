@@ -1,9 +1,11 @@
 # Validator Benchmark: atscript vs popular validators
 
-Measures how fast one realistic data model validates with an
+Measures how fast one realistic data model validates with the
 [atscript](https://atscript.dev) runtime validator (`@atscript/typescript`) and with the
 equivalent schema in popular JavaScript validation libraries, across three unknown-property
-policies.
+policies. atscript runs as three engines: the current release interpreted and with compiled
+validators, plus the last release before compiled validators as a baseline (see
+[The three atscript engines](#the-three-atscript-engines)).
 
 Results: [RESULTS.md](RESULTS.md) · raw data: [results/results.json](results/results.json) ·
 chart data: [results/summary.json](results/summary.json)
@@ -14,8 +16,11 @@ chart data: [results/summary.json](results/summary.json)
 addresses, 1–100 line items (with optional nested metadata and arrays), a `Payment`
 union (`PaymentCard | PaymentPaypal`), money fields and optional extras. It uses string
 length limits, regex patterns, integer and numeric range checks, array length limits,
-optional properties and a union. `pnpm compile` turns it into `src/model/order.as.js`
-with the atscript CLI (`asc`).
+optional properties and a union. `pnpm compile` builds it three times: into
+`src/model/order.as.js` with the atscript CLI (`asc`, [`atscript.config.mts`](atscript.config.mts)),
+into `src/model-compiled/order.as.js` with compiled validators
+([`atscript.compiled.config.mts`](atscript.compiled.config.mts): `tsPlugin({ compileValidators: true })`),
+and with atscript 0.1.109 into the [`atscript-baseline`](../atscript-baseline/) package.
 
 The same model in every other library lives in [`src/schemas/`](src/schemas/) (one file per
 library; all regexes come from [`src/schemas/patterns.js`](src/schemas/patterns.js)). Each
@@ -26,6 +31,8 @@ engine's runner is in [`src/engines/`](src/engines/).
 | Engine | Call | Setup |
 |---|---|---|
 | atscript `validate()` | `new Validator(Order, opts)` once, then `validator.validate(input, true)` | `unknownProps` per mode; `errorLimit: Infinity` / `1` |
+| atscript `validate()` [compiled] | same as above, on `src/model-compiled/order.as.js` | same as above; checks compiled at build time by the atscript plugin (`compileValidators: true`), no `new Function`/`eval` at runtime |
+| atscript 0.1.109 `validate()` [baseline] | same as above, with 0.1.109's `Validator` on the model 0.1.109 built | same as above; the last release before compiled validators |
 | zod `safeParse()` | `schema.safeParse(input)` | object JIT on (default) |
 | zod `z.compile()` + `safeParse()` | `z.compile(schema, { strict: true }).safeParse(input)` | ahead-of-time compiled |
 | zod `z.compile()` + `validate()` | `z.compile(schema).validate(input)` | boolean only |
@@ -51,9 +58,34 @@ TypeBox moved from `@sinclair/typebox` (0.34.x, which keeps the `TypeCompiler` A
 zod's object JIT is on by default in Node (`z.config().jitless` is unset, `new Function` is
 allowed), so the plain `safeParse()` row already uses it. `z.compile(schema, { strict: true })`
 fails loudly instead of silently falling back if a schema can't be compiled (every schema here
-compiles). atscript has no ahead-of-time compile mode yet; one is planned, so the compiled rows
-(zod `z.compile()`, ajv, ArkType, TypeBox `Compile()`) compare against atscript's regular
-validator.
+compiles). atscript has both rows too (plus the baseline): the regular (interpreted) validator, and the same
+`Validator` over a model generated with `compileValidators: true`, whose `.as.js` carries a
+compiled check per type as plain code (no `new Function`/`eval` at runtime). `validate()` runs
+that check first; when it fails, the regular walk builds the error report, so the error
+reports are the same in both rows.
+
+### The three atscript engines
+
+| Engine | atscript version | Model |
+|---|---|---|
+| atscript `validate()` | 0.2.1 (`@atscript/core`, `@atscript/typescript`, pinned exactly) | `src/model/order.as.js`, built by `asc` |
+| atscript `validate()` [compiled] | 0.2.1 | `src/model-compiled/order.as.js`, built by `asc` with `compileValidators: true` |
+| atscript 0.1.109 `validate()` [baseline] | 0.1.109, the last release before compiled validators | `../atscript-baseline/model/order.as.js`, built by 0.1.109 |
+
+All three share one runner ([`src/engines/atscript-shared.js`](src/engines/atscript-shared.js)):
+the same `Validator` options, the same call and the same error reading. Only the atscript
+release and the generated model differ, so the baseline row shows what the current release
+gained over 0.1.109, both interpreted and compiled.
+
+The baseline lives in its own workspace package, [`packages/atscript-baseline`](../atscript-baseline/),
+which pins `@atscript/core` and `@atscript/typescript` to 0.1.109. One package cannot depend on two
+versions of the same package, and 0.1.109's `asc` CLI runs on moost 0.6 / wooks
+0.7, which cannot load next to the wooks 0.8 in this workspace. So the baseline package builds the
+same `src/model/order.as` through 0.1.109's programmatic API (`build()` from `@atscript/core`
+with 0.1.109's `tsPlugin()`, in its [`compile.mjs`](../atscript-baseline/compile.mjs)); the
+build and the validator do not use the CLI's dependencies. The baseline engine imports only
+that package. The pre-flight runs it like every other engine: all three atscript engines
+report identical violations.
 
 ## Scenarios
 
@@ -210,7 +242,7 @@ Run it alone with `pnpm preflight`.
 
 ## Measurement method
 
-- **One child process per job** (`engine × mode × scenario`, 295 jobs). No two libraries,
+- **One child process per job** (`engine × mode × scenario`, 349 jobs). No two libraries,
   modes or scenarios share a V8 isolate, so JIT state, inline caches and heap state from
   one cannot affect another.
 - **Rounds.** The whole job list runs `--rounds` times (default 3): forward, then
@@ -248,7 +280,7 @@ pnpm --filter validator-benchmark preflight       # equivalence checks only
 Or inside this package:
 
 ```bash
-pnpm start          # compiles order.as, runs the pre-flight, then the full benchmark
+pnpm start          # builds order.as (all three models), runs the pre-flight, then the full benchmark
                     # → results/results.json, results/summary.json,
                     #   results/{strip,passthrough,strict}-chart.svg, RESULTS.md
 pnpm quick          # smoke test (~2 min)
@@ -264,6 +296,12 @@ substrings, for example `--only strict/union`.
 Smoke (`--quick`) and partial (`--only`) runs write the same files into the git-ignored
 `.quick/` directory, never over the published results.
 
-A full run takes about 40 minutes (295 jobs × 3 rounds × about 2.5 s). Keep the machine
+A full run takes about 40 minutes (349 jobs × 3 rounds × about 2.2 s). Keep the machine
 otherwise idle: other CPU-heavy processes, such as concurrent benchmarks, distort the
 numbers.
+
+**The published run** (Node.js 26.13.0, Apple M4, 39 min) could not get an idle machine:
+other workloads on the laptop could not be fully stopped, and the load average stayed at about 3
+throughout. Each job runs in its own process and the rounds run in different orders, so the load
+spreads over all engines, but treat the numbers as indicative: small gaps (under about 10%)
+between two engines are within the noise of this run.

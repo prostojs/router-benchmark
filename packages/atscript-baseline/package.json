@@ -1,0 +1,17 @@
+{
+  "name": "atscript-baseline",
+  "version": "0.0.1",
+  "private": true,
+  "description": "atscript 0.1.109 (the last release before compiled validators): the validator benchmark's baseline engine — the same order.as model, built and validated by 0.1.109 only",
+  "type": "module",
+  "exports": {
+    ".": "./index.js"
+  },
+  "scripts": {
+    "compile": "node ./compile.mjs"
+  },
+  "dependencies": {
+    "@atscript/core": "0.1.109",
+    "@atscript/typescript": "0.1.109"
+  }
+}
